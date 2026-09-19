@@ -27,3 +27,12 @@ def test_instruction_decode():
     s=Simulator(data)
     from edusim import instruction_at
     assert instruction_at(s.cpu,0)=="MOVI R3, 0x07"
+
+
+def test_source_correlation_lookup():
+    from eduasm import debug_map
+    src="MOVI R0, 9\nHALT\n"
+    data,_,rows=assemble_text(src)
+    s=Simulator(data,debug_map(rows,"demo.eduasm"))
+    row=s.source_by_addr[0]
+    assert row["line"]==1 and row["source"]=="MOVI R0, 9"
