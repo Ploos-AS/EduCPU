@@ -7,22 +7,25 @@
 - [x] programmer-visible state, encoding, opcode map, flags, stack/calls, reference CPU and initial conformance tests
 
 ## M2 — EduASM
-- [x] EduASM v0 syntax
-- [x] two-pass label-aware assembler
-- [x] assembler diagnostics and range checks
-- [x] educational address/byte/source listing
-- [x] disassembler
-- [x] assembler/disassembler tests
-- [x] assembled program executed on reference CPU
-- [x] introductory sum example
-
-Exit: learners can write symbolic EduCPU programs, inspect their exact machine bytes, disassemble binaries and execute assembled output on the M1 reference CPU.
+- [x] syntax, two-pass assembler, labels, diagnostics, educational listing, disassembler, tests and runnable example
 
 ## M3 — Pedagogical simulator + debugger
+- [x] terminal-based interactive simulator/debugger foundation
+- [x] instruction stepping and bounded run
+- [x] register, PC, SP and FLAGS state view
+- [x] decoded next-instruction view
+- [x] per-instruction architectural state-change trace
+- [x] memory inspection
+- [x] breakpoints
+- [x] memory watchpoints
+- [x] reset
+- [x] conceptual fetch/decode/execute/micro-operation teaching view
+- [x] simulator tests
+- [ ] rich datapath visualization / graphical teaching UI
+- [ ] source-line correlation using assembler debug metadata
+- [ ] interactive cycle/micro-operation state machine rather than explanatory sequence
 
-Build the primary teaching simulator. Interactive execution; register/flag/memory/stack views; breakpoints/watchpoints; traces; datapath and fetch/decode/execute visualization; conceptual micro-operation/cycle stepping; source/assembly/byte correlation.
-
-The simulator may expose idealized teaching views that are not required to correspond to one concrete hardware implementation.
+M3 is intentionally iterative: the deterministic debugger/trace foundation is operational; richer visual teaching layers remain M3 work.
 
 ## M4 — Programs, stack, ABI + linking
 Calling convention, stack frames, object representation, minimal linker, symbols/relocations, function and recursion lessons.
