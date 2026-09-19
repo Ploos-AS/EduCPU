@@ -1,0 +1,12 @@
+; EduCPU ABI v0 example
+; R0 and R1 are arguments; R0 is the return value.
+
+start:
+    MOVI R0, 20
+    MOVI R1, 22
+    CALL add_two
+    HALT
+
+add_two:
+    ADD R0, R1
+    RET
