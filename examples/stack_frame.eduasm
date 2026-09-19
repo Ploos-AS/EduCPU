@@ -1,0 +1,14 @@
+; Stack-frame/local-variable example.
+; local byte 0 holds a copy of the first argument.
+start:
+    MOVI R0, 21
+    CALL twice
+    HALT
+
+twice:
+    ENTER 1
+    STORES [0], R0
+    LOADS R1, [0]
+    ADD R0, R1
+    LEAVE 1
+    RET
