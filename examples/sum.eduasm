@@ -1,0 +1,10 @@
+; EduASM example: sum 10 + 9 + ... + 1 into R1
+start:
+    MOVI R0, 10
+    MOVI R1, 0
+loop:
+    ADD R1, R0
+    SUBI R0, 1
+    CMPI R0, 0
+    JNZ loop
+    HALT
