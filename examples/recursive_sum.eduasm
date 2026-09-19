@@ -1,0 +1,22 @@
+; Recursive sum_to(n): n + (n-1) + ... + 1
+; ABI: R0 argument/return. Each invocation saves n in one local byte.
+start:
+    MOVI R0, 5
+    CALL sum_to
+    HALT
+
+sum_to:
+    CMPI R0, 0
+    JNZ recurse
+    MOVI R0, 0
+    RET
+
+recurse:
+    ENTER 1
+    STORES [0], R0
+    SUBI R0, 1
+    CALL sum_to
+    LOADS R1, [0]
+    ADD R0, R1
+    LEAVE 1
+    RET
