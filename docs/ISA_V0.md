@@ -1,6 +1,6 @@
 # EduCPU ISA v0
 
-Status: M1 architectural baseline.
+Status: **frozen for EduC v0** after M4 ABI/stack qualification. Breaking architectural changes require an explicit ISA revision.
 
 EduCPU is an 8-bit, byte-addressable educational architecture with a 16-bit address space. The ISA prioritizes visible, regular behavior over density or historical compatibility.
 
