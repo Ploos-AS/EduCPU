@@ -19,11 +19,12 @@
 - [x] conceptual fetch/decode/execute teaching model
 - [x] interactive conceptual micro-step state machine
 - [x] instruction-specific ALU/memory/control/stack phases
-- [x] simulator and micro-step tests
-- [ ] source-line correlation using assembler debug metadata
+- [x] assembler debug metadata (address, bytes, source line/text)
+- [x] source-line correlation in instruction and micro-step views
+- [x] simulator/source-correlation tests
 - [ ] rich datapath visualization / graphical teaching UI
 
-The micro-step model deliberately does not mutate architectural state until the final COMMIT of an instruction. It is a teaching model, not a claim about future FPGA timing.
+The source correlation now provides the complete teaching path: EduASM source line → encoded bytes/address → decoded instruction → conceptual micro-step → architectural state change.
 
 ## M4 — Programs, stack, ABI + linking
 Calling convention, stack frames, object representation, minimal linker, symbols/relocations, function and recursion lessons.
