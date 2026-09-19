@@ -15,17 +15,15 @@
 - [x] register, PC, SP and FLAGS state view
 - [x] decoded next-instruction view
 - [x] per-instruction architectural state-change trace
-- [x] memory inspection
-- [x] breakpoints
-- [x] memory watchpoints
-- [x] reset
-- [x] conceptual fetch/decode/execute/micro-operation teaching view
-- [x] simulator tests
-- [ ] rich datapath visualization / graphical teaching UI
+- [x] memory inspection, breakpoints, memory watchpoints and reset
+- [x] conceptual fetch/decode/execute teaching model
+- [x] interactive conceptual micro-step state machine
+- [x] instruction-specific ALU/memory/control/stack phases
+- [x] simulator and micro-step tests
 - [ ] source-line correlation using assembler debug metadata
-- [ ] interactive cycle/micro-operation state machine rather than explanatory sequence
+- [ ] rich datapath visualization / graphical teaching UI
 
-M3 is intentionally iterative: the deterministic debugger/trace foundation is operational; richer visual teaching layers remain M3 work.
+The micro-step model deliberately does not mutate architectural state until the final COMMIT of an instruction. It is a teaching model, not a claim about future FPGA timing.
 
 ## M4 — Programs, stack, ABI + linking
 Calling convention, stack frames, object representation, minimal linker, symbols/relocations, function and recursion lessons.
