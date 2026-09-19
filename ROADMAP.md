@@ -15,23 +15,23 @@
 - [x] datapath visualization and shared reference semantics
 
 ## M4 — Programs, stack, ABI + linking
-- [x] ABI v0 register calling convention
-- [x] return-value convention
-- [x] caller/callee-saved register rules
-- [x] CALL/RET and stack preservation rules
-- [x] function-call example
+- [x] ABI v0 calling/return and preservation conventions
+- [x] explicit SP-relative stack-frame ISA: LOADS/STORES/ENTER/LEAVE
+- [x] stack-frame/local-variable example
 - [x] transparent object-format v0
-- [x] exported symbols
+- [x] EduASM .export/.import syntax
+- [x] EduASM object emission (`.eo`)
+- [x] exported and object-local symbols
 - [x] abs16 little-endian relocations
-- [x] minimal EduLink linker
-- [x] linker errors for duplicate/undefined symbols
-- [x] linked-program execution test
-- [ ] assembler object emission and imports/exports syntax
-- [ ] decide/add general stack-relative addressing before compiler ABI is frozen
-- [ ] stack-frame/local-variable examples
-- [ ] recursive example after stack-addressing decision
+- [x] relocation of local labels when objects move
+- [x] minimal EduLink linker and map support
+- [x] duplicate/undefined-symbol diagnostics
+- [x] complete eduasm -c → .eo → edulink → executable test path
+- [x] linked multi-object function-call example
+- [ ] recursive stack-frame example and qualification
+- [ ] ABI/ISA v0 freeze review
 
-M4 has deliberately exposed an ISA limitation: ISA v0 can PUSH/POP bytes but cannot address arbitrary stack-frame slots. We will resolve that explicitly rather than hide it behind tooling before EduC code generation.
+M4 now has a real inspectable multi-file toolchain. The remaining work is to exercise recursion/frames and review the ABI/ISA together before freezing the interface used by EduC.
 
 ## M5 — EduC front end
 Small EduC specification, lexer, parser, AST, semantic checks, simple documented IR, and inspection tools.
