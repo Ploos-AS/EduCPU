@@ -1,64 +1,67 @@
 # EduCPU ABI v0
 
-The ABI is intentionally small and visible enough to inspect by hand.
+Status: **frozen for EduC v0**. Changes that break this contract require an explicit ABI revision.
+
+The ABI is intentionally small and inspectable by hand.
 
 ## Register convention
 
-- R0: primary 8-bit return value and first argument.
-- R1: second argument.
+- R0: first argument and primary 8-bit return value.
+- R1: second argument; high byte of a 16-bit return value.
 - R2: third argument.
 - R3: fourth argument.
 - R4-R6: callee-saved working registers.
 - R7: caller-saved scratch register.
-- PC and SP have architectural roles.
+- PC and SP retain their architectural roles.
 - FLAGS are caller-saved.
 
-Functions with more than four byte arguments pass additional bytes on the stack. Multi-byte values are passed low byte first through consecutive argument locations.
+The first four byte arguments use R0-R3. Additional stack arguments are reserved for a later, explicitly specified extension; EduC v0 must not silently invent a layout for them.
 
-## Calls
+## Calls and returns
 
-`CALL target` pushes the 16-bit return address. The callee returns with `RET`.
+`CALL target` pushes the 16-bit return PC high byte then low byte and transfers control. `RET` pops low byte then high byte and restores PC.
 
-A leaf function that only uses R0-R3/R7 needs no prologue when it requires no local stack storage.
+A leaf function using only caller-saved registers needs no prologue. A function modifying R4-R6 must PUSH the registers it changes and POP them in reverse order before RET.
 
-If a function changes R4-R6, it must PUSH the registers it uses and POP them in reverse order before RET.
+## Stack frames and locals
 
-Example:
+The stack grows downward. M4 defines explicit frame operations:
 
-```asm
-add_two:
-    ADD R0, R1
-    RET
-```
+- `ENTER n`: SP = SP - n.
+- `LEAVE n`: SP = SP + n.
+- `LOADS rd,[off8]`: rd = MEM[SP + signed off8].
+- `STORES [off8],rs`: MEM[SP + signed off8] = rs.
 
-## Stack frames
+The signed offset range is -128..+127. A normal frame uses non-negative offsets starting at zero after ENTER. This makes local-variable storage visible without introducing an implicit frame pointer.
 
-ISA v0 deliberately has no frame-pointer register and no SP-relative load/store instruction. M4 therefore defines a **minimal ABI**, not an artificial pseudo-frame mechanism.
-
-Functions may use PUSH/POP for saved registers and temporary byte values. Compiler-grade addressable local variables and stack arguments beyond the simple convention require either explicit stack access instructions or a future ABI/ISA revision.
-
-This limitation is documented rather than hidden: it is a useful architecture-design lesson and will be reviewed before the EduC back end is frozen.
+A function must restore SP to its entry value before RET, apart from the return address consumed by RET itself.
 
 ## Return values
 
 - byte / bool / char: R0.
-- 16-bit teaching values: R0 = low byte, R1 = high byte.
-- no-value functions leave R0/R1 unspecified.
+- 16-bit teaching value: R0 low byte, R1 high byte.
+- void: R0/R1 unspecified.
 
 ## Preservation summary
 
 | State | Rule |
 |---|---|
-| R0-R3 | caller-saved / arguments |
+| R0-R3 | caller-saved / argument registers |
 | R4-R6 | callee-saved |
 | R7 | caller-saved scratch |
 | FLAGS | caller-saved |
-| SP | restored by callee before RET |
+| SP | balanced by callee |
 
 ## Recursion
 
-CALL/RET are naturally recursive. A recursive function must preserve any live register values explicitly with PUSH/POP. Each recursive invocation gets its own bytes after `ENTER`, so recursive addressable locals are now supported within the signed stack-offset window.
+Recursion is supported. Each invocation can reserve independent locals with ENTER and address them relative to its current SP. `examples/recursive_sum.eduasm` demonstrates recursive calls with a one-byte local and complete SP restoration.
+
+## Freeze rationale
+
+The v0 contract now supports the needs required before EduC code generation: register arguments, return values, calls, saved registers, addressable local bytes, recursion, and deterministic stack restoration.
+
+General stack-passed arguments, larger aggregate values, alignment rules, interrupts and re-entrant system conventions are deliberately outside ABI v0 rather than being underspecified.
 
 ## Educational goal
 
-The ABI makes ownership visible: students can watch arguments enter registers, the return PC appear on the stack, saved registers move to memory, and the result return in R0.
+Students can inspect every part of a call: arguments in registers, return PC on the stack, local allocation through ENTER, local reads/writes through SP-relative addressing, recursive frames, LEAVE, and the final return value in R0.
