@@ -72,7 +72,7 @@ All instructions begin with a one-byte opcode. Operand bytes follow the opcode. 
 | 12 | LOAD rd,[addr16] | 4 | rd = MEM[addr] |
 | 13 | STORE [addr16],rs | 4 | MEM[addr] = rs |
 | 14 | LOADR rd,[ra] | 3 | rd = MEM[zero-extended ra] |
-| 15 | STORER [ra],rs | 3 | MEM[zero-extended ra] = rs |
+| 15 | STORER [ra],rs | 3 | MEM[zero-extended ra] = rs |\n| 16 | LOADS rd,[SP+off8] | 3 | rd = MEM[SP + signed offset] |\n| 17 | STORES [SP+off8],rs | 3 | MEM[SP + signed offset] = rs |\n| 18 | ENTER imm8 | 2 | SP = SP - imm8; reserve local bytes |\n| 19 | LEAVE imm8 | 2 | SP = SP + imm8; release local bytes |
 | 20 | ADD rd,rs | 3 | rd = rd + rs |
 | 21 | ADDI rd,imm8 | 3 | rd = rd + imm8 |
 | 22 | SUB rd,rs | 3 | rd = rd - rs |
@@ -101,14 +101,14 @@ Opcodes not listed above are invalid in ISA v0 and trap the reference model with
 
 ## Addressing modes
 
-ISA v0 deliberately has only four visible forms:
+ISA v0 has five visible forms:
 
 1. register;
 2. immediate 8-bit;
 3. absolute 16-bit memory/address;
-4. simple register-indirect memory.
+4. simple register-indirect memory;\n5. signed 8-bit SP-relative memory for stack frames.
 
-The register-indirect form zero-extends an 8-bit register and therefore addresses page zero (0x0000-0x00FF). Full 16-bit pointer/index registers are intentionally deferred: M1 favors conceptual simplicity and explicit absolute addressing. This decision may be revisited before ISA v1 if EduC/ABI teaching demonstrates a clear need.
+The register-indirect form zero-extends an 8-bit register and therefore addresses page zero (0x0000-0x00FF). LOADS/STORES add a signed -128..+127 byte offset to the 16-bit SP and are specifically intended to make stack frames, locals and stack arguments visible without introducing a hidden frame pointer. ENTER/LEAVE explicitly reserve/release local bytes. Full general 16-bit pointer/index registers remain deferred.
 
 ## PC semantics
 
