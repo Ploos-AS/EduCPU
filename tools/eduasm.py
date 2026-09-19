@@ -4,7 +4,7 @@ import argparse,json,re
 from pathlib import Path
 OPS={
 "NOP":(0x00,[]),"HALT":(0x01,[]),"MOV":(0x10,["r","r"]),"MOVI":(0x11,["r","i8"]),
-"LOAD":(0x12,["r","a16"]),"STORE":(0x13,["a16","r"]),"LOADR":(0x14,["r","r"]),"STORER":(0x15,["r","r"]),
+"LOAD":(0x12,["r","a16"]),"STORE":(0x13,["a16","r"]),"LOADR":(0x14,["r","r"]),"STORER":(0x15,["r","r"]),\n"LOADS":(0x16,["r","s8"]),"STORES":(0x17,["s8","r"]),"ENTER":(0x18,["i8"]),"LEAVE":(0x19,["i8"]),
 "ADD":(0x20,["r","r"]),"ADDI":(0x21,["r","i8"]),"SUB":(0x22,["r","r"]),"SUBI":(0x23,["r","i8"]),
 "CMP":(0x24,["r","r"]),"CMPI":(0x25,["r","i8"]),"AND":(0x28,["r","r"]),"OR":(0x29,["r","r"]),"XOR":(0x2A,["r","r"]),
 "NOT":(0x2B,["r"]),"SHL":(0x2C,["r"]),"SHR":(0x2D,["r"]),"JMP":(0x30,["a16"]),"JZ":(0x31,["a16"]),
@@ -39,7 +39,7 @@ def parse(lines):
   if name not in OPS:raise ValueError(f"line {no}: unknown instruction {name}")
   args=[] if len(parts)==1 else [x.strip() for x in parts[1].split(",")];spec=OPS[name][1]
   if len(args)!=len(spec):raise ValueError(f"line {no}: {name} expects {len(spec)} operands")
-  rows.append((no,pc,name,args,raw.rstrip()));pc+=1+sum(1 if t in ("r","i8") else 2 for t in spec)
+  rows.append((no,pc,name,args,raw.rstrip()));pc+=1+sum(1 if t in ("r","i8","s8") else 2 for t in spec)
  return labels,rows
 def assemble_text(text,listing=False):
  labels,rows=parse(text.splitlines());out=bytearray();listing_rows=[]
