@@ -1,6 +1,6 @@
 [project]
 name = "educpu"
-version = "0.3.0"
+version = "0.4.0"
 description = "Pedagogy-first virtual CPU and teaching toolchain"
 requires-python = ">=3.11"
 
@@ -9,6 +9,7 @@ eduasm = "eduasm:main"
 edudis = "edudis:main"
 edusim = "edusim:main"
 eduvis = "eduvis:main"
+edulink = "edulink:main"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
