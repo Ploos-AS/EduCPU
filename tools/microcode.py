@@ -24,11 +24,11 @@ def plan(cpu):
         steps.append(MicroStep("READ_OPERANDS","Read encoded operands and required register/memory values"))
     if op in range(0x20,0x2E):
         steps.append(MicroStep("ALU","ALU performs arithmetic, logic, compare, or shift operation"))
-    elif op in (0x12,0x14):
+    elif op in (0x12,0x14,0x16):
         steps.append(MicroStep("MEM_READ","Read data memory operand"))
-    elif op in (0x13,0x15):
+    elif op in (0x13,0x15,0x17):
         steps.append(MicroStep("MEM_WRITE","Write data memory operand"))
-    elif 0x30<=op<=0x39:
+    elif op in (0x18,0x19,0x40,0x41):\n        steps.append(MicroStep("STACK","Perform stack/frame operation"))\n    elif 0x30<=op<=0x39:
         steps.append(MicroStep("CONTROL","Evaluate/perform control-flow operation"))
     elif op in (0x40,0x41):
         steps.append(MicroStep("STACK","Perform stack memory operation"))
