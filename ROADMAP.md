@@ -19,19 +19,16 @@
 - [x] explicit SP-relative stack-frame ISA: LOADS/STORES/ENTER/LEAVE
 - [x] stack-frame/local-variable example
 - [x] transparent object-format v0
-- [x] EduASM .export/.import syntax
-- [x] EduASM object emission (`.eo`)
-- [x] exported and object-local symbols
-- [x] abs16 little-endian relocations
-- [x] relocation of local labels when objects move
-- [x] minimal EduLink linker and map support
-- [x] duplicate/undefined-symbol diagnostics
-- [x] complete eduasm -c → .eo → edulink → executable test path
-- [x] linked multi-object function-call example
-- [ ] recursive stack-frame example and qualification
-- [ ] ABI/ISA v0 freeze review
+- [x] EduASM .export/.import and .eo object emission
+- [x] exported/local symbols and abs16le relocations
+- [x] relocation of local labels
+- [x] EduLink and complete multi-object executable pipeline
+- [x] recursive stack-frame example
+- [x] recursive frame/SP-restoration qualification tests
+- [x] ABI v0 freeze for EduC
+- [x] ISA v0 freeze for EduC
 
-M4 now has a real inspectable multi-file toolchain. The remaining work is to exercise recursion/frames and review the ABI/ISA together before freezing the interface used by EduC.
+Exit: M4 supplies a frozen, inspectable function/stack/linkage contract suitable for the first EduC compiler. Breaking changes now require explicit ISA/ABI revisions.
 
 ## M5 — EduC front end
 Small EduC specification, lexer, parser, AST, semantic checks, simple documented IR, and inspection tools.
