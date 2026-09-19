@@ -131,7 +131,7 @@ def ast_dict(node):
  if isinstance(node,dict):return {k:ast_dict(v) for k,v in node.items()}
  return node
 def main():
- p=argparse.ArgumentParser(prog="educ");p.add_argument("source");p.add_argument("--tokens",action="store_true");p.add_argument("--ast",action="store_true");p.add_argument("--check",action="store_true");a=p.parse_args();text=Path(a.source).read_text()
+ p=argparse.ArgumentParser(prog="educ");p.add_argument("source");p.add_argument("--tokens",action="store_true");p.add_argument("--ast",action="store_true");p.add_argument("--check",action="store_true");p.add_argument("--ir",action="store_true");a=p.parse_args();text=Path(a.source).read_text()
  if a.tokens:
   for t in lex(text):print(f"{t.line}:{t.col}\t{t.kind}\t{t.value}")
  tree=parse(text)
