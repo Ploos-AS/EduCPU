@@ -1,0 +1,12 @@
+byte add(byte a, byte b) {
+    return a + b;
+}
+
+byte main() {
+    byte answer = add(20, 22);
+    if (answer == 42) {
+        return answer;
+    } else {
+        return 0;
+    }
+}
