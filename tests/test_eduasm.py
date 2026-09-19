@@ -3,7 +3,7 @@ from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 sys.path.insert(0,str(ROOT/"tools"))
 sys.path.insert(0,str(ROOT/"reference"))
-from eduasm import assemble_text
+from eduasm import assemble_text, debug_map
 from edudis import disassemble
 from educpu import CPU
 
@@ -42,3 +42,12 @@ def test_forward_label():
     data,labels,_=assemble_text("JMP done\nMOVI R0, 1\ndone: HALT\n")
     assert labels["done"]==6
     assert data[:3]==bytes([0x30,6,0])
+
+
+def test_debug_map_correlates_address_line_and_bytes():
+    data,_,rows=assemble_text("; comment\nstart: MOVI R0, 7\nHALT\n")
+    dbg=debug_map(rows,"demo.eduasm")
+    assert dbg["source"]=="demo.eduasm"
+    assert dbg["instructions"][0]["address"]==0
+    assert dbg["instructions"][0]["line"]==2
+    assert dbg["instructions"][0]["bytes"]=="110007"
