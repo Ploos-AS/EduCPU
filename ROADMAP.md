@@ -10,21 +10,21 @@
 - [x] syntax, two-pass assembler, labels, diagnostics, educational listing, disassembler, tests and runnable example
 
 ## M3 — Pedagogical simulator + debugger
-- [x] terminal-based interactive simulator/debugger foundation
-- [x] instruction stepping and bounded run
-- [x] register, PC, SP and FLAGS state view
-- [x] decoded next-instruction view
-- [x] per-instruction architectural state-change trace
-- [x] memory inspection, breakpoints, memory watchpoints and reset
-- [x] conceptual fetch/decode/execute teaching model
-- [x] interactive conceptual micro-step state machine
-- [x] instruction-specific ALU/memory/control/stack phases
-- [x] assembler debug metadata (address, bytes, source line/text)
-- [x] source-line correlation in instruction and micro-step views
-- [x] simulator/source-correlation tests
-- [ ] rich datapath visualization / graphical teaching UI
+- [x] terminal interactive simulator/debugger
+- [x] instruction stepping, run, state, memory, breakpoints and watchpoints
+- [x] architectural state-change trace
+- [x] conceptual fetch/decode/execute model
+- [x] interactive instruction-specific micro-step state machine
+- [x] EduASM address/byte/source debug metadata
+- [x] source-line correlation
+- [x] browser-based graphical teaching UI
+- [x] PC → memory → decode → registers ↔ ALU → FLAGS datapath view
+- [x] active datapath highlighting driven by real MicroStepper phases
+- [x] graphical register/control/source/instruction state
+- [x] shared reference CPU semantics across terminal and browser views
+- [x] simulator, micro-step, source-correlation and visualizer tests
 
-The source correlation now provides the complete teaching path: EduASM source line → encoded bytes/address → decoded instruction → conceptual micro-step → architectural state change.
+Exit: M3 provides a coherent source → bytes → instruction → conceptual datapath phase → architectural state teaching path in both terminal and graphical views.
 
 ## M4 — Programs, stack, ABI + linking
 Calling convention, stack frames, object representation, minimal linker, symbols/relocations, function and recursion lessons.
