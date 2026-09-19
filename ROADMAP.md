@@ -31,7 +31,7 @@
 - [ ] IR validation and inspection CLI
 - [ ] M5 front-end qualification
 
-M5 now has syntax plus semantic meaning. The remaining front-end work is to make compiler decisions visible through a deliberately simple IR.
+M5 now covers source syntax, semantic meaning, explicit EduIR lowering and independent IR validation. The remaining step is qualification of the complete front-end pipeline before M6.
 
 ## M6 — EduC compiler back end
 IR lowering, simple register allocation, code generation and complete source to AST to IR to assembly to bytes to execution correlation.
