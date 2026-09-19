@@ -10,24 +10,28 @@
 - [x] syntax, two-pass assembler, labels, diagnostics, educational listing, disassembler, tests and runnable example
 
 ## M3 — Pedagogical simulator + debugger
-- [x] terminal interactive simulator/debugger
-- [x] instruction stepping, run, state, memory, breakpoints and watchpoints
-- [x] architectural state-change trace
-- [x] conceptual fetch/decode/execute model
-- [x] interactive instruction-specific micro-step state machine
-- [x] EduASM address/byte/source debug metadata
-- [x] source-line correlation
-- [x] browser-based graphical teaching UI
-- [x] PC → memory → decode → registers ↔ ALU → FLAGS datapath view
-- [x] active datapath highlighting driven by real MicroStepper phases
-- [x] graphical register/control/source/instruction state
-- [x] shared reference CPU semantics across terminal and browser views
-- [x] simulator, micro-step, source-correlation and visualizer tests
-
-Exit: M3 provides a coherent source → bytes → instruction → conceptual datapath phase → architectural state teaching path in both terminal and graphical views.
+- [x] terminal and graphical teaching environments
+- [x] source → bytes → instruction → micro-step → architectural state correlation
+- [x] datapath visualization and shared reference semantics
 
 ## M4 — Programs, stack, ABI + linking
-Calling convention, stack frames, object representation, minimal linker, symbols/relocations, function and recursion lessons.
+- [x] ABI v0 register calling convention
+- [x] return-value convention
+- [x] caller/callee-saved register rules
+- [x] CALL/RET and stack preservation rules
+- [x] function-call example
+- [x] transparent object-format v0
+- [x] exported symbols
+- [x] abs16 little-endian relocations
+- [x] minimal EduLink linker
+- [x] linker errors for duplicate/undefined symbols
+- [x] linked-program execution test
+- [ ] assembler object emission and imports/exports syntax
+- [ ] decide/add general stack-relative addressing before compiler ABI is frozen
+- [ ] stack-frame/local-variable examples
+- [ ] recursive example after stack-addressing decision
+
+M4 has deliberately exposed an ISA limitation: ISA v0 can PUSH/POP bytes but cannot address arbitrary stack-frame slots. We will resolve that explicitly rather than hide it behind tooling before EduC code generation.
 
 ## M5 — EduC front end
 Small EduC specification, lexer, parser, AST, semantic checks, simple documented IR, and inspection tools.
