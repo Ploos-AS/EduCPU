@@ -57,7 +57,7 @@ This limitation is documented rather than hidden: it is a useful architecture-de
 
 ## Recursion
 
-CALL/RET are naturally recursive. A recursive function must preserve any live register values explicitly with PUSH/POP. Fully general C-style recursive local variables are deferred until stack-addressing support is decided.
+CALL/RET are naturally recursive. A recursive function must preserve any live register values explicitly with PUSH/POP. Each recursive invocation gets its own bytes after `ENTER`, so recursive addressable locals are now supported within the signed stack-offset window.
 
 ## Educational goal
 
