@@ -53,3 +53,13 @@ FPGA CI #119 (commit `5c98ba8`) establishes the loader layers through the byte-p
 - UP5K/UPduino timing regression: PASS at 12 MHz
 
 The next gate is end-to-end serial transport: UART waveform → UART RX → protocol parser → loader mux → SPRAM → CPU execution → HALT. Physical USB/FTDI loading remains unqualified until observed on hardware.
+
+## End-to-end serial qualification
+
+FPGA CI #122 (commit `d319c5a`) passes the complete simulated loading path:
+
+`UART 8N1 waveform → UART RX → protocol v0 → loader mux → memory → CPU reset release → PC=0 → execution → HALT`
+
+Result: **PASS** (`EduCPU UART-to-CPU end-to-end PASS`). Existing bring-up, loader, protocol, timing, bitstream, and 20-program differential conformance regressions also remain green.
+
+This qualifies the digital architecture through the serial pin boundary in simulation. It does **not** qualify the physical FTDI/UPduino pin connection yet.
