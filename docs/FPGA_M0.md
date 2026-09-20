@@ -33,12 +33,14 @@ instruction memory -> fetch/decode/control -> register file <-> ALU
 - [ ] RTL elaborates
 - [ ] lint passes
 - [x] reset test passes — architectural state initialized and smoke-tested
-- [ ] NOP/HALT passes
+- [x] NOP/HALT passes — RTL fetch loop and sticky HALT qualified
 - [ ] arithmetic/logic/flags passes
 - [ ] memory passes
 - [ ] branches pass
 - [ ] stack/CALL/RET passes
 - [ ] full ISA conformance passes
+
+M0.2 also verifies invalid opcodes enter the architectural trap state and that execution remains stable after HALT/trap.
 - [ ] synthesis passes for selected target
 - [ ] physical FPGA bring-up passes
 
