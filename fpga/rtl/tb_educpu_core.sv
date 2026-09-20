@@ -9,6 +9,9 @@ module tb_educpu_core;
     integer i;
 
     assign mem_rdata = mem[mem_addr];
+    always @(posedge clk) begin
+        if (mem_we) mem[mem_addr] <= mem_wdata;
+    end
 
     educpu_core dut (
         .clk, .reset, .mem_rdata, .mem_addr, .mem_wdata, .mem_we, .halted, .trap
@@ -125,7 +128,48 @@ module tb_educpu_core;
         assert (dut.flags == 8'h05);
         assert (halted == 1'b1);
 
-        $display("EduCPU FPGA M0.4 complete ALU/FLAGS PASS");
+        // Absolute LOAD/STORE round trip.
+        clear_mem();
+        mem[0]=8'h11; mem[1]=8'h00; mem[2]=8'hA5;
+        mem[3]=8'h13; mem[4]=8'h00; mem[5]=8'h20; mem[6]=8'h00;
+        mem[7]=8'h12; mem[8]=8'h01; mem[9]=8'h00; mem[10]=8'h20;
+        mem[11]=8'h01;
+        do_reset();
+        repeat (12) begin @(posedge clk); #1; end
+        assert (mem[16'h2000] == 8'hA5);
+        assert (dut.r[1] == 8'hA5);
+        assert (dut.flags == 8'h00);
+        assert (halted == 1'b1);
+        assert (trap == 1'b0);
+
+        // Register-indirect page-zero memory.
+        clear_mem();
+        mem[0]=8'h11; mem[1]=8'h02; mem[2]=8'h80;
+        mem[3]=8'h11; mem[4]=8'h03; mem[5]=8'h5A;
+        mem[6]=8'h15; mem[7]=8'h02; mem[8]=8'h03;
+        mem[9]=8'h14; mem[10]=8'h04; mem[11]=8'h02;
+        mem[12]=8'h01;
+        do_reset();
+        repeat (13) begin @(posedge clk); #1; end
+        assert (mem[16'h0080] == 8'h5A);
+        assert (dut.r[4] == 8'h5A);
+        assert (halted == 1'b1);
+        assert (trap == 1'b0);
+
+        // SP-relative signed offset memory.
+        clear_mem();
+        mem[0]=8'h11; mem[1]=8'h05; mem[2]=8'hCC;
+        mem[3]=8'h17; mem[4]=8'hFE; mem[5]=8'h05;
+        mem[6]=8'h16; mem[7]=8'h06; mem[8]=8'hFE;
+        mem[9]=8'h01;
+        do_reset();
+        repeat (10) begin @(posedge clk); #1; end
+        assert (mem[16'hFEFE] == 8'hCC);
+        assert (dut.r[6] == 8'hCC);
+        assert (halted == 1'b1);
+        assert (trap == 1'b0);
+
+        $display("EduCPU FPGA M0.5 memory PASS");
         $finish;
     end
 endmodule
