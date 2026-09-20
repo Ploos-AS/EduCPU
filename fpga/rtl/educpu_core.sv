@@ -105,7 +105,7 @@ module educpu_core (
             stack_data <= 8'h00;
             for (i = 0; i < 8; i = i + 1)
                 r[i] <= 8'h00;
-        end else if (!halted && !trap) begin
+        end else if (!halted && !trap && mem_ready) begin
             case (state)
                 S_FETCH: begin
                     case (mem_rdata)
