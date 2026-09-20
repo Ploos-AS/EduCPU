@@ -2,7 +2,7 @@ from pathlib import Path
 
 from eduasm import assemble_text
 from educpu import CPU
-from educ import compile_source, parse, Program, Function, VarDecl, Return, Call, Name
+from educ import compile_source, compile_trace, parse, Program, Function, VarDecl, Return, Call, Name
 from educ_semantic import analyze, SemanticError
 from educ_ir import lower
 from educ_codegen import generate
