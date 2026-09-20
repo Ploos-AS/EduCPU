@@ -43,8 +43,8 @@ M5 covers source syntax, semantic meaning, explicit EduIR lowering and independe
 - [x] function-local label namespacing
 - [x] function calls, void calls and recursion
 - [x] generated EduASM object assembly and EduLink execution tests
-- [ ] complete EduC to executable CLI pipeline
-- [ ] source to AST to IR to assembly to bytes to execution correlation
+- [x] complete EduC to executable CLI pipeline
+- [x] source to AST to IR to assembly to bytes to execution correlation
 - [ ] M6 qualification
 
 ## M7 — Guided teaching environment
