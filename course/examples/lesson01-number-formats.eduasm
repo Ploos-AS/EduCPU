@@ -1,0 +1,5 @@
+; Lesson 01 fixture: decimal, hexadecimal and binary literals are the same value.
+MOVI R0, 42
+MOVI R1, 0x2A
+MOVI R2, 0b00101010
+HALT
