@@ -1,5 +1,6 @@
 from educpu import CPU
 from eduemu import Emulator
+from educ import compile_source
 
 
 def state(cpu):
@@ -344,3 +345,44 @@ def test_enter_frame_layout_matches_reference():
     assert emulator.r[7] == 0x8FFE
     assert emulator.mem[0x8FFF] == 0x88
     assert emulator.mem[0x8FFE] == 0x00
+
+
+def run_compiled_pair(source_path):
+    text = source_path.read_text()
+    _, _, _, _, data, symbols = compile_source(text, str(source_path))
+    reference = CPU()
+    emulator = Emulator()
+    for cpu in (reference, emulator):
+        cpu.mem[:len(data)] = data
+        cpu.pc = symbols["main"]
+        halt = len(data)
+        cpu.mem[halt] = 0x01
+        cpu.sp -= 1
+        cpu.mem[cpu.sp] = (halt >> 8) & 0xFF
+        cpu.sp -= 1
+        cpu.mem[cpu.sp] = halt & 0xFF
+    reference.run()
+    emulator.run()
+    assert state(emulator) == state(reference)
+    assert emulator.r[0] == 42
+    assert emulator.halted
+    assert emulator.trap is None
+    assert emulator.sp == 0xFF00
+
+
+def test_compiled_educ_lesson10_runs_identically_on_both_cpus():
+    run_compiled_pair(
+        ROOT / "course" / "examples" / "lesson10-compiler.educ"
+    )
+
+
+def test_compiled_educ_lesson12_runs_identically_on_both_cpus():
+    run_compiled_pair(
+        ROOT / "course" / "examples" / "lesson12-ir-codegen.educ"
+    )
+
+
+def test_compiled_educ_lesson14_runs_identically_on_both_cpus():
+    run_compiled_pair(
+        ROOT / "course" / "examples" / "lesson14-end-to-end.educ"
+    )
