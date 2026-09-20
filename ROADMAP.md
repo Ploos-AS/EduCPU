@@ -57,7 +57,7 @@ Course from binary/hex through compiler construction and complete execution. See
 - [ ] simulator/visualizer lesson integration
 - [x] complete progressive course coverage
 - [x] executable lesson fixtures and checks
-- [ ] M7 qualification
+- [x] M7 course-content qualification — CI and Pages PASS; see docs/M7_QUALIFICATION.md
 ## M8 — EduCPU emulator
 Separate faithful implementation, deterministic devices, debugger hooks and differential/conformance testing.
 ## M9 — FPGA realization
