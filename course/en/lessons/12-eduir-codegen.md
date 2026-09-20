@@ -183,6 +183,12 @@ EduASM: how EduCPU resources perform them
 
 Why is that boundary useful both for compiler design and for teaching?
 
+## Tools
+
+Use the real course fixture: `course/examples/lesson12-ir-codegen.educ`.
+
+**EduGuide:** use the guided PREDICT → OBSERVE → EXPLAIN workflow. Predict important compiler-stage or machine-state changes before running the fixture, then compare them with the observation.
+
 ## Next
 
 Next we follow generated assembly into **object files, relocations and linking**, where separately translated pieces finally receive concrete addresses.
