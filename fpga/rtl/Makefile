@@ -3,7 +3,7 @@ VVP ?= vvp
 YOSYS ?= yosys
 NEXTPNR ?= nextpnr-ice40
 
-.PHONY: test bringup-test loader-test serial-loader-test synth machine-synth up5k machine-up5k spram-up5k upduino-v31 clean
+.PHONY: test bringup-test loader-test serial-loader-test serial-e2e-test synth machine-synth up5k machine-up5k spram-up5k upduino-v31 clean
 
 test:
 	$(IVERILOG) -g2012 -o simv educpu_core.sv tb_educpu_core.sv
@@ -20,6 +20,10 @@ loader-test:
 serial-loader-test:
 	$(IVERILOG) -g2012 -o serial-loader-simv educpu_serial_loader.sv tb_serial_loader.sv
 	$(VVP) serial-loader-simv
+
+serial-e2e-test:
+	$(IVERILOG) -g2012 -o serial-e2e-simv educpu_core.sv educpu_loader_mux.sv educpu_uart_rx.sv educpu_serial_loader.sv tb_serial_e2e.sv
+	$(VVP) serial-e2e-simv
 
 synth:
 	$(YOSYS) -q -p 'read_verilog -sv educpu_core.sv; hierarchy -check -top educpu_core; proc; opt; check; synth_ice40 -top educpu_core -json educpu_core.json; stat'
