@@ -49,3 +49,17 @@ The RTL must be checked against the already-qualified reference CPU and emulator
 ## License
 
 HDL/gateware uses CERN-OHL-P-2.0 under the EduCPU hardware licensing policy.
+
+## M0.12 explicit UP5K SPRAM qualification
+
+FPGA CI #84 qualifies the physical 64 KiB memory backend on iCE40UP5K.
+
+- complete core + SPRAM machine place-and-route: PASS
+- ICESTORM_LC: 981 / 5280 (18%)
+- ICESTORM_SPRAM: 2 / 4 (50%)
+- SB_IO: 4 / 96 (4%) for the unconstrained machine wrapper
+- SB_GB: 5 / 8 (62%)
+- timing: 22.59 MHz achieved, PASS at the 12 MHz target
+- RTL/reference differential conformance: PASS (20 programs)
+
+The physical backend therefore provides the full 64 KiB EduCPU address space using half of the UP5K SPRAM capacity while preserving the qualified ISA-visible behaviour.
