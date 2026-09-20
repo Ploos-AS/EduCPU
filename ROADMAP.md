@@ -80,3 +80,14 @@ Separate faithful implementation, deterministic devices, debugger hooks and diff
 Synthesizable realization of frozen architecture and qualification against ISA vectors.
 ## M10 — Advanced and experimental concepts
 Optional interrupts, richer I/O, microcode, privilege, VM, pipelines/hazards, cache and alternative architecture experiments.
+
+
+## FPGA M0
+
+- [x] board-neutral FPGA project structure
+- [x] SystemVerilog CPU-core boundary
+- [x] reset simulation skeleton
+- [ ] complete ISA v0 RTL implementation
+- [ ] RTL/reference-CPU conformance
+- [ ] synthesis target selection
+- [ ] physical FPGA bring-up
