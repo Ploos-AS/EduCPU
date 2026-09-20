@@ -182,6 +182,18 @@ Explain this sentence:
 
 Where, precisely, does the connection between those two worlds get created?
 
+## Representation checkpoint
+
+Stop before running the fixture. Choose the expression `20 + 22` and write one sentence describing what is visible at each level:
+
+```text
+EduC → AST → EduIR → EduASM → bytes → CPU state
+```
+
+For each step ask: **What does this layer know that the previous layer did not, and what has been abstracted away?**
+
+Then run the fixture and verify one concrete transition between each neighboring level.
+
 ## Tools
 
 Use the real course fixture: `course/examples/lesson10-compiler.educ`.
