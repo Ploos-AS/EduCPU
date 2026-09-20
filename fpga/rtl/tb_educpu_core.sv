@@ -1,4 +1,5 @@
 module tb_educpu_core;
+    logic pc_check = 1'b1;
     logic clk = 1'b0;
     logic reset = 1'b1;
     logic [7:0]  mem_rdata = 8'h00;
@@ -15,7 +16,7 @@ module tb_educpu_core;
         assert (dut.pc == 16'h0000);
         assert (dut.sp == 16'hFF00);
         assert (dut.flags == 8'h00);
-        assert (dut.r[0] == 16'h0000);
+        assert (dut.r[0] == 8'h00);
         assert (dut.r[7] == 8'h00);
         assert (mem_addr == 16'h0000);
         assert (mem_we == 1'b0);
