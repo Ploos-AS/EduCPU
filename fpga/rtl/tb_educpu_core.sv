@@ -1,5 +1,4 @@
 module tb_educpu_core;
-    logic pc_check = 1'b1;
     logic clk = 1'b0;
     logic reset = 1'b1;
     logic [7:0]  mem_rdata = 8'h00;
