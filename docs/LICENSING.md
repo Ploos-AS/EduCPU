@@ -2,12 +2,17 @@
 
 EduCPU is a mixed software and hardware-design repository.
 
-## Software, documentation and course material
+## Software and project documentation
 
-Unless a file or directory states otherwise, the software, reference models,
-simulators, assemblers, compiler tools, tests, documentation and course
-material in this repository are licensed under the MIT License. See
-[LICENSE](../LICENSE).
+Unless a file or directory states otherwise, software, reference models, simulators, assemblers, compiler tools, tests and project documentation are licensed under the MIT License. See [LICENSE](../LICENSE).
+
+## Course material
+
+The educational course material under `course/` is licensed under Creative Commons Attribution 4.0 International (CC BY 4.0), except executable source-code examples which remain software under the MIT License unless explicitly stated otherwise.
+
+Copyright © 2026 Ploos AS.
+
+See [LICENSES/CC-BY-4.0.txt](../LICENSES/CC-BY-4.0.txt).
 
 ## FPGA / HDL / hardware design
 
