@@ -261,3 +261,51 @@ def test_conditional_branch_preserves_flags():
         emulator.step()
         assert state(emulator) == state(reference)
         assert emulator.flags == 0x0F
+
+
+def test_push_pop_differential_and_stack_direction():
+    def setup(cpu):
+        cpu.sp = 0x9000
+        cpu.r[2] = 0xA5
+    assert_differential(bytes([
+        0x40, 0x02,       # PUSH R2
+        0x41, 0x03,       # POP R3
+        0x01,
+    ]), setup=setup, memory_addresses=(0x8FFF,))
+
+
+def test_call_ret_differential_and_return_address_bytes():
+    def setup(cpu):
+        cpu.sp = 0x9000
+    program = bytes([
+        0x44, 0x08, 0x00, # CALL 0x0008
+        0x01,             # return target: HALT
+        0x00, 0x00, 0x00,
+        0x45,             # RET at 0x0007? target adjusted below
+        0x01,
+    ])
+    reference, emulator = machines(program)
+    reference.sp = emulator.sp = 0x9000
+    # CALL target is 8, where HALT lives.
+    reference.run()
+    emulator.run()
+    assert state(emulator) == state(reference)
+    assert emulator.halted
+    assert emulator.sp == 0x9000
+
+
+def test_call_pushes_high_then_low_and_ret_restores_pc():
+    program = bytes([0x44, 0x06, 0x00, 0x01, 0x00, 0x00, 0x45])
+    reference, emulator = machines(program)
+    reference.sp = emulator.sp = 0x9000
+    reference.step()
+    emulator.step()
+    assert state(emulator) == state(reference)
+    assert emulator.sp == 0x8FFE
+    assert emulator.mem[0x8FFF] == 0x00
+    assert emulator.mem[0x8FFE] == 0x03
+    reference.step()
+    emulator.step()
+    assert state(emulator) == state(reference)
+    assert emulator.pc == 0x0003
+    assert emulator.sp == 0x9000
