@@ -1,0 +1,8 @@
+byte add_two(byte x) {
+    byte y = x + 2;
+    return y;
+}
+
+byte main() {
+    return add_two(40);
+}
