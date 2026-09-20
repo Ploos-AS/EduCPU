@@ -198,4 +198,4 @@ def test_lesson09_call_ret_abi_stack_layout():
     assert cpu.halted
     assert cpu.trap is None
     assert cpu.r[0] == 42
-    assert cpu.pc == len(data)
+    assert cpu.pc == return_pc + 1
