@@ -1,3 +1,5 @@
+from pathlib import Path
+ROOT = Path(__file__).resolve().parents[1]
 from educpu import CPU
 from eduemu import Emulator
 from educ import compile_source
@@ -279,10 +281,10 @@ def test_call_ret_differential_and_return_address_bytes():
     def setup(cpu):
         cpu.sp = 0x9000
     program = bytes([
-        0x44, 0x08, 0x00, # CALL 0x0008
+        0x38, 0x08, 0x00, # CALL 0x0008
         0x01,             # return target: HALT
         0x00, 0x00, 0x00,
-        0x45,             # RET at 0x0007? target adjusted below
+        0x39,             # RET at 0x0007? target adjusted below
         0x01,
     ])
     reference, emulator = machines(program)
@@ -296,7 +298,7 @@ def test_call_ret_differential_and_return_address_bytes():
 
 
 def test_call_pushes_high_then_low_and_ret_restores_pc():
-    program = bytes([0x44, 0x06, 0x00, 0x01, 0x00, 0x00, 0x45])
+    program = bytes([0x38, 0x06, 0x00, 0x01, 0x00, 0x00, 0x39])
     reference, emulator = machines(program)
     reference.sp = emulator.sp = 0x9000
     reference.step()
@@ -315,10 +317,9 @@ def test_call_pushes_high_then_low_and_ret_restores_pc():
 def test_enter_leave_frame_differential():
     def setup(cpu):
         cpu.sp = 0x9000
-        cpu.r[7] = 0x8800
     program = bytes([
-        0x46, 0x10,       # ENTER 16
-        0x47,             # LEAVE
+        0x18, 0x10,       # ENTER 16
+        0x19, 0x10,       # LEAVE 16
         0x01,
     ])
     reference, emulator = machines(program)
@@ -328,23 +329,25 @@ def test_enter_leave_frame_differential():
     emulator.run()
     assert state(emulator) == state(reference)
     assert emulator.sp == 0x9000
-    assert emulator.r[7] == 0x8800
+    assert emulator.halted
 
 
-def test_enter_frame_layout_matches_reference():
-    def setup(cpu):
-        cpu.sp = 0x9000
-        cpu.r[7] = 0x8800
-    reference, emulator = machines(bytes([0x46, 0x04]))
-    setup(reference)
-    setup(emulator)
+def test_enter_frame_reserves_exactly_requested_bytes():
+    reference, emulator = machines(bytes([0x18, 0x04]))
+    reference.sp = emulator.sp = 0x9000
     reference.step()
     emulator.step()
     assert state(emulator) == state(reference)
-    assert emulator.sp == 0x8FFA
-    assert emulator.r[7] == 0x8FFE
-    assert emulator.mem[0x8FFF] == 0x88
-    assert emulator.mem[0x8FFE] == 0x00
+    assert emulator.sp == 0x8FFC
+
+
+def test_leave_frame_releases_exactly_requested_bytes():
+    reference, emulator = machines(bytes([0x19, 0x04]))
+    reference.sp = emulator.sp = 0x8FFC
+    reference.step()
+    emulator.step()
+    assert state(emulator) == state(reference)
+    assert emulator.sp == 0x9000
 
 
 def run_compiled_pair(source_path):
