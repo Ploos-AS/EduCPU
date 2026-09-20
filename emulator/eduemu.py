@@ -53,6 +53,7 @@ class Emulator:
         if mapped:
             mapped[0].write(mapped[1], value)
         else:
+            if not mapped:
             self.mem[address] = value
         if self.on_memory_write:
             self.on_memory_write(address, value)
@@ -141,7 +142,7 @@ class Emulator:
             destination = self._reg_operand()
             if destination is None:
                 return
-            self.r[destination] = self.mem[self._addr_operand()]
+            self.r[destination] = self._read_mem(self._addr_operand())
             return
         if opcode == 0x13:  # STORE [addr16],rs
             address = self._addr_operand()
@@ -157,7 +158,7 @@ class Emulator:
             address_register = self._reg_operand()
             if address_register is None:
                 return
-            self.r[destination] = self.mem[self.r[address_register]]
+            self.r[destination] = self._read_mem(self.r[address_register])
             return
         if opcode == 0x15:  # STORER [ra],rs
             address_register = self._reg_operand()
@@ -173,7 +174,7 @@ class Emulator:
             if destination is None:
                 return
             offset = self._signed_offset()
-            self.r[destination] = self.mem[(self.sp + offset) & 0xFFFF]
+            self.r[destination] = self._read_mem((self.sp + offset) & 0xFFFF)
             return
         if opcode == 0x17:  # STORES [SP+off8],rs
             offset = self._signed_offset()
@@ -260,78 +261,48 @@ class Emulator:
                 self.pc = address
             return
 
-        if opcode in (0x40, 0x41):
+        if opcode == 0x18:  # ENTER imm8
+            amount = self._fetch()
+            self.sp = (self.sp - amount) & 0xFFFF
+            return
+
+        if opcode == 0x19:  # LEAVE imm8
+            amount = self._fetch()
+            self.sp = (self.sp + amount) & 0xFFFF
+            return
+
+        if opcode == 0x38:  # CALL addr16
+            address = self._addr_operand()
+            return_pc = self.pc
+            self.sp = (self.sp - 1) & 0xFFFF
+            self._write_mem(self.sp, (return_pc >> 8) & 0xFF)
+            self.sp = (self.sp - 1) & 0xFFFF
+            self._write_mem(self.sp, return_pc & 0xFF)
+            self.pc = address
+            return
+
+        if opcode == 0x39:  # RET
+            low = self._read_mem(self.sp)
+            self.sp = (self.sp + 1) & 0xFFFF
+            high = self._read_mem(self.sp)
+            self.sp = (self.sp + 1) & 0xFFFF
+            self.pc = low | (high << 8)
+            return
+
+        if opcode == 0x40:  # PUSH
             register = self._reg_operand()
             if register is None:
                 return
-            if opcode == 0x40:
-                self.sp = (self.sp - 1) & 0xFFFF
-                self._write_mem(self.sp, self.r[register])
-            else:
-                self.r[register] = self.mem[self.sp]
-                self.sp = (self.sp + 1) & 0xFFFF
-            return
-
-        if opcode == 0x42:
             self.sp = (self.sp - 1) & 0xFFFF
-            self._write_mem(self.sp, (self.pc >> 8) & 0xFF)
-            self.sp = (self.sp - 1) & 0xFFFF
-            self._write_mem(self.sp, self.pc & 0xFF)
+            self._write_mem(self.sp, self.r[register])
             return
 
-        if opcode == 0x43:
-            low = self.mem[self.sp]
+        if opcode == 0x41:  # POP
+            register = self._reg_operand()
+            if register is None:
+                return
+            self.r[register] = self._read_mem(self.sp)
             self.sp = (self.sp + 1) & 0xFFFF
-            high = self.mem[self.sp]
-            self.sp = (self.sp + 1) & 0xFFFF
-            self.pc = low | (high << 8)
-            return
-
-        if opcode == 0x44:
-            self.sp = (self.sp - 1) & 0xFFFF
-            self.mem[self.sp] = (self.pc >> 8) & 0xFF
-            self.sp = (self.sp - 1) & 0xFFFF
-            self.mem[self.sp] = self.pc & 0xFF
-            self.pc = self._addr_operand()
-            return
-
-        if opcode == 0x45:
-            low = self.mem[self.sp]
-            self.sp = (self.sp + 1) & 0xFFFF
-            high = self.mem[self.sp]
-            self.sp = (self.sp + 1) & 0xFFFF
-            self.pc = low | (high << 8)
-            return
-
-        if opcode == 0x48:  # PUSHA
-            for register in range(8):
-                self.sp = (self.sp - 1) & 0xFFFF
-                self._write_mem(self.sp, self.r[register])
-            return
-
-        if opcode == 0x49:  # POPA
-            for register in reversed(range(8)):
-                self.r[register] = self.mem[self.sp]
-                self.sp = (self.sp + 1) & 0xFFFF
-            return
-
-        if opcode == 0x46:  # ENTER frame_size
-            frame_size = self._fetch()
-            self.sp = (self.sp - 1) & 0xFFFF
-            self._write_mem(self.sp, (self.r[7] >> 8) & 0xFF)
-            self.sp = (self.sp - 1) & 0xFFFF
-            self._write_mem(self.sp, self.r[7] & 0xFF)
-            self.r[7] = self.sp
-            self.sp = (self.sp - frame_size) & 0xFFFF
-            return
-
-        if opcode == 0x47:  # LEAVE
-            self.sp = self.r[7]
-            low = self.mem[self.sp]
-            self.sp = (self.sp + 1) & 0xFFFF
-            high = self.mem[self.sp]
-            self.sp = (self.sp + 1) & 0xFFFF
-            self.r[7] = low | (high << 8)
             return
 
         self.trap = "INVALID_OPCODE"
