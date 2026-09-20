@@ -20,7 +20,7 @@ up5k: synth
 	$(NEXTPNR) --up5k --package sg48 --json educpu_core.json --asc educpu_core.asc --freq 12 --report educpu_core-report.json --pcf-allow-unconstrained
 
 spram-up5k:
-	$(YOSYS) -q -p 'read_verilog -sv educpu_core.sv educpu_up5k_spram.sv educpu_up5k_machine.sv; hierarchy -check -top educpu_up5k_machine; proc; opt; check; synth_ice40 -top educpu_up5k_machine -json educpu_up5k_machine.json; stat'
+	$(YOSYS) -q -p 'read_verilog -lib -specify +/ice40/cells_sim.v; read_verilog -sv educpu_core.sv educpu_up5k_spram.sv educpu_up5k_machine.sv; hierarchy -check -top educpu_up5k_machine; proc; opt; check; synth_ice40 -top educpu_up5k_machine -json educpu_up5k_machine.json; stat'
 	$(NEXTPNR) --up5k --package sg48 --json educpu_up5k_machine.json --asc educpu_up5k_machine.asc --freq 12 --report educpu_up5k_machine-report.json --pcf-allow-unconstrained
 
 machine-up5k: machine-synth
