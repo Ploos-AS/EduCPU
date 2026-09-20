@@ -7,6 +7,7 @@ module tb_differential;
     logic mem_we, mem_valid, halted, trap;
     logic mem_ready = 1'b0;
     logic pending = 1'b0;
+    logic wait_release = 1'b0;
     logic [15:0] pending_addr;
     logic pending_we;
     logic [7:0] pending_wdata;
@@ -21,6 +22,11 @@ module tb_differential;
             if (pending_we) mem[pending_addr] <= pending_wdata;
             mem_ready <= 1'b1;
             pending <= 1'b0;
+            wait_release <= 1'b1;
+        end else if (wait_release) begin
+            // Do not accept the still-asserted request in the completion cycle.
+            // Give the core one cycle to advance and present the next address.
+            wait_release <= 1'b0;
         end else if (mem_valid) begin
             pending_addr <= mem_addr;
             pending_we <= mem_we;
