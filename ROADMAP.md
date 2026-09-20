@@ -29,9 +29,9 @@
 - [ ] documented simple IR
 - [ ] AST to IR lowering
 - [ ] IR validation and inspection CLI
-- [ ] M5 front-end qualification
+- [x] M5 front-end qualification — CI green on Python 3.11, 3.12 and 3.13
 
-M5 now covers source syntax, semantic meaning, explicit EduIR lowering and independent IR validation. The remaining step is qualification of the complete front-end pipeline before M6.
+M5 now covers source syntax, semantic meaning, explicit EduIR lowering and independent IR validation. The complete front-end pipeline is qualified in CI. M5 is complete; M6 starts with lowering validated EduIR to EduASM.
 
 ## M6 — EduC compiler back end
 IR lowering, simple register allocation, code generation and complete source to AST to IR to assembly to bytes to execution correlation.
