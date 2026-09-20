@@ -40,6 +40,15 @@ class Emulator:
             return None
         return number
 
+    def _addr_operand(self) -> int:
+        low = self._fetch()
+        high = self._fetch()
+        return low | (high << 8)
+
+    def _signed_offset(self) -> int:
+        value = self._fetch()
+        return value - 256 if value & 0x80 else value
+
     def step(self) -> None:
         if self.halted or self.trap:
             return
@@ -52,17 +61,65 @@ class Emulator:
             self.halted = True
             return
 
-        # Decode the register operand for MOV so malformed operands trap in
-        # exactly the architectural place required by ISA v0. MOV execution
-        # itself is introduced with the data-movement conformance stage.
-        if opcode == 0x10:
+        if opcode == 0x10:  # MOV rd,rs
             destination = self._reg_operand()
             if destination is None:
                 return
             source = self._reg_operand()
             if source is None:
                 return
-            self.trap = "UNIMPLEMENTED_INSTRUCTION"
+            self.r[destination] = self.r[source]
+            return
+        if opcode == 0x11:  # MOVI rd,imm8
+            destination = self._reg_operand()
+            if destination is None:
+                return
+            self.r[destination] = self._fetch()
+            return
+        if opcode == 0x12:  # LOAD rd,[addr16]
+            destination = self._reg_operand()
+            if destination is None:
+                return
+            self.r[destination] = self.mem[self._addr_operand()]
+            return
+        if opcode == 0x13:  # STORE [addr16],rs
+            address = self._addr_operand()
+            source = self._reg_operand()
+            if source is None:
+                return
+            self.mem[address] = self.r[source]
+            return
+        if opcode == 0x14:  # LOADR rd,[ra]
+            destination = self._reg_operand()
+            if destination is None:
+                return
+            address_register = self._reg_operand()
+            if address_register is None:
+                return
+            self.r[destination] = self.mem[self.r[address_register]]
+            return
+        if opcode == 0x15:  # STORER [ra],rs
+            address_register = self._reg_operand()
+            if address_register is None:
+                return
+            source = self._reg_operand()
+            if source is None:
+                return
+            self.mem[self.r[address_register]] = self.r[source]
+            return
+        if opcode == 0x16:  # LOADS rd,[SP+off8]
+            destination = self._reg_operand()
+            if destination is None:
+                return
+            offset = self._signed_offset()
+            self.r[destination] = self.mem[(self.sp + offset) & 0xFFFF]
+            return
+        if opcode == 0x17:  # STORES [SP+off8],rs
+            offset = self._signed_offset()
+            source = self._reg_operand()
+            if source is None:
+                return
+            self.mem[(self.sp + offset) & 0xFFFF] = self.r[source]
             return
 
         self.trap = "INVALID_OPCODE"
