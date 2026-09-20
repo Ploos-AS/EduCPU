@@ -210,6 +210,17 @@ symbolic CALL
 
 Which information exists only during build time?
 
+## Linker prediction
+
+Before running the linker:
+
+1. find the `add_two` import;
+2. find the relocation representing it;
+3. predict which symbol should resolve it;
+4. predict that the final CALL operand must be a numeric little-endian address.
+
+Then run the linker and check each point. This separates a **symbolic build-time reference** from a **runtime address**.
+
 ## Tools
 
 Use the real course fixture: `course/examples/lesson13-main.eduasm + lesson13-math.eduasm`.
