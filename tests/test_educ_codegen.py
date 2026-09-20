@@ -101,7 +101,7 @@ def test_void_call_statement_executes():
 
 
 def test_control_flow_labels_are_namespaced_per_function():
- source="byte a(bool x){if(x){return 1;}else{return 0;}} byte b(bool x){if(x){return 2;}else{return 0;}} byte main(){return a(1)+b(1);}"
+ source="byte a(bool x){if(x){return 1;}else{return 0;}} byte b(bool x){if(x){return 2;}else{return 0;}} byte main(){return a(true)+b(true);}"
  asm=compile_asm(source)
  assert "__a_if_then_0:" in asm and "__b_if_then_0:" in asm
  obj,_=assemble_object(asm)
