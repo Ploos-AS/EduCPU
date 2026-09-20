@@ -183,6 +183,14 @@ EduASM: hvordan EduCPU-ressurser utfører dem
 
 Hvorfor er dette skillet nyttig både for compilerdesign og undervisning?
 
+## Verktøy
+
+Bruk den ekte kursfixturen: `course/examples/lesson12-ir-codegen.educ`.
+
+**EduGuide:** bruk nettleservisualiseringen for å stege gjennom CPU-tilstanden.
+
+Forvent viktige tilstands- eller compiler-endringer før du kjører fixturen, og sammenlign deretter med resultatet.
+
 ## Neste
 
 Neste leksjon følger generert assembly inn i **objektfiler, relocations og linking**, der separat oversatte deler til slutt får konkrete adresser.
