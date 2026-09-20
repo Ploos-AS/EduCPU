@@ -26,7 +26,9 @@ module educpu_core (
         S_MEM_ARG,
         S_MEM_ADDR_LO,
         S_MEM_ADDR_HI,
-        S_MEM_ACCESS
+        S_MEM_ACCESS,
+        S_BRANCH_LO,
+        S_BRANCH_HI
     } state_t;
 
     state_t state;
@@ -60,6 +62,13 @@ module educpu_core (
     localparam logic [7:0] OP_NOT  = 8'h2B;
     localparam logic [7:0] OP_SHL  = 8'h2C;
     localparam logic [7:0] OP_SHR  = 8'h2D;
+    localparam logic [7:0] OP_JMP  = 8'h30;
+    localparam logic [7:0] OP_JZ   = 8'h31;
+    localparam logic [7:0] OP_JNZ  = 8'h32;
+    localparam logic [7:0] OP_JC   = 8'h33;
+    localparam logic [7:0] OP_JNC  = 8'h34;
+    localparam logic [7:0] OP_JN   = 8'h35;
+    localparam logic [7:0] OP_JP   = 8'h36;
 
     always_ff @(posedge clk) begin
         if (reset) begin
@@ -101,6 +110,11 @@ module educpu_core (
                             current_op <= mem_rdata;
                             pc <= pc + 16'd1;
                             state <= S_ALU_RD;
+                        end
+                        OP_JMP, OP_JZ, OP_JNZ, OP_JC, OP_JNC, OP_JN, OP_JP: begin
+                            current_op <= mem_rdata;
+                            pc <= pc + 16'd1;
+                            state <= S_BRANCH_LO;
                         end
                         OP_NOT, OP_SHL, OP_SHR: begin
                             current_op <= mem_rdata;
@@ -234,6 +248,27 @@ module educpu_core (
                 S_MEM_ACCESS: begin
                     if (current_op == OP_LOAD || current_op == OP_LOADR || current_op == OP_LOADS)
                         r[operand_rd] <= mem_rdata;
+                    state <= S_FETCH;
+                end
+
+                S_BRANCH_LO: begin
+                    operand_addr[7:0] <= mem_rdata;
+                    pc <= pc + 16'd1;
+                    state <= S_BRANCH_HI;
+                end
+
+                S_BRANCH_HI: begin
+                    operand_addr[15:8] <= mem_rdata;
+                    if ((current_op == OP_JMP) ||
+                        (current_op == OP_JZ  && flags[0]) ||
+                        (current_op == OP_JNZ && !flags[0]) ||
+                        (current_op == OP_JC  && flags[2]) ||
+                        (current_op == OP_JNC && !flags[2]) ||
+                        (current_op == OP_JN  && flags[1]) ||
+                        (current_op == OP_JP  && !flags[1]))
+                        pc <= {mem_rdata, operand_addr[7:0]};
+                    else
+                        pc <= pc + 16'd1;
                     state <= S_FETCH;
                 end
 
