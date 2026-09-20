@@ -45,7 +45,7 @@ M5 covers source syntax, semantic meaning, explicit EduIR lowering and independe
 - [x] generated EduASM object assembly and EduLink execution tests
 - [x] complete EduC to executable CLI pipeline
 - [x] source to AST to IR to assembly to bytes to execution correlation
-- [ ] M6 qualification
+- [x] M6 qualification — 82 tests PASS on Python 3.11, 3.12 and 3.13; see docs/M6_QUALIFICATION.md
 
 ## M7 — Guided teaching environment
 Course from binary/hex through compiler construction and complete execution.
