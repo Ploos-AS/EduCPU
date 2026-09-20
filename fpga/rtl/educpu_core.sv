@@ -13,7 +13,7 @@ module educpu_core (
     logic [15:0] sp;
     logic [7:0]  flags;
 
-    typedef enum logic [2:0] {
+    typedef enum logic [3:0] {
         S_FETCH,
         S_MOV_RD,
         S_MOV_RS,
@@ -21,7 +21,12 @@ module educpu_core (
         S_MOVI_IMM,
         S_ALU_RD,
         S_ALU_SRC,
-        S_UNARY_RD
+        S_UNARY_RD,
+        S_MEM_RD,
+        S_MEM_ARG,
+        S_MEM_ADDR_LO,
+        S_MEM_ADDR_HI,
+        S_MEM_ACCESS
     } state_t;
 
     state_t state;
@@ -29,6 +34,7 @@ module educpu_core (
     logic [7:0] current_op;
     logic [8:0] alu_ext;
     logic [7:0] alu_out;
+    logic [15:0] operand_addr;
     integer i;
 
     localparam logic [15:0] RESET_SP = 16'hFF00;
@@ -36,6 +42,12 @@ module educpu_core (
     localparam logic [7:0] OP_HALT = 8'h01;
     localparam logic [7:0] OP_MOV  = 8'h10;
     localparam logic [7:0] OP_MOVI = 8'h11;
+    localparam logic [7:0] OP_LOAD = 8'h12;
+    localparam logic [7:0] OP_STORE = 8'h13;
+    localparam logic [7:0] OP_LOADR = 8'h14;
+    localparam logic [7:0] OP_STORER = 8'h15;
+    localparam logic [7:0] OP_LOADS = 8'h16;
+    localparam logic [7:0] OP_STORES = 8'h17;
     localparam logic [7:0] OP_ADD  = 8'h20;
     localparam logic [7:0] OP_ADDI = 8'h21;
     localparam logic [7:0] OP_SUB  = 8'h22;
@@ -59,6 +71,7 @@ module educpu_core (
             state <= S_FETCH;
             operand_rd <= 3'd0;
             current_op <= 8'h00;
+            operand_addr <= 16'h0000;
             for (i = 0; i < 8; i = i + 1)
                 r[i] <= 8'h00;
         end else if (!halted && !trap) begin
@@ -77,6 +90,11 @@ module educpu_core (
                         OP_MOVI: begin
                             pc <= pc + 16'd1;
                             state <= S_MOVI_RD;
+                        end
+                        OP_LOAD, OP_STORE, OP_LOADR, OP_STORER, OP_LOADS, OP_STORES: begin
+                            current_op <= mem_rdata;
+                            pc <= pc + 16'd1;
+                            state <= S_MEM_RD;
                         end
                         OP_ADD, OP_ADDI, OP_SUB, OP_SUBI, OP_CMP, OP_CMPI,
                         OP_AND, OP_OR, OP_XOR: begin
@@ -172,6 +190,53 @@ module educpu_core (
                     end
                 end
 
+                S_MEM_RD: begin
+                    pc <= pc + 16'd1;
+                    if (current_op == OP_LOAD || current_op == OP_LOADR || current_op == OP_LOADS) begin
+                        if (mem_rdata > 8'd7) trap <= 1'b1;
+                        else begin operand_rd <= mem_rdata[2:0]; state <= S_MEM_ARG; end
+                    end else if (current_op == OP_STORE) begin
+                        operand_addr[7:0] <= mem_rdata;
+                        state <= S_MEM_ADDR_HI;
+                    end else begin
+                        operand_addr[7:0] <= mem_rdata;
+                        state <= S_MEM_ARG;
+                    end
+                end
+
+                S_MEM_ARG: begin
+                    pc <= pc + 16'd1;
+                    if (current_op == OP_LOAD) begin
+                        operand_addr[7:0] <= mem_rdata;
+                        state <= S_MEM_ADDR_HI;
+                    end else if (current_op == OP_LOADR) begin
+                        if (mem_rdata > 8'd7) trap <= 1'b1;
+                        else begin operand_addr <= {8'h00, r[mem_rdata[2:0]]}; state <= S_MEM_ACCESS; end
+                    end else if (current_op == OP_LOADS) begin
+                        operand_addr <= sp + {{8{mem_rdata[7]}}, mem_rdata};
+                        state <= S_MEM_ACCESS;
+                    end else if (current_op == OP_STORER) begin
+                        if (operand_addr[7:0] > 8'd7 || mem_rdata > 8'd7) trap <= 1'b1;
+                        else begin operand_addr <= {8'h00, r[operand_addr[2:0]]}; operand_rd <= mem_rdata[2:0]; state <= S_MEM_ACCESS; end
+                    end else begin
+                        if (mem_rdata > 8'd7) trap <= 1'b1;
+                        else begin operand_addr <= sp + {{8{operand_addr[7]}}, operand_addr[7:0]}; operand_rd <= mem_rdata[2:0]; state <= S_MEM_ACCESS; end
+                    end
+                end
+
+                S_MEM_ADDR_HI: begin
+                    pc <= pc + 16'd1;
+                    operand_addr[15:8] <= mem_rdata;
+                    if (current_op == OP_LOAD) state <= S_MEM_ACCESS;
+                    else state <= S_MEM_ARG;
+                end
+
+                S_MEM_ACCESS: begin
+                    if (current_op == OP_LOAD || current_op == OP_LOADR || current_op == OP_LOADS)
+                        r[operand_rd] <= mem_rdata;
+                    state <= S_FETCH;
+                end
+
                 S_UNARY_RD: begin
                     pc <= pc + 16'd1;
                     if (mem_rdata > 8'd7)
@@ -202,7 +267,8 @@ module educpu_core (
         end
     end
 
-    assign mem_addr  = pc;
-    assign mem_wdata = 8'h00;
-    assign mem_we    = 1'b0;
+    assign mem_addr = (state == S_MEM_ACCESS) ? operand_addr : pc;
+    assign mem_wdata = r[operand_rd];
+    assign mem_we = (state == S_MEM_ACCESS) &&
+                    (current_op == OP_STORE || current_op == OP_STORER || current_op == OP_STORES);
 endmodule
