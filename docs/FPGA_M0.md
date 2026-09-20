@@ -34,7 +34,7 @@ instruction memory -> fetch/decode/control -> register file <-> ALU
 - [ ] lint passes
 - [x] reset test passes — architectural state initialized and smoke-tested
 - [x] NOP/HALT passes — RTL fetch loop and sticky HALT qualified
-- [ ] arithmetic/logic/flags passes
+- [x] arithmetic/logic/flags passes — ADD/SUB/CMP, immediate forms, AND/OR/XOR/NOT and SHL/SHR with ISA v0 Z/N/C/V semantics
 - [ ] memory passes
 - [ ] branches pass
 - [ ] stack/CALL/RET passes
