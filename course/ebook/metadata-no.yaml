@@ -1,0 +1,11 @@
+---
+title: "EduCPU-kurset"
+subtitle: "Lær hvordan en datamaskin fungerer, ett forståelig lag om gangen"
+author: "Ploos AS"
+lang: "nb-NO"
+rights: "Kursinnhold © 2026 Ploos AS. Lisensiert CC BY 4.0."
+publisher: "Ploos AS"
+subject: "Datamaskinarkitektur; programmering; assembly; compilere; digital logikk"
+description: "Et pedagogikk-først-kurs som følger hele veien fra bits og maskintilstand via assembly og kompilering til CPU-kjøring."
+identifier: "https://github.com/Ploos-AS/EduCPU"
+---
