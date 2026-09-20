@@ -1,4 +1,4 @@
-"""Initial pedagogical EduIR -> EduASM backend."""
+"""Pedagogical EduIR -> EduASM backend with explicit stack slots."""
 from educ_ir_validate import validate
 
 class CodegenError(ValueError):pass
@@ -9,30 +9,36 @@ def generate(program):
 
 def _function(f):
  if len(f.params)>4:raise CodegenError("ABI v0 supports at most four register parameters")
- regs={name:f"R{i}" for i,(_,name) in enumerate(f.params)}
- free=["R7","R6","R5","R4"]
+ # Every IR value gets a visible one-byte frame slot. This is intentionally
+ # simple rather than optimized: students can inspect where each value lives.
+ names=[]
+ for _,n in f.params:names.append(n)
+ for x in f.instructions:
+  if x.dest and x.dest not in names:names.append(x.dest)
+ if len(names)>128:raise CodegenError(f"{f.name}: frame exceeds LOADS/STORES positive offset range")
+ slots={n:i for i,n in enumerate(names)}
+ frame=len(names)
  out=[f".export {f.name}",f"{f.name}:"]
- def src(v):
-  if v not in regs:raise CodegenError(f"{f.name}: value has no register: {v}")
-  return regs[v]
- def dest(v):
-  if v in regs:return regs[v]
-  if not free:raise CodegenError(f"{f.name}: initial backend register capacity exceeded")
-  regs[v]=free.pop(0);return regs[v]
+ if frame:out.append(f"    ENTER {frame}")
+ # Preserve ABI parameter values into their frame slots before R0-R3 become scratch.
+ for i,(_,n) in enumerate(f.params):out.append(f"    STORES [{slots[n]}], R{i}")
+ def load(v,r):
+  if v not in slots:raise CodegenError(f"{f.name}: value has no stack slot: {v}")
+  out.append(f"    LOADS {r}, [{slots[v]}]")
+ def store(v,r):
+  if v not in slots:raise CodegenError(f"{f.name}: destination has no stack slot: {v}")
+  out.append(f"    STORES [{slots[v]}], {r}")
  for x in f.instructions:
   if x.op=="const":
-   out.append(f"    MOVI {dest(x.dest)}, {x.args[0]}")
+   out.append(f"    MOVI R7, {x.args[0]}");store(x.dest,"R7")
   elif x.op=="copy":
-   s=src(x.args[0]);d=dest(x.dest)
-   if s!=d:out.append(f"    MOV {d}, {s}")
+   load(x.args[0],"R7");store(x.dest,"R7")
   elif x.op in ("add","sub"):
-   a,b=map(src,x.args);d=dest(x.dest)
-   if d!=a:out.append(f"    MOV {d}, {a}")
-   out.append(f"    {x.op.upper()} {d}, {b}")
+   load(x.args[0],"R7");load(x.args[1],"R6")
+   out.append(f"    {x.op.upper()} R7, R6");store(x.dest,"R7")
   elif x.op=="ret":
-   if x.args:
-    s=src(x.args[0])
-    if s!="R0":out.append(f"    MOV R0, {s}")
+   if x.args:load(x.args[0],"R0")
+   if frame:out.append(f"    LEAVE {frame}")
    out.append("    RET")
-  else:raise CodegenError(f"{f.name}: IR op not in initial backend slice: {x.op}")
+  else:raise CodegenError(f"{f.name}: IR op not yet supported by backend: {x.op}")
  return "\n".join(out)
