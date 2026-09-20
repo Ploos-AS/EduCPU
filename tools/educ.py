@@ -139,7 +139,7 @@ def compile_source(text,source_name=None):
  return tree,ir,asm,obj,data,symbols
 
 def main():
- p=argparse.ArgumentParser(prog="educ");p.add_argument("source");p.add_argument("--tokens",action="store_true");p.add_argument("--ast",action="store_true");p.add_argument("--check",action="store_true");p.add_argument("--ir",action="store_true");p.add_argument("--ir-check",action="store_true");p.add_argument("-S","--assembly",action="store_true");p.add_argument("-c","--object",action="store_true");p.add_argument("-o","--output");a=p.parse_args();src=Path(a.source);text=src.read_text()
+ p=argparse.ArgumentParser(prog="educ");p.add_argument("source");p.add_argument("--tokens",action="store_true");p.add_argument("--ast",action="store_true");p.add_argument("--check",action="store_true");p.add_argument("--ir",action="store_true");p.add_argument("--ir-check",action="store_true");p.add_argument("-S","--assembly",action="store_true");p.add_argument("-c","--object",action="store_true");p.add_argument("--trace",action="store_true");p.add_argument("-o","--output");a=p.parse_args();src=Path(a.source);text=src.read_text()
  if a.tokens:
   for t in lex(text):print(f"{t.line}:{t.col}\\t{t.kind}\\t{t.value}")
  tree=parse(text)
@@ -153,7 +153,11 @@ def main():
   ir=lower(tree)
   if a.ir_check:validate(ir)
   if a.ir:print(format_ir(ir),end="")
- if a.assembly or a.object or a.output:
+ if a.trace:
+  trace=compile_trace(text,str(src));payload=json.dumps(trace,indent=2)+"\\n"
+  if a.output:Path(a.output).write_text(payload)
+  else:print(payload,end="")
+ elif a.assembly or a.object or a.output:
   tree,ir,asm,obj,data,symbols=compile_source(text,str(src))
   if a.assembly:
    if a.output:Path(a.output).write_text(asm)
@@ -162,6 +166,6 @@ def main():
    dest=Path(a.output or src.with_suffix(".eo"));dest.write_text(json.dumps(obj,indent=2)+"\\n")
   else:
    Path(a.output).write_bytes(data)
- if not any((a.tokens,a.ast,a.check,a.ir,a.ir_check,a.assembly,a.object,a.output)):
+ if not any((a.tokens,a.ast,a.check,a.ir,a.ir_check,a.assembly,a.object,a.trace,a.output)):
   print(json.dumps(ast_dict(tree),indent=2))
 if __name__=="__main__":main()
