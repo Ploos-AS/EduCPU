@@ -12,3 +12,8 @@ mov pc=0007 sp=ff00 flags=00 halted=1 trap=0 regs=00 5a 5a 00 00 00 00 00
 sub_cmp pc=0010 sp=ff00 flags=05 halted=1 trap=0 regs=02 03 00 00 00 00 00 00
 logic_full pc=0012 sp=ff00 flags=02 halted=1 trap=0 regs=ff 0f 00 00 00 00 00 00
 branches_flags pc=0010 sp=ff00 flags=05 halted=0 trap=1 regs=00 00 00 00 00 00 00 00
+add_reg pc=000a sp=ff00 flags=0a halted=1 trap=0 regs=80 01 00 00 00 00 00 00
+subi pc=0007 sp=ff00 flags=02 halted=1 trap=0 regs=ff 00 00 00 00 00 00 00
+jnz pc=000b sp=ff00 flags=04 halted=1 trap=0 regs=01 00 00 00 00 00 00 00
+invalid_opcode pc=0001 sp=ff00 flags=00 halted=0 trap=1 regs=00 00 00 00 00 00 00 00
+invalid_register pc=0002 sp=ff00 flags=00 halted=0 trap=1 regs=00 00 00 00 00 00 00 00
