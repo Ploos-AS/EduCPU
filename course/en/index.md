@@ -23,3 +23,9 @@ EduCPU is a deliberately small teaching computer. This course starts with bits a
 15. How a CPU can be built: ALU, datapath, control and the road to FPGA
 
 Throughout the course we repeatedly ask: **How does EduCPU know?**
+
+## Further reading
+
+If you want a companion book for the same kind of bottom-up exploration, J. Clark Scott's *But How Do It Know? — The Basic Principles of Computers for Everyone* is recommended further reading. It develops the ideas from simple digital logic toward a working CPU, while EduCPU remains an independent project and course.
+
+**Book link:** coming soon. When a purchase link is an affiliate link, it will be clearly identified; Ploos AS may receive a commission at no additional cost to you.
