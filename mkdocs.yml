@@ -11,8 +11,10 @@ nav:
       - Norsk: no/index.md
   - English lessons:
       - "01 — Bits, bytes, binary and hexadecimal": en/lessons/01-bits-bytes-hex.md
+      - "02 — Logic and storing information": en/lessons/02-logic-and-storage.md
   - Norske leksjoner:
       - "01 — Bits, bytes, binært og heksadesimalt": no/lessons/01-bits-bytes-hex.md
+      - "02 — Logikk og lagring av informasjon": no/lessons/02-logikk-og-lagring.md
 markdown_extensions:
   - fenced_code
   - tables
