@@ -8,3 +8,7 @@ memory_abs pc=000c sp=ff00 flags=00 halted=1 trap=0 regs=a5 a5 00 00 00 00 00 00
 memory_reg pc=000d sp=ff00 flags=00 halted=1 trap=0 regs=00 00 80 5a 5a 00 00 00
 memory_sp pc=000a sp=ff00 flags=00 halted=1 trap=0 regs=00 00 00 00 00 cc cc 00
 frame pc=0005 sp=ff00 flags=00 halted=1 trap=0 regs=00 00 00 00 00 00 00 00
+mov pc=0007 sp=ff00 flags=00 halted=1 trap=0 regs=00 5a 5a 00 00 00 00 00
+sub_cmp pc=0010 sp=ff00 flags=05 halted=1 trap=0 regs=02 03 00 00 00 00 00 00
+logic_full pc=0012 sp=ff00 flags=02 halted=1 trap=0 regs=ff 0f 00 00 00 00 00 00
+branches_flags pc=0010 sp=ff00 flags=05 halted=0 trap=1 regs=00 00 00 00 00 00 00 00
