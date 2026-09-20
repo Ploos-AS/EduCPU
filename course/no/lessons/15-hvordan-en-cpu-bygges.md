@@ -48,6 +48,22 @@ Hovedideen er:
 
 > ISA-en definerer **hva** maskinen må gjøre. Hardware-designet bestemmer **hvordan** signaler, lagring og logikk får det til å skje.
 
+## Hva er ekte og hva er foreløpig?
+
+Denne leksjonen beskriver **arkitekturen**, ikke en ferdig FPGA-nettlist eller et påstått fysisk skjema.
+
+Det som allerede er konkret og testbart er:
+
+- ISA v0 og dens instruksjonskoding;
+- referanse-CPU-en;
+- den uavhengige emulatoren;
+- differential/conformance-testene;
+- compiler- og toolchain-resultatene.
+
+FPGA-datapathen er neste implementasjonslag. Derfor bruker vi bevisst en konseptuell datapath her i stedet for å late som om den er det endelige kretsdesignet.
+
+Når HDL-implementasjonen finnes, skal denne leksjonen kunne oppgraderes med et faktisk EduCPU-blokkdiagram og vise hvilke deler av diagrammet som er arkitekturkrav versus konkrete FPGA-designvalg.
+
 ## Registre: små biter med tilstand
 
 Et register lagrer bits.
