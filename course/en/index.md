@@ -29,3 +29,10 @@ Throughout the course we repeatedly ask: **How does EduCPU know?**
 If you want a companion book for the same kind of bottom-up exploration, J. Clark Scott's *But How Do It Know? — The Basic Principles of Computers for Everyone* is recommended further reading. It develops the ideas from simple digital logic toward a working CPU, while EduCPU remains an independent project and course.
 
 **Book link:** coming soon. When a purchase link is an affiliate link, it will be clearly identified; Ploos AS may receive a commission at no additional cost to you.
+
+
+## Continue learning
+
+After EduCPU, **EduAVR** is a natural next step: move from the deliberately small teaching CPU to a real AVR microcontroller, real embedded tooling and physical hardware. EduCPU explains the mechanisms first; EduAVR lets you apply the same ideas on a practical microcontroller platform.
+
+The EduAVR course link will be added here when its public course site is ready.
