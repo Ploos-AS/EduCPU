@@ -12,9 +12,11 @@ nav:
   - English lessons:
       - "01 — Bits, bytes, binary and hexadecimal": en/lessons/01-bits-bytes-hex.md
       - "02 — Logic and storing information": en/lessons/02-logic-and-storage.md
+      - "03 — What is a CPU?": en/lessons/03-what-is-a-cpu.md
   - Norske leksjoner:
       - "01 — Bits, bytes, binært og heksadesimalt": no/lessons/01-bits-bytes-hex.md
       - "02 — Logikk og lagring av informasjon": no/lessons/02-logikk-og-lagring.md
+      - "03 — Hva er en CPU?": no/lessons/03-hva-er-en-cpu.md
 markdown_extensions:
   - fenced_code
   - tables
