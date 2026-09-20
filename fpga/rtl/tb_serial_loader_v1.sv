@@ -9,6 +9,11 @@ module tb_serial_loader_v1;
   // image 11 00 2a 01; CRC over 01 04 00 11 00 2a 01 = 0xC88B
   send(8'h55);send(8'haa);send(8'h01);send(8'h04);send(0);send(8'h11);send(0);send(8'h2a);send(1);send(8'h8b);send(8'hc8);
   @(posedge clk); if(!started||!accepted||err||load_mode)$fatal(1,"valid v1 frame rejected");
-  $display("EduCPU serial loader v1 CRC PASS");$finish;
+  $display("EduCPU serial loader v1 CRC PASS");
+  reset=1;@(posedge clk);reset=0;
+  // Same payload with corrupted CRC must never release the CPU.
+  send(8'h55);send(8'haa);send(8'h01);send(8'h04);send(0);send(8'h11);send(0);send(8'h2a);send(1);send(8'h8a);send(8'hc8);
+  @(posedge clk); if(started||accepted||!err||!load_mode)$fatal(1,"bad CRC released CPU");
+  $display("EduCPU serial loader v1 bad-CRC rejection PASS");$finish;
  end
 endmodule
