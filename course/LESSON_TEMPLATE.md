@@ -1,5 +1,9 @@
 # NN — Lesson title
 
+## Suggested time
+
+State an approximate time for the lesson, including optional exercises.
+
 ## Learning objectives
 
 After this lesson, you should be able to:
@@ -27,6 +31,10 @@ Connect the concept to the real EduCPU architecture or toolchain.
 ## Worked example
 
 Use a small example that can be reasoned through manually.
+
+## Tools
+
+Name the relevant EduCPU tools or fixtures. From the machine-state lessons onward, prefer EduVis for visual stepping and EduGuide for predict → observe → explain work.
 
 ## Run and observe
 
@@ -56,6 +64,10 @@ Connect the observed bytes, registers, flags, memory or compiler stages back to 
 1. ...
 2. ...
 3. ...
+
+## Variant notes
+
+For compiler/toolchain and synthesis lessons, this template may be adapted. Keep the learning objectives, worked example, observation/verification, exercises, understanding check and explicit next step even when the section names become domain-specific.
 
 ## Next
 
