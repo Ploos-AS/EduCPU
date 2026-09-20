@@ -1,0 +1,6 @@
+; Lesson 06 fixture: labels and a backwards branch.
+MOVI R0, 3
+loop:
+    SUBI R0, 1
+    JNZ loop
+HALT
