@@ -3,7 +3,7 @@ VVP ?= vvp
 YOSYS ?= yosys
 NEXTPNR ?= nextpnr-ice40
 
-.PHONY: test synth machine-synth up5k machine-up5k spram-up5k clean
+.PHONY: test synth machine-synth up5k machine-up5k spram-up5k upduino-v31 clean
 
 test:
 	$(IVERILOG) -g2012 -o simv educpu_core.sv tb_educpu_core.sv
@@ -21,7 +21,12 @@ up5k: synth
 
 spram-up5k:
 	$(YOSYS) -q -p 'read_verilog -lib -specify +/ice40/cells_sim.v; read_verilog -sv educpu_core.sv educpu_up5k_spram.sv educpu_up5k_machine.sv; hierarchy -check -top educpu_up5k_machine; proc; opt; check; synth_ice40 -top educpu_up5k_machine -json educpu_up5k_machine.json; stat'
-	$(NEXTPNR) --up5k --package sg48 --json educpu_up5k_machine.json --asc educpu_up5k_machine.asc --freq 12 --report educpu_up5k_machine-report.json --pcf-allow-unconstrained
+	$(NEXTPNR) --up5k --package sg48 --json educpu_up5k_machine.json --asc educpu_up5k_machine.asc --freq 12 --report educpu_up5k_machine-report.json educpu_upduino_v31.json educpu_upduino_v31.asc educpu_upduino_v31.bin educpu_upduino_v31-report.json --pcf-allow-unconstrained
+
+upduino-v31:
+	$(YOSYS) -q -p 'read_verilog -lib -specify +/ice40/cells_sim.v; read_verilog -sv educpu_core.sv educpu_up5k_spram.sv educpu_up5k_machine.sv ../boards/upduino-v3.1/educpu_upduino_v31.sv; hierarchy -check -top educpu_upduino_v31; proc; opt; check; synth_ice40 -top educpu_upduino_v31 -json educpu_upduino_v31.json'
+	$(NEXTPNR) --up5k --package sg48 --json educpu_upduino_v31.json --pcf ../boards/upduino-v3.1/upduino_v31.pcf --asc educpu_upduino_v31.asc --report educpu_upduino_v31-report.json
+	icepack educpu_upduino_v31.asc educpu_upduino_v31.bin
 
 machine-up5k: machine-synth
 	$(NEXTPNR) --up5k --package sg48 --json educpu_machine.json --asc educpu_machine.asc --freq 12 --report educpu_machine-report.json --pcf-allow-unconstrained
