@@ -169,7 +169,42 @@ module tb_educpu_core;
         assert (halted == 1'b1);
         assert (trap == 1'b0);
 
-        $display("EduCPU FPGA M0.5 memory PASS");
+        // Conditional branch: CMPI sets Z, JZ skips invalid opcode to HALT.
+        clear_mem();
+        mem[0]=8'h11; mem[1]=8'h00; mem[2]=8'h2A;
+        mem[3]=8'h25; mem[4]=8'h00; mem[5]=8'h2A;
+        mem[6]=8'h31; mem[7]=8'h0A; mem[8]=8'h00;
+        mem[9]=8'hFF;
+        mem[10]=8'h01;
+        do_reset();
+        repeat (10) begin @(posedge clk); #1; end
+        assert (dut.pc == 16'h000B);
+        assert (halted == 1'b1);
+        assert (trap == 1'b0);
+
+        // Not-taken JNZ must consume both address bytes and continue sequentially.
+        clear_mem();
+        mem[0]=8'h11; mem[1]=8'h00; mem[2]=8'h00;
+        mem[3]=8'h25; mem[4]=8'h00; mem[5]=8'h00;
+        mem[6]=8'h32; mem[7]=8'h20; mem[8]=8'h00;
+        mem[9]=8'h01;
+        do_reset();
+        repeat (10) begin @(posedge clk); #1; end
+        assert (dut.pc == 16'h000A);
+        assert (halted == 1'b1);
+        assert (trap == 1'b0);
+
+        // JMP is unconditional and little-endian.
+        clear_mem();
+        mem[0]=8'h30; mem[1]=8'h34; mem[2]=8'h12;
+        mem[16'h1234]=8'h01;
+        do_reset();
+        repeat (4) begin @(posedge clk); #1; end
+        assert (dut.pc == 16'h1235);
+        assert (halted == 1'b1);
+        assert (trap == 1'b0);
+
+        $display("EduCPU FPGA M0.6 branches PASS");
         $finish;
     end
 endmodule
