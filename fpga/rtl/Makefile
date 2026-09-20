@@ -15,6 +15,9 @@ synth:
 machine-synth:
 	$(YOSYS) -q -p 'read_verilog -sv educpu_core.sv educpu_sync_ram.sv educpu_machine.sv; hierarchy -check -top educpu_machine; proc; memory; opt; check; synth_ice40 -top educpu_machine -json educpu_machine.json; stat'
 
+machine-synth:
+	$(YOSYS) -q -p 'read_verilog -sv educpu_core.sv educpu_sync_ram.sv educpu_machine.sv; hierarchy -check -top educpu_machine; proc; opt; check; synth_ice40 -top educpu_machine -json educpu_machine.json; stat'
+
 up5k: synth
 	$(NEXTPNR) --up5k --package sg48 --json educpu_core.json --asc educpu_core.asc --freq 12 --report educpu_core-report.json --pcf-allow-unconstrained
 
@@ -22,4 +25,4 @@ machine-up5k: machine-synth
 	$(NEXTPNR) --up5k --package sg48 --json educpu_machine.json --asc educpu_machine.asc --freq 12 --report educpu_machine-report.json --pcf-allow-unconstrained
 
 clean:
-	rm -f simv educpu_core.json educpu_core.asc educpu_core-report.json educpu_machine.json educpu_machine.asc educpu_machine-report.json
+	rm -f simv educpu_core.json educpu_machine.json educpu_core.asc educpu_core-report.json educpu_machine.json educpu_machine.asc educpu_machine-report.json
