@@ -182,6 +182,18 @@ Forklar setningen:
 
 Hvor, helt konkret, blir forbindelsen mellom disse to verdenene skapt?
 
+## Representasjonssjekk
+
+Stopp før du kjører fixturen. Velg uttrykket `20 + 22` og skriv én setning for hva som er synlig på hvert nivå:
+
+```text
+EduC → AST → EduIR → EduASM → bytes → CPU-state
+```
+
+For hvert steg: **Hva vet dette laget som laget før ikke visste, og hva har blitt abstrakt bort?**
+
+Kjør deretter fixturen og kontroller én konkret overgang mellom hvert nabonivå.
+
 ## Verktøy
 
 Bruk den ekte kursfixturen: `course/examples/lesson10-compiler.educ`.
