@@ -98,3 +98,14 @@ def test_void_call_statement_executes():
  source="void ping(){return;} byte main(){ping();return 42;}"
  c=run_function(source)
  assert c.r[0]==42 and c.halted and c.sp==0xFF00
+
+
+def test_control_flow_labels_are_namespaced_per_function():
+ source="byte a(bool x){if(x){return 1;}else{return 0;}} byte b(bool x){if(x){return 2;}else{return 0;}} byte main(){return a(1)+b(1);}"
+ asm=compile_asm(source)
+ assert "__a_if_then_0:" in asm and "__b_if_then_0:" in asm
+ obj,_=assemble_object(asm)
+ data,_,_=link([obj])
+ assert data
+ c=run_function(source)
+ assert c.r[0]==3 and c.halted and c.sp==0xFF00
