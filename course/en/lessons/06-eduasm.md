@@ -218,12 +218,6 @@ Notice that the source-level name stays the same even though its machine address
 
 Solutions are kept separately from the lesson.
 
-## Further reading
-
-If you enjoy the bottom-up approach used here, J. Clark Scott's *But How Do It Know? — The Basic Principles of Computers for Everyone* is complementary reading. It builds computer concepts from simple digital logic toward a working CPU. EduCPU is an independent project and course, not an implementation or adaptation of the book.
-
-A purchase link may be marked as an **affiliate link**. If you buy through such a link, Ploos AS may receive a commission at no additional cost to you.
-
 ## Next
 
 Now we can write readable machine-level programs. Next we study **arithmetic, FLAGS and branches**, where the CPU begins making decisions based on previous results.
