@@ -28,6 +28,9 @@ jobs:
       - name: Run loader hand-off simulation
         working-directory: fpga/rtl
         run: make loader-test
+      - name: Run serial loader protocol simulation
+        working-directory: fpga/rtl
+        run: make serial-loader-test
       - name: Run board-neutral Yosys/iCE40 synthesis
         working-directory: fpga/rtl
         run: make synth
