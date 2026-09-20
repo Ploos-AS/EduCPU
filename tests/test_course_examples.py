@@ -8,6 +8,7 @@ from educ_ir import lower
 from educ_codegen import generate
 from eduasm import assemble_object
 from edulink import link
+from eduguide import guided_steps
 
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURE = ROOT / "course" / "examples" / "lesson01-number-formats.eduasm"
@@ -385,4 +386,28 @@ def test_lesson14_compile_trace_and_runtime_state_transitions():
     assert cpu.r[0] == 42
     assert cpu.halted
     assert cpu.trap is None
+    assert cpu.sp == 0xFF00
+
+
+def test_guided_runner_eduasm_uses_reference_cpu():
+    source = ROOT / "course" / "examples" / "lesson03-cpu-cycle.eduasm"
+    cpu, symbols, steps = guided_steps(source)
+    assert steps
+    assert steps[0]["pc"] == 0
+    assert steps[0]["instruction"].startswith("MOVI")
+    assert steps[0]["changes"]
+    assert cpu.halted
+    assert cpu.trap is None
+    assert cpu.r[0] == 30
+
+
+def test_guided_runner_educ_sets_up_main_and_balances_stack():
+    source = ROOT / "course" / "examples" / "lesson14-end-to-end.educ"
+    cpu, symbols, steps = guided_steps(source)
+    assert symbols["main"] >= 0
+    assert steps[0]["pc"] == symbols["main"]
+    assert any(s["before"]["sp"] != s["after"]["sp"] for s in steps)
+    assert cpu.halted
+    assert cpu.trap is None
+    assert cpu.r[0] == 42
     assert cpu.sp == 0xFF00
