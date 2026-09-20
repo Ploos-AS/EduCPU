@@ -22,3 +22,5 @@ jobs:
       - name: Run RTL smoke test
         working-directory: fpga/rtl
         run: make test
+      - name: Check reference-model conformance vectors
+        run: sh fpga/conformance/check_reference.sh
