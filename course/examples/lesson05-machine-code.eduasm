@@ -1,0 +1,5 @@
+; Lesson 05 fixture: exact instruction encoding.
+MOVI R0, 42
+MOVI R1, 1
+ADD R0, R1
+HALT
