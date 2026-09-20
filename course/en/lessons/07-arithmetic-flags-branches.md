@@ -134,6 +134,14 @@ arithmetic → FLAGS → conditional branch → PC → next instruction
 
 Which part of that chain makes a high-level decision possible without the CPU understanding the meaning of the program?
 
+## Tools
+
+Use the real course fixture: `course/examples/lesson07-flags-branches.eduasm`.
+
+**EduVis:** use this tool during the observation step. **EduGuide:** use the guided PREDICT → OBSERVE → EXPLAIN workflow.
+
+Predict important changes before running the fixture, then compare them with the observation.
+
 ## Next
 
 Next we introduce the **stack**: a disciplined use of memory controlled by SP that lets programs temporarily save values and, later, support function calls.
