@@ -198,7 +198,7 @@ Kjør deretter fixturen og kontroller én konkret overgang mellom hvert naboniv�
 
 Bruk den ekte kursfixturen: `course/examples/lesson10-compiler.educ`.
 
-**EduGuide:** bruk nettleservisualiseringen for å stege gjennom CPU-tilstanden.
+**EduGuide:** bruk den guidede PREDICT → OBSERVE → EXPLAIN-flyten. For CPU-kjøring kan du bruke EduVis.
 
 Forvent viktige tilstands- eller compiler-endringer før du kjører fixturen, og sammenlign deretter med resultatet.
 
