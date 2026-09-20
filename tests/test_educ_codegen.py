@@ -39,7 +39,7 @@ def test_many_values_use_stack_not_register_limit():
 def test_generated_constant_function_executes():
  asm=compile_asm("byte answer(){return 42;}")
  obj,_=assemble_object(asm)
- data=bytes.fromhex(obj["data"])
+ data,_,_=link([obj])
  c=CPU();c.mem[:len(data)]=data
  # Direct function entry needs a synthetic return address. Return to HALT after body.
  halt=len(data);c.mem[halt]=0x01
