@@ -9,6 +9,7 @@ from educ_codegen import generate
 from eduasm import assemble_object
 from edulink import link
 from eduguide import guided_steps
+from eduvis import Visualizer, load_program
 
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURE = ROOT / "course" / "examples" / "lesson01-number-formats.eduasm"
@@ -411,3 +412,26 @@ def test_guided_runner_educ_sets_up_main_and_balances_stack():
     assert cpu.trap is None
     assert cpu.r[0] == 42
     assert cpu.sp == 0xFF00
+
+
+def test_eduvis_loads_course_eduasm_with_source_map():
+    source = ROOT / "course" / "examples" / "lesson03-cpu-cycle.eduasm"
+    data, debug = load_program(source)
+    assert data
+    assert debug["source"] == str(source)
+    vis = Visualizer(data, debug)
+    snap = vis.snapshot()
+    assert snap["pc"] == 0
+    assert snap["source"]["line"] >= 1
+    assert "MOVI" in snap["instruction"]
+
+
+def test_eduvis_reset_restores_modified_memory():
+    source = ROOT / "course" / "examples" / "lesson03-cpu-cycle.eduasm"
+    data, debug = load_program(source)
+    vis = Visualizer(data, debug)
+    addr = 0x8000
+    vis.cpu.mem[addr] = 0xAA
+    vis.action("reset")
+    assert vis.cpu.mem[addr] == 0
+    assert bytes(vis.cpu.mem[:len(data)]) == data
