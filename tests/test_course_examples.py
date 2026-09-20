@@ -4,6 +4,10 @@ from eduasm import assemble_text
 from educpu import CPU
 from educ import compile_source, parse, Program, Function, VarDecl, Return, Call, Name
 from educ_semantic import analyze, SemanticError
+from educ_ir import lower
+from educ_codegen import generate
+from eduasm import assemble_object
+from edulink import link
 
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURE = ROOT / "course" / "examples" / "lesson01-number-formats.eduasm"
@@ -262,3 +266,46 @@ def test_lesson11_real_ast_and_semantic_analysis():
         assert "unknown variable: missing" in str(exc)
     else:
         raise AssertionError("semantic analysis accepted an unknown variable")
+
+
+def test_lesson12_real_ir_codegen_pipeline_executes():
+    source = ROOT / "course" / "examples" / "lesson12-ir-codegen.educ"
+    tree = parse(source.read_text())
+    ir = lower(tree)
+    assert [fn.name for fn in ir.functions] == ["add_two", "main"]
+
+    add_two = ir.functions[0]
+    ops = [ins.op for ins in add_two.instructions]
+    assert "const" in ops
+    assert "add" in ops
+    assert "copy" in ops
+    assert "ret" in ops
+
+    main = ir.functions[1]
+    assert "call" in [ins.op for ins in main.instructions]
+
+    asm = generate(ir)
+    assert ".export add_two" in asm
+    assert ".export main" in asm
+    assert "ENTER " in asm
+    assert "STORES [" in asm
+    assert "LOADS " in asm
+    assert "CALL add_two" in asm
+
+    obj, _ = assemble_object(asm)
+    data, symbols, _ = link([obj])
+    cpu = CPU()
+    cpu.mem[:len(data)] = data
+    cpu.pc = symbols["main"]
+    halt = len(data)
+    cpu.mem[halt] = 0x01
+    cpu.sp -= 1
+    cpu.mem[cpu.sp] = (halt >> 8) & 0xFF
+    cpu.sp -= 1
+    cpu.mem[cpu.sp] = halt & 0xFF
+    cpu.run()
+
+    assert cpu.r[0] == 42
+    assert cpu.halted
+    assert cpu.trap is None
+    assert cpu.sp == 0xFF00
