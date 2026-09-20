@@ -57,3 +57,24 @@ def test_lesson03_cpu_cycle_fixture():
     assert cpu.r[1] == 20
     assert cpu.pc == len(data)
     assert cpu.flags == 0
+
+
+def test_lesson04_machine_state_step_by_step():
+    source = ROOT / "course" / "examples" / "lesson04-machine-state.eduasm"
+    data, _, _ = assemble_text(source.read_text())
+    cpu = CPU()
+    cpu.mem[:len(data)] = data
+
+    assert (cpu.r[0], cpu.r[1], cpu.pc, cpu.sp, cpu.flags) == (0, 0, 0, 0xFF00, 0)
+    cpu.step()
+    assert (cpu.r[0], cpu.pc, cpu.flags) == (5, 3, 0)
+    cpu.step()
+    assert (cpu.r[1], cpu.pc, cpu.flags) == (5, 6, 0)
+    cpu.step()
+    assert cpu.r[0] == 0
+    assert cpu.pc == 9
+    assert cpu.flags == (CPU.Z | CPU.C)
+    assert cpu.sp == 0xFF00
+    cpu.step()
+    assert cpu.halted
+    assert cpu.pc == len(data)
