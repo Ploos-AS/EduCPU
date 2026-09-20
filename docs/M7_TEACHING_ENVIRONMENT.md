@@ -48,7 +48,7 @@ A learner should be able to start with bits and bytes and progressively understa
 - [x] cover EduC, AST, semantic analysis and EduIR
 - [x] cover compiler backend, object/link stages and final execution
 - [x] add lesson fixtures and automated checks
-- [ ] M7 qualification
+- [x] M7 qualification\n- [x] separate bilingual exercise solutions
 
 
 ## Pedagogical direction: no magic boxes
