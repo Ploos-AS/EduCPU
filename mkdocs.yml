@@ -17,6 +17,7 @@ nav:
       - "05 — Instructions and machine code": en/lessons/05-instructions-machine-code.md
       - "06 — EduASM and what an assembler does": en/lessons/06-eduasm.md
       - "07 — Arithmetic, FLAGS and branches": en/lessons/07-arithmetic-flags-branches.md
+      - "08 — The stack": en/lessons/08-stack.md
   - Norske leksjoner:
       - "01 — Bits, bytes, binært og heksadesimalt": no/lessons/01-bits-bytes-hex.md
       - "02 — Logikk og lagring av informasjon": no/lessons/02-logikk-og-lagring.md
@@ -25,6 +26,7 @@ nav:
       - "05 — Instruksjoner og maskinkode": no/lessons/05-instruksjoner-maskinkode.md
       - "06 — EduASM og hva en assembler gjør": no/lessons/06-eduasm.md
       - "07 — Aritmetikk, FLAGS og hopp": no/lessons/07-aritmetikk-flags-hopp.md
+      - "08 — Stacken": no/lessons/08-stacken.md
 markdown_extensions:
   - fenced_code
   - tables
