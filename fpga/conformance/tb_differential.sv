@@ -6,6 +6,7 @@ module tb_differential;
     logic [7:0] mem_wdata;
     logic mem_we, halted, trap;
     integer i, cycles;
+    logic [31:0] mem_hash;
     reg [1023:0] image;
 
     assign mem_rdata=mem[mem_addr];
@@ -23,7 +24,11 @@ module tb_differential;
         while(!halted && !trap && cycles<1000) begin @(posedge clk); #1; cycles=cycles+1; end
         $write("pc=%04x sp=%04x flags=%02x halted=%0d trap=%0d regs=",dut.pc,dut.sp,dut.flags,halted,trap);
         for(i=0;i<8;i=i+1) begin $write("%02x",dut.r[i]); if(i!=7)$write(" "); end
-        $write("\n");
+        mem_hash=32'h811c9dc5;
+        for(i=0;i<65536;i=i+1) begin
+            mem_hash=(mem_hash ^ mem[i]) * 32'h01000193;
+        end
+        $write(" memhash=%08x\n",mem_hash);
         if(cycles>=1000)$fatal(1,"cycle limit");
         $finish;
     end
