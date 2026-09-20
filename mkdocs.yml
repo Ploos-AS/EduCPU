@@ -14,11 +14,13 @@ nav:
       - "02 — Logic and storing information": en/lessons/02-logic-and-storage.md
       - "03 — What is a CPU?": en/lessons/03-what-is-a-cpu.md
       - "04 — Machine state": en/lessons/04-machine-state.md
+      - "05 — Instructions and machine code": en/lessons/05-instructions-machine-code.md
   - Norske leksjoner:
       - "01 — Bits, bytes, binært og heksadesimalt": no/lessons/01-bits-bytes-hex.md
       - "02 — Logikk og lagring av informasjon": no/lessons/02-logikk-og-lagring.md
       - "03 — Hva er en CPU?": no/lessons/03-hva-er-en-cpu.md
       - "04 — Maskintilstand": no/lessons/04-maskintilstand.md
+      - "05 — Instruksjoner og maskinkode": no/lessons/05-instruksjoner-maskinkode.md
 markdown_extensions:
   - fenced_code
   - tables
