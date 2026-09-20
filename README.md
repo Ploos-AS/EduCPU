@@ -53,11 +53,11 @@ See [ROADMAP.md](ROADMAP.md) for milestone details.
 
 EduCPU is a mixed software/hardware-design project.
 
-Software, reference models, tools, documentation and course material default
-to the **MIT License**.
+Software, reference models, tools and project documentation default to the **MIT License**.
 
-FPGA/HDL/gateware and any physical hardware design sources default to
-**CERN-OHL-P-2.0**.
+The EduCPU educational course material defaults to **CC BY 4.0**; executable course source-code examples remain MIT-licensed software unless explicitly stated otherwise.
+
+FPGA/HDL/gateware and any physical hardware design sources default to **CERN-OHL-P-2.0**.
 
 See [docs/LICENSING.md](docs/LICENSING.md) for the repository licence
 boundaries and full licence files.
