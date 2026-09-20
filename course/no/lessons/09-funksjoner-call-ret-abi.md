@@ -175,6 +175,14 @@ caller → argumentregistre → CALL → returadresse på stack
 
 Hvilke deler er hardware/ISA-oppførsel, og hvilke eksisterer bare fordi programvare er enig om ABI-en?
 
+## Verktøy
+
+Bruk den ekte kursfixturen: `course/examples/lesson09-call-ret-abi.eduasm`.
+
+**EduVis:** bruk nettleservisualiseringen for å stege gjennom CPU-tilstanden. **eduguide:** bruk den guidede PREDICT → OBSERVE → EXPLAIN-flyten.
+
+Forvent viktige tilstands- eller compiler-endringer før du kjører fixturen, og sammenlign deretter med resultatet.
+
 ## Neste
 
 Nå kjenner vi nok av lavnivåmekanismene til å stille et mye større spørsmål: Hvordan kan programmereren skrive noe mer uttrykksfullt og la verktøy produsere alt dette automatisk? Neste: **Hva er en compiler?**
