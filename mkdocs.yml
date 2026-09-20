@@ -19,3 +19,5 @@ markdown_extensions:
   - fenced_code
   - tables
   - toc
+
+copyright: "Copyright © 2026 Ploos AS · Course content licensed CC BY 4.0"
