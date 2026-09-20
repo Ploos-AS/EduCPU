@@ -218,11 +218,6 @@ Legg merke til at navnet i kildekoden er det samme selv om maskinadressen endres
 
 Løsningene oppbevares separat fra leksjonen.
 
-## Videre lesning
-
-Hvis du liker bottom-up-tilnærmingen i dette kurset, er J. Clark Scotts *But How Do It Know? — The Basic Principles of Computers for Everyone* et godt supplement. Boken bygger datamaskinkonsepter fra enkel digital logikk og videre mot en fungerende CPU. EduCPU er et selvstendig prosjekt og kurs, ikke en implementasjon eller bearbeidelse av boken.
-
-En kjøpslenke kan være merket som en **affiliate-lenke**. Hvis du handler gjennom en slik lenke, kan Ploos AS motta provisjon uten ekstra kostnad for deg.
 
 ## Neste
 
