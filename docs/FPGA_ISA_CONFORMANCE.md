@@ -28,7 +28,7 @@ This matrix maps every frozen EduCPU ISA v0 opcode to at least one reference↔R
 | 2B | NOT | logic_full |
 | 2C | SHL | logic_shift |
 | 2D | SHR | logic_shift |
-| 30 | JMP | **GAP: no dedicated executed differential vector yet** |
+| 30 | JMP | jmp |
 | 31 | JZ | branch |
 | 32 | JNZ | jnz |
 | 33 | JC | branches_flags |
@@ -47,4 +47,4 @@ This matrix maps every frozen EduCPU ISA v0 opcode to at least one reference↔R
 
 ## Closing gate
 
-Full ISA v0 differential conformance is not marked complete until the remaining JMP gap is covered and the matrix is kept in CI-visible source control.
+Full ISA v0 differential conformance is complete: every frozen opcode has an executed differential vector, with invalid-opcode and invalid-register trap coverage. The matrix remains in source control as the explicit coverage record.
