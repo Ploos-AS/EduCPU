@@ -10,6 +10,22 @@ The course is designed for beginners. You do not need prior knowledge of CPU des
 
 Allow roughly **30–60 minutes per lesson** for the reading and basic exercises. Lessons 10–15 may take **60–120 minutes** when you complete the practical exercises and follow the full toolchain.
 
+## Terminology we use consistently
+
+- **bit / byte** — one bit is 0 or 1; one byte is 8 bits.
+- **register** — a small, named storage location inside the CPU.
+- **machine state** — the values in registers, PC, SP, FLAGS and other relevant architectural state.
+- **instruction** — an architectural operation the CPU is required to perform.
+- **opcode** — the bit pattern identifying an instruction's operation.
+- **ISA** — the contract describing instructions, encoding and observable behaviour.
+- **reference CPU** — the authoritative software model used to define and check architectural behaviour.
+- **emulator** — a separate implementation that emulates EduCPU and can be compared with the reference CPU.
+- **datapath** — the hardware structure that moves and processes values.
+- **control logic** — the logic that selects which datapath actions occur.
+- **implementation** — a concrete realization of the ISA, such as software or FPGA logic.
+
+**Architecture and implementation are kept separate throughout the course.** EduCPU is a standalone project and teaching system. External CPU or hardware projects are not part of the EduCPU architecture or roadmap.
+
 ## Course map
 
 ```text
