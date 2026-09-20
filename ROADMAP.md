@@ -54,7 +54,7 @@ Course from binary/hex through compiler construction and complete execution. See
 - [x] GitHub Pages generation pipeline
 - [x] lessons 01–15 in English and Norwegian
 - [x] compile-trace integration in guided end-to-end lesson
-- [ ] simulator/visualizer lesson integration
+- [x] simulator/visualizer lesson integration
 - [x] complete progressive course coverage
 - [x] executable lesson fixtures and checks
 - [x] M7 course-content qualification — CI and Pages PASS; see docs/M7_QUALIFICATION.md
