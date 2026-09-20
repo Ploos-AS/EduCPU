@@ -210,3 +210,54 @@ def test_alu_invalid_register_operand_differential():
         emulator.step()
         assert state(emulator) == state(reference)
         assert emulator.trap == "INVALID_OPERAND"
+
+
+def test_jmp_differential():
+    # Jump over an invalid opcode to HALT.
+    assert_differential(bytes([
+        0x30, 0x04, 0x00,
+        0xFE,
+        0x01,
+    ]))
+
+
+def test_conditional_branches_taken_and_not_taken_differential():
+    cases = (
+        (0x31, 0x01, True),   # JZ
+        (0x31, 0x00, False),
+        (0x32, 0x00, True),   # JNZ
+        (0x32, 0x01, False),
+        (0x33, 0x04, True),   # JC
+        (0x33, 0x00, False),
+        (0x34, 0x00, True),   # JNC
+        (0x34, 0x04, False),
+        (0x35, 0x02, True),   # JN
+        (0x35, 0x00, False),
+        (0x36, 0x00, True),   # JP means N=0
+        (0x36, 0x02, False),
+    )
+    for opcode, flags, should_take in cases:
+        reference, emulator = machines(bytes([opcode, 0x06, 0x00, 0x01]))
+        reference.flags = emulator.flags = flags
+        reference.step()
+        emulator.step()
+        assert state(emulator) == state(reference)
+        assert emulator.pc == (0x0006 if should_take else 0x0003)
+
+
+def test_branch_address_is_little_endian():
+    reference, emulator = machines(bytes([0x30, 0x34, 0x12]))
+    reference.step()
+    emulator.step()
+    assert state(emulator) == state(reference)
+    assert emulator.pc == 0x1234
+
+
+def test_conditional_branch_preserves_flags():
+    for opcode in range(0x31, 0x37):
+        reference, emulator = machines(bytes([opcode, 0x03, 0x00]))
+        reference.flags = emulator.flags = 0x0F
+        reference.step()
+        emulator.step()
+        assert state(emulator) == state(reference)
+        assert emulator.flags == 0x0F
