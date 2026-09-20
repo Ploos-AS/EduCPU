@@ -31,6 +31,9 @@ jobs:
       - name: Run explicit SPRAM iCE40UP5K machine qualification
         working-directory: fpga/rtl
         run: make spram-up5k
+      - name: Build UPduino v3.1 bitstream
+        working-directory: fpga/rtl
+        run: make upduino-v31
       - name: Check reference-model conformance vectors
         run: sh fpga/conformance/check_reference.sh
       - name: Run RTL/reference differential conformance
