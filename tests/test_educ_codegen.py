@@ -2,7 +2,7 @@ import sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 sys.path[:0]=[str(ROOT/"tools"),str(ROOT/"reference")]
-from educ import parse
+from educ import parse,compile_source
 from educ_ir import lower
 from educ_codegen import generate,CodegenError
 from eduasm import assemble_object
@@ -109,3 +109,16 @@ def test_control_flow_labels_are_namespaced_per_function():
  assert data
  c=run_function(source)
  assert c.r[0]==3 and c.halted and c.sp==0xFF00
+
+
+def test_complete_educ_compile_pipeline_executes():
+ source="byte add(byte a,byte b){return a+b;} byte main(){return add(20,22);}"
+ tree,ir,asm,obj,data,symbols=compile_source(source,"pipeline.educ")
+ assert tree.functions and ir.functions
+ assert ".export main" in asm
+ assert obj["format"]=="educpu-object-v0"
+ c=CPU();c.mem[:len(data)]=data;c.pc=symbols["main"]
+ halt=len(data);c.mem[halt]=0x01
+ c.sp-=1;c.mem[c.sp]=(halt>>8)&255;c.sp-=1;c.mem[c.sp]=halt&255
+ c.run()
+ assert c.r[0]==42 and c.halted and c.sp==0xFF00
