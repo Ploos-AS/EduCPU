@@ -1,0 +1,5 @@
+# UPduino v3.x RGB LED pins, verified against XarkLabs/upduino-example.
+# On-board RGB LED uses negative logic on these dedicated pins.
+set_io -nowarn led_g 39
+set_io -nowarn led_r 41
+set_io -nowarn led_b 40
