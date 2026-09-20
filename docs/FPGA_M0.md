@@ -63,3 +63,17 @@ FPGA CI #84 qualifies the physical 64 KiB memory backend on iCE40UP5K.
 - RTL/reference differential conformance: PASS (20 programs)
 
 The physical backend therefore provides the full 64 KiB EduCPU address space using half of the UP5K SPRAM capacity while preserving the qualified ISA-visible behaviour.
+
+## M0.13 UPduino v3.1 bitstream qualification
+
+FPGA CI #92 qualifies the first concrete development-board target.
+
+- UPduino v3.1 wrapper synthesis/place-and-route: PASS
+- explicit 64 KiB SPRAM backend: 2 / 4 blocks (50%)
+- logic: 981 / 5280 ICESTORM_LC (18%)
+- timing: 21.33 MHz achieved, PASS at the 12 MHz target
+- IceStorm bitstream generation: PASS
+- output: `educpu_upduino_v31.bin`
+- RTL/reference differential conformance: PASS (20 programs)
+
+The remaining board gate is physical execution on an actual UPduino. See `FPGA_UPDUINO_BRINGUP.md`; do not mark physical bring-up PASS from CI alone.
