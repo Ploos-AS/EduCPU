@@ -47,9 +47,11 @@ def test_generated_constant_function_executes():
  c.run()
  assert c.r[0]==42 and c.halted and c.sp==0xFF00
 
-def run_function(source, args=()):
- asm=compile_asm(source);obj,_=assemble_object(asm);data,_,_=link([obj])
+def run_function(source, args=(), entry=None):
+ asm=compile_asm(source);obj,_=assemble_object(asm);data,symbols,_=link([obj])
  c=CPU();c.mem[:len(data)]=data
+ if entry is None:entry="main" if "main" in symbols else next(iter(symbols))
+ c.pc=symbols[entry]
  for i,v in enumerate(args):c.r[i]=v
  halt=len(data);c.mem[halt]=0x01
  c.sp-=1;c.mem[c.sp]=(halt>>8)&255;c.sp-=1;c.mem[c.sp]=halt&255
