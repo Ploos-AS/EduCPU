@@ -188,6 +188,14 @@ Vær oppmerksom på at en endret opcode også kan endre hvordan de etterfølgend
 
 Løsningene oppbevares separat fra leksjonen.
 
+## Verktøy
+
+Bruk den ekte kursfixturen: `course/examples/lesson05-machine-code.eduasm`.
+
+**EduVis:** bruk nettleservisualiseringen for å stege gjennom CPU-tilstanden. **eduguide:** bruk den guidede PREDICT → OBSERVE → EXPLAIN-flyten.
+
+Forvent viktige tilstands- eller compiler-endringer før du kjører fixturen, og sammenlign deretter med resultatet.
+
 ## Neste
 
 Maskinkode er presist, men upraktisk for mennesker. I neste leksjon går vi ett lag opp igjen og studerer **EduASM og hva en assembler gjør**.
