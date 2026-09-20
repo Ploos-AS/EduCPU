@@ -1,0 +1,7 @@
+.export main
+.import add_two
+
+main:
+    MOVI R0, 40
+    CALL add_two
+    HALT
