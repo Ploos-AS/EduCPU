@@ -17,7 +17,7 @@ instruction memory -> fetch/decode/control -> register file <-> ALU
 ## Implementation order
 
 1. module boundaries
-2.1 M0.1 reset and architectural-state skeleton
+2.1 M0.1 reset and architectural-state skeleton (8-bit R0-R7, 16-bit PC/SP, 8-bit FLAGS)
 2. clock/reset
 3. register file and architectural state
 4. instruction fetch
