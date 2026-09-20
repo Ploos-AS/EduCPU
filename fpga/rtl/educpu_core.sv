@@ -5,6 +5,8 @@ module educpu_core (
     output logic [15:0] mem_addr,
     output logic [7:0]  mem_wdata,
     output logic        mem_we,
+    output logic        mem_valid,
+    input  logic        mem_ready,
     output logic        halted,
     output logic        trap
 );
@@ -375,6 +377,7 @@ module educpu_core (
                        (state == S_CALL_PUSH_LO) ? pc[7:0] :
                        (state == S_PUSH_WRITE) ? stack_data :
                        (state == S_MEM_ACCESS && (current_op == OP_STORE || current_op == OP_STORER || current_op == OP_STORES)) ? r[store_reg] : r[operand_rd];
+    assign mem_valid = !halted && !trap;
     assign mem_we = ((state == S_MEM_ACCESS) &&
                     (current_op == OP_STORE || current_op == OP_STORER || current_op == OP_STORES)) ||
                     state == S_PUSH_WRITE || state == S_CALL_PUSH_HI || state == S_CALL_PUSH_LO;
