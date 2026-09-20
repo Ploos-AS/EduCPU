@@ -20,15 +20,19 @@ jobs:
       - name: Install ebook tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y pandoc epubcheck
+          sudo apt-get install -y pandoc epubcheck librsvg2-bin
       - name: Build manuscripts
         run: |
           python tools/build_ebook.py en build/educpu-en.md
           python tools/build_ebook.py no build/educpu-no.md
+      - name: Render covers
+        run: |
+          rsvg-convert -w 1600 -h 2560 course/ebook/cover-en.svg -o build/cover-en.png
+          rsvg-convert -w 1600 -h 2560 course/ebook/cover-no.svg -o build/cover-no.png
       - name: Build EPUB editions
         run: |
-          pandoc build/educpu-en.md -o build/EduCPU-en.epub --toc --metadata title="EduCPU Course" --metadata author="Ploos AS" --metadata lang="en"
-          pandoc build/educpu-no.md -o build/EduCPU-no.epub --toc --metadata title="EduCPU-kurset" --metadata author="Ploos AS" --metadata lang="nb-NO"
+          pandoc build/educpu-en.md -o build/EduCPU-en.epub --toc --metadata-file=course/ebook/metadata-en.yaml --epub-cover-image=build/cover-en.png
+          pandoc build/educpu-no.md -o build/EduCPU-no.epub --toc --metadata-file=course/ebook/metadata-no.yaml --epub-cover-image=build/cover-no.png
       - name: Validate EPUB
         run: |
           epubcheck build/EduCPU-en.epub
