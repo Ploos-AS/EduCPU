@@ -2,7 +2,8 @@ from pathlib import Path
 
 from eduasm import assemble_text
 from educpu import CPU
-from educ import compile_source
+from educ import compile_source, parse, Program, Function, VarDecl, Return, Call, Name
+from educ_semantic import analyze, SemanticError
 
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURE = ROOT / "course" / "examples" / "lesson01-number-formats.eduasm"
@@ -227,3 +228,37 @@ def test_lesson10_real_compiler_pipeline_executes():
     assert cpu.halted
     assert cpu.trap is None
     assert cpu.sp == 0xFF00
+
+
+def test_lesson11_real_ast_and_semantic_analysis():
+    source = ROOT / "course" / "examples" / "lesson11-ast-semantics.educ"
+    tree = parse(source.read_text())
+    assert isinstance(tree, Program)
+    assert [fn.name for fn in tree.functions] == ["add", "main"]
+
+    add, main = tree.functions
+    assert isinstance(add, Function)
+    assert add.return_type == "byte"
+    assert add.params == [("byte", "a"), ("byte", "b")]
+    assert isinstance(add.body[0], Return)
+
+    decl = main.body[0]
+    assert isinstance(decl, VarDecl)
+    assert decl.type == "byte" and decl.name == "answer"
+    assert isinstance(decl.value, Call)
+    assert decl.value.name == "add"
+    assert isinstance(main.body[1], Return)
+    assert isinstance(main.body[1].value, Name)
+    assert main.body[1].value.name == "answer"
+
+    signatures = analyze(tree)
+    assert signatures["add"].return_type == "byte"
+    assert signatures["main"].return_type == "byte"
+
+    bad = parse("byte main(){return missing+2;}")
+    try:
+        analyze(bad)
+    except SemanticError as exc:
+        assert "unknown variable: missing" in str(exc)
+    else:
+        raise AssertionError("semantic analysis accepted an unknown variable")
