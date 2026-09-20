@@ -5,6 +5,7 @@ The reference model is an oracle used only by differential tests.
 """
 from dataclasses import dataclass, field
 from typing import Callable
+from devices import DeviceMap
 import copy
 
 MEM_SIZE = 65536
@@ -19,6 +20,7 @@ class Emulator:
     mem: bytearray = field(default_factory=lambda: bytearray(MEM_SIZE))
     halted: bool = False
     trap: str | None = None
+    devices: DeviceMap | None = None
     before_step: Callable[["Emulator"], None] | None = None
     after_step: Callable[["Emulator"], None] | None = None
     on_memory_read: Callable[[int, int], None] | None = None
@@ -33,10 +35,13 @@ class Emulator:
         self.flags = 0
         self.halted = False
         self.trap = None
+        if self.devices:
+            self.devices.reset()
 
     def _read_mem(self, address: int) -> int:
         address &= 0xFFFF
-        value = self.mem[address]
+        mapped = self.devices.lookup(address) if self.devices else None
+        value = mapped[0].read(mapped[1]) if mapped else self.mem[address]
         if self.on_memory_read:
             self.on_memory_read(address, value)
         return value
@@ -44,7 +49,11 @@ class Emulator:
     def _write_mem(self, address: int, value: int) -> None:
         address &= 0xFFFF
         value &= 0xFF
-        self.mem[address] = value
+        mapped = self.devices.lookup(address) if self.devices else None
+        if mapped:
+            mapped[0].write(mapped[1], value)
+        else:
+            self.mem[address] = value
         if self.on_memory_write:
             self.on_memory_write(address, value)
 
