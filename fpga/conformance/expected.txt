@@ -1,0 +1,6 @@
+nop_halt pc=0002 sp=ff00 flags=00 halted=1 trap=0 regs=00 00 00 00 00 00 00 00
+mov_alu pc=000a sp=ff00 flags=05 halted=1 trap=0 regs=00 00 00 00 00 00 00 00
+logic_shift pc=0008 sp=ff00 flags=01 halted=1 trap=0 regs=00 00 00 00 00 00 00 00
+branch pc=000b sp=ff00 flags=05 halted=1 trap=0 regs=00 00 00 00 00 00 00 00
+stack pc=0008 sp=ff00 flags=00 halted=1 trap=0 regs=5a 5a 00 00 00 00 00 00
+call_ret pc=0004 sp=ff00 flags=00 halted=1 trap=0 regs=00 00 33 00 00 00 00 00
