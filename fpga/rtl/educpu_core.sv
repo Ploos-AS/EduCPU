@@ -260,6 +260,9 @@ module educpu_core (
                     end else if (current_op == OP_STORER) begin
                         if (operand_addr[7:0] > 8'd7 || mem_rdata > 8'd7) trap <= 1'b1;
                         else begin operand_addr <= {8'h00, r[operand_addr[2:0]]}; operand_rd <= mem_rdata[2:0]; state <= S_MEM_ACCESS; end
+                    end else if (current_op == OP_STORE) begin
+                        if (mem_rdata > 8'd7) trap <= 1'b1;
+                        else begin operand_rd <= mem_rdata[2:0]; state <= S_MEM_ACCESS; end
                     end else begin
                         if (mem_rdata > 8'd7) trap <= 1'b1;
                         else begin operand_addr <= sp + {{8{operand_addr[7]}}, operand_addr[7:0]}; operand_rd <= mem_rdata[2:0]; state <= S_MEM_ACCESS; end
