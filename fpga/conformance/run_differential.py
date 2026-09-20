@@ -15,7 +15,7 @@ def rtl(program,sim):
  with tempfile.NamedTemporaryFile("w",suffix=".hex",delete=False) as f:
   f.write("\n".join(f"{b:02x}" for b in program)+"\n"); name=f.name
  try:
-  out=subprocess.check_output(["vvp",str(sim),f"+IMAGE={name}"],text=True).strip().splitlines()[-1]
+  lines=subprocess.check_output(["vvp",str(sim),f"+IMAGE={name}"],text=True).strip().splitlines()\n  out=next((line for line in reversed(lines) if line.startswith("pc=")), None)\n  if out is None: raise RuntimeError("RTL harness produced no architectural-state line: "+repr(lines))
  finally: Path(name).unlink(missing_ok=True)
  fields=out.split(" regs="); h=dict(x.split("=") for x in fields[0].split())
  regs=tuple(int(x,16) for x in fields[1].split())
