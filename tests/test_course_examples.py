@@ -97,3 +97,22 @@ def test_lesson05_exact_machine_code():
 def test_lesson05_little_endian_address_encoding():
     data, _, _ = assemble_text("JMP 0x1234\n")
     assert data == bytes([0x30, 0x34, 0x12])
+
+
+def test_lesson06_labels_and_execution():
+    source = ROOT / "course" / "examples" / "lesson06-eduasm.eduasm"
+    data, labels, rows = assemble_text(source.read_text())
+    assert labels["loop"] == 0x0003
+    assert data == bytes([
+        0x11, 0x00, 0x03,
+        0x23, 0x00, 0x01,
+        0x32, 0x03, 0x00,
+        0x01,
+    ])
+    cpu = CPU()
+    cpu.mem[:len(data)] = data
+    cpu.run()
+    assert cpu.halted
+    assert cpu.trap is None
+    assert cpu.r[0] == 0
+    assert cpu.pc == len(data)
