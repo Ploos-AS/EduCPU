@@ -164,6 +164,14 @@ POP  Rx: Rx → ______ ; SP → ______
 
 Hvorfor gir dette paret naturlig LIFO-rekkefølge?
 
+## Verktøy
+
+Bruk den ekte kursfixturen: `course/examples/lesson08-stack.eduasm`.
+
+**EduVis:** bruk nettleservisualiseringen for å stege gjennom CPU-tilstanden. **eduguide:** bruk den guidede PREDICT → OBSERVE → EXPLAIN-flyten.
+
+Forvent viktige tilstands- eller compiler-endringer før du kjører fixturen, og sammenlign deretter med resultatet.
+
 ## Neste
 
 En stack blir langt kraftigere når CPU-en kan lagre hvor programmet skal returnere. Neste leksjon: **funksjoner, CALL/RET og EduCPU ABI**.
