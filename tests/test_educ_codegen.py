@@ -46,7 +46,32 @@ def test_generated_constant_function_executes():
  c.run()
  assert c.r[0]==42 and c.halted and c.sp==0xFF00
 
-def test_unsupported_control_flow_is_explicit():
- try:compile_asm("byte f(bool x){if(x){return 1;}else{return 2;}}")
- except CodegenError as e:assert "not yet supported" in str(e)
- else:assert False
+def run_function(source, args=()):
+ asm=compile_asm(source);obj,_=assemble_object(asm);data=bytes.fromhex(obj["data"])
+ c=CPU();c.mem[:len(data)]=data
+ for i,v in enumerate(args):c.r[i]=v
+ halt=len(data);c.mem[halt]=0x01
+ c.sp-=1;c.mem[c.sp]=(halt>>8)&255;c.sp-=1;c.mem[c.sp]=halt&255
+ c.run()
+ return c
+
+def test_if_else_executes_both_paths():
+ source="byte choose(bool x){if(x){return 11;}else{return 22;}}"
+ assert run_function(source,(1,)).r[0]==11
+ assert run_function(source,(0,)).r[0]==22
+
+def test_while_executes():
+ source="byte count(byte n){byte x=0;while(x<n){x=x+1;}return x;}"
+ c=run_function(source,(7,))
+ assert c.r[0]==7 and c.sp==0xFF00
+
+def test_all_unsigned_comparisons():
+ ops=[("==",1,1,1),("!=",1,2,1),("<",1,2,1),("<=",2,2,1),(">",3,2,1),(">=",2,2,1),
+      ("==",1,2,0),("!=",2,2,0),("<",2,1,0),("<=",3,2,0),(">",2,3,0),(">=",1,2,0)]
+ for op,a,b,want in ops:
+  c=run_function(f"bool f(byte a,byte b){{return a {op} b;}}",(a,b))
+  assert c.r[0]==want,(op,a,b,c.r[0])
+
+def test_boolean_not():
+ assert run_function("bool f(bool x){return !x;}",(0,)).r[0]==1
+ assert run_function("bool f(bool x){return !x;}",(1,)).r[0]==0
