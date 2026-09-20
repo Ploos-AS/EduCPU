@@ -1,0 +1,8 @@
+; Lesson 08 fixture: demonstrate LIFO and balanced SP.
+MOVI R0, 0x11
+MOVI R1, 0x22
+PUSH R0
+PUSH R1
+POP R2
+POP R3
+HALT
