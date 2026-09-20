@@ -4,6 +4,7 @@ This implementation deliberately does not import or inherit the reference CPU.
 The reference model is an oracle used only by differential tests.
 """
 from dataclasses import dataclass, field
+from typing import Callable
 
 MEM_SIZE = 65536
 
@@ -17,6 +18,10 @@ class Emulator:
     mem: bytearray = field(default_factory=lambda: bytearray(MEM_SIZE))
     halted: bool = False
     trap: str | None = None
+    before_step: Callable[["Emulator"], None] | None = None
+    after_step: Callable[["Emulator"], None] | None = None
+    on_memory_read: Callable[[int, int], None] | None = None
+    on_memory_write: Callable[[int, int], None] | None = None
 
     Z, N, C, V = 1, 2, 4, 8
 
@@ -28,8 +33,22 @@ class Emulator:
         self.halted = False
         self.trap = None
 
+    def _read_mem(self, address: int) -> int:
+        address &= 0xFFFF
+        value = self.mem[address]
+        if self.on_memory_read:
+            self.on_memory_read(address, value)
+        return value
+
+    def _write_mem(self, address: int, value: int) -> None:
+        address &= 0xFFFF
+        value &= 0xFF
+        self.mem[address] = value
+        if self.on_memory_write:
+            self.on_memory_write(address, value)
+
     def _fetch(self) -> int:
-        value = self.mem[self.pc]
+        value = self._read_mem(self.pc)
         self.pc = (self.pc + 1) & 0xFFFF
         return value
 
@@ -119,7 +138,7 @@ class Emulator:
             source = self._reg_operand()
             if source is None:
                 return
-            self.mem[address] = self.r[source]
+            self._write_mem(address, self.r[source])
             return
         if opcode == 0x14:  # LOADR rd,[ra]
             destination = self._reg_operand()
@@ -137,7 +156,7 @@ class Emulator:
             source = self._reg_operand()
             if source is None:
                 return
-            self.mem[self.r[address_register]] = self.r[source]
+            self._write_mem(self.r[address_register], self.r[source])
             return
         if opcode == 0x16:  # LOADS rd,[SP+off8]
             destination = self._reg_operand()
@@ -151,7 +170,7 @@ class Emulator:
             source = self._reg_operand()
             if source is None:
                 return
-            self.mem[(self.sp + offset) & 0xFFFF] = self.r[source]
+            self._write_mem((self.sp + offset) & 0xFFFF, self.r[source])
             return
 
         if opcode in (0x20, 0x22, 0x24, 0x28, 0x29, 0x2A):
@@ -237,7 +256,7 @@ class Emulator:
                 return
             if opcode == 0x40:
                 self.sp = (self.sp - 1) & 0xFFFF
-                self.mem[self.sp] = self.r[register]
+                self._write_mem(self.sp, self.r[register])
             else:
                 self.r[register] = self.mem[self.sp]
                 self.sp = (self.sp + 1) & 0xFFFF
@@ -245,9 +264,9 @@ class Emulator:
 
         if opcode == 0x42:
             self.sp = (self.sp - 1) & 0xFFFF
-            self.mem[self.sp] = (self.pc >> 8) & 0xFF
+            self._write_mem(self.sp, (self.pc >> 8) & 0xFF)
             self.sp = (self.sp - 1) & 0xFFFF
-            self.mem[self.sp] = self.pc & 0xFF
+            self._write_mem(self.sp, self.pc & 0xFF)
             return
 
         if opcode == 0x43:
@@ -277,7 +296,7 @@ class Emulator:
         if opcode == 0x48:  # PUSHA
             for register in range(8):
                 self.sp = (self.sp - 1) & 0xFFFF
-                self.mem[self.sp] = self.r[register]
+                self._write_mem(self.sp, self.r[register])
             return
 
         if opcode == 0x49:  # POPA
@@ -289,9 +308,9 @@ class Emulator:
         if opcode == 0x46:  # ENTER frame_size
             frame_size = self._fetch()
             self.sp = (self.sp - 1) & 0xFFFF
-            self.mem[self.sp] = (self.r[7] >> 8) & 0xFF
+            self._write_mem(self.sp, (self.r[7] >> 8) & 0xFF)
             self.sp = (self.sp - 1) & 0xFFFF
-            self.mem[self.sp] = self.r[7] & 0xFF
+            self._write_mem(self.sp, self.r[7] & 0xFF)
             self.r[7] = self.sp
             self.sp = (self.sp - frame_size) & 0xFFFF
             return
