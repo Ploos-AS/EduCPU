@@ -204,7 +204,39 @@ module tb_educpu_core;
         assert (halted == 1'b1);
         assert (trap == 1'b0);
 
-        $display("EduCPU FPGA M0.6 branches PASS");
+        // PUSH/POP and ENTER/LEAVE preserve visible stack semantics.
+        clear_mem();
+        mem[0]=8'h11; mem[1]=8'h00; mem[2]=8'h5A;
+        mem[3]=8'h40; mem[4]=8'h00;
+        mem[5]=8'h41; mem[6]=8'h01;
+        mem[7]=8'h18; mem[8]=8'h04;
+        mem[9]=8'h19; mem[10]=8'h04;
+        mem[11]=8'h01;
+        do_reset();
+        repeat (12) begin @(posedge clk); #1; end
+        assert (dut.r[1] == 8'h5A);
+        assert (dut.sp == 16'hFF00);
+        assert (mem[16'hFEFF] == 8'h5A);
+        assert (halted == 1'b1);
+        assert (trap == 1'b0);
+
+        // CALL pushes return PC high then low; RET reconstructs it.
+        clear_mem();
+        mem[0]=8'h38; mem[1]=8'h08; mem[2]=8'h00; // CALL 0008
+        mem[3]=8'h01;                              // return target HALT
+        mem[8]=8'h11; mem[9]=8'h02; mem[10]=8'h33;
+        mem[11]=8'h39;                             // RET
+        do_reset();
+        repeat (12) begin @(posedge clk); #1; end
+        assert (dut.r[2] == 8'h33);
+        assert (dut.sp == 16'hFF00);
+        assert (mem[16'hFEFF] == 8'h00); // return high
+        assert (mem[16'hFEFE] == 8'h03); // return low at final SP after pushes
+        assert (dut.pc == 16'h0004);
+        assert (halted == 1'b1);
+        assert (trap == 1'b0);
+
+        $display("EduCPU FPGA M0.7 stack/call PASS");
         $finish;
     end
 endmodule
