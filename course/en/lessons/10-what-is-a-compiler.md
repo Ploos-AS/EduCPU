@@ -182,6 +182,14 @@ Explain this sentence:
 
 Where, precisely, does the connection between those two worlds get created?
 
+## Tools
+
+Use the real course fixture: `course/examples/lesson10-compiler.educ`.
+
+**EduGuide:** use this tool during the observation step.
+
+Predict important changes before running the fixture, then compare them with the observation.
+
 ## Next
 
 Next we inspect the first stages in detail: **EduC, the AST and semantic analysis**.
