@@ -14,4 +14,4 @@ educ = "educ:main"
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-pythonpath = ["reference", "tools"]
+pythonpath = ["reference", "tools", "emulator"]
