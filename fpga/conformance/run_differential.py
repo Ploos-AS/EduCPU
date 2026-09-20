@@ -7,9 +7,15 @@ sys.path.insert(0,str(ROOT))
 from reference.educpu import CPU
 from fpga.conformance.reference_vectors import CASES
 
+def memhash(mem):
+ h=0x811c9dc5
+ for b in mem:
+  h=((h ^ b) * 0x01000193) & 0xffffffff
+ return h
+
 def ref(program):
  c=CPU(); c.mem[:len(program)]=program; c.run(1000)
- return (c.pc,c.sp,c.flags,int(c.halted),int(c.trap is not None),tuple(c.r))
+ return (c.pc,c.sp,c.flags,int(c.halted),int(c.trap is not None),tuple(c.r),memhash(c.mem))
 
 def rtl(program,sim):
  with tempfile.NamedTemporaryFile("w",suffix=".hex",delete=False) as f:
@@ -21,8 +27,9 @@ def rtl(program,sim):
     raise RuntimeError("RTL harness produced no architectural-state line: "+repr(lines))
  finally: Path(name).unlink(missing_ok=True)
  fields=out.split(" regs="); h=dict(x.split("=") for x in fields[0].split())
- regs=tuple(int(x,16) for x in fields[1].split())
- return (int(h["pc"],16),int(h["sp"],16),int(h["flags"],16),int(h["halted"]),int(h["trap"]),regs)
+ regpart,hashpart=fields[1].split(" memhash=")
+ regs=tuple(int(x,16) for x in regpart.split())
+ return (int(h["pc"],16),int(h["sp"],16),int(h["flags"],16),int(h["halted"]),int(h["trap"]),regs,int(hashpart,16))
 
 def main():
  sim=ROOT/"fpga/conformance/diff_simv"
