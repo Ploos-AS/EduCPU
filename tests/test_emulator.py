@@ -386,3 +386,32 @@ def test_compiled_educ_lesson14_runs_identically_on_both_cpus():
     run_compiled_pair(
         ROOT / "course" / "examples" / "lesson14-end-to-end.educ"
     )
+
+
+def test_debugger_hooks_are_deterministic_and_ordered():
+    program = bytes([0x11, 0x00, 0x2A, 0x01])
+    events = []
+    emulator = Emulator()
+    emulator.mem[:len(program)] = program
+    emulator.before_step = lambda cpu: events.append(("before", cpu.pc, cpu.r[0]))
+    emulator.after_step = lambda cpu: events.append(("after", cpu.pc, cpu.r[0]))
+    emulator.run()
+    assert events == [
+        ("before", 0, 0),
+        ("after", 3, 42),
+        ("before", 3, 42),
+        ("after", 4, 42),
+    ]
+
+
+def test_memory_observation_hooks_capture_writes():
+    emulator = Emulator()
+    emulator.sp = 0x9000
+    emulator.r[0] = 0x5A
+    reads, writes = [], []
+    emulator.on_memory_read = lambda address, value: reads.append((address, value))
+    emulator.on_memory_write = lambda address, value: writes.append((address, value))
+    emulator.mem[0:3] = bytes([0x40, 0x00, 0x01])
+    emulator.run()
+    assert (0x8FFF, 0x5A) in writes
+    assert any(address == 0 for address, _ in reads)
