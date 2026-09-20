@@ -445,3 +445,40 @@ def test_trace_is_deterministic_and_restores_existing_hooks():
     emulator.mem[0:2] = bytes([0x00, 0x01])
     second = run_trace(emulator, 10)
     assert first["trace"] == second["trace"]
+
+
+def test_deterministic_device_read_write_and_reset():
+    from devices import ByteStreamDevice, DeviceMap
+    device = ByteStreamDevice([0x41, 0x42])
+    mapping = DeviceMap()
+    mapping.attach(0xFF00, 0xFF01, device)
+    emulator = Emulator(devices=mapping)
+    reads, writes = [], []
+    emulator.on_memory_read = lambda address, value: reads.append((address, value))
+    emulator.on_memory_write = lambda address, value: writes.append((address, value))
+    assert emulator._read_mem(0xFF00) == 0x41
+    emulator._write_mem(0xFF00, 0x43)
+    assert device.output_bytes == bytes([0x43])
+    assert reads == [(0xFF00, 0x41)]
+    assert writes == [(0xFF00, 0x43)]
+    emulator.reset()
+    assert device.output_bytes == b""
+    assert emulator._read_mem(0xFF00) == 0x42
+
+
+def test_unmapped_memory_remains_ram():
+    emulator = Emulator()
+    emulator._write_mem(0xFF10, 0x5A)
+    assert emulator._read_mem(0xFF10) == 0x5A
+
+
+def test_device_ranges_cannot_overlap():
+    from devices import ByteStreamDevice, DeviceMap
+    mapping = DeviceMap()
+    mapping.attach(0xFF00, 0xFF10, ByteStreamDevice())
+    try:
+        mapping.attach(0xFF08, 0xFF18, ByteStreamDevice())
+    except ValueError:
+        pass
+    else:
+        raise AssertionError("overlapping device range accepted")
