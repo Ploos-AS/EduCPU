@@ -97,7 +97,35 @@ module tb_educpu_core;
         assert (dut.flags == 8'h05);
         assert (halted == 1'b1);
 
-        $display("EduCPU FPGA M0.4 arithmetic/flags PASS");
+        // Logic and shift operations: logical ops clear C/V; shifts expose outgoing bit in C.
+        clear_mem();
+        mem[0]=8'h11; mem[1]=8'h00; mem[2]=8'h81; // MOVI R0,81
+        mem[3]=8'h11; mem[4]=8'h01; mem[5]=8'h0F; // MOVI R1,0F
+        mem[6]=8'h28; mem[7]=8'h00; mem[8]=8'h01; // AND R0,R1 => 01
+        mem[9]=8'h2B; mem[10]=8'h00;              // NOT R0 => FE, N
+        mem[11]=8'h2C; mem[12]=8'h00;             // SHL R0 => FC, C,N
+        mem[13]=8'h2D; mem[14]=8'h00;             // SHR R0 => 7E, C=0
+        mem[15]=8'h01;
+        do_reset();
+        repeat (16) begin @(posedge clk); #1; end
+        assert (dut.r[0] == 8'h7E);
+        assert (dut.r[1] == 8'h0F);
+        assert (dut.flags == 8'h00);
+        assert (halted == 1'b1);
+        assert (trap == 1'b0);
+
+        // SHL 0x80 => zero with carry: Z=1,C=1.
+        clear_mem();
+        mem[0]=8'h11; mem[1]=8'h03; mem[2]=8'h80;
+        mem[3]=8'h2C; mem[4]=8'h03;
+        mem[5]=8'h01;
+        do_reset();
+        repeat (6) begin @(posedge clk); #1; end
+        assert (dut.r[3] == 8'h00);
+        assert (dut.flags == 8'h05);
+        assert (halted == 1'b1);
+
+        $display("EduCPU FPGA M0.4 complete ALU/FLAGS PASS");
         $finish;
     end
 endmodule
