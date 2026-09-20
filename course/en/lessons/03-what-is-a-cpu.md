@@ -201,6 +201,14 @@ This is an important transition: you are beginning to look at the program from t
 
 Solutions are kept separately from the lesson.
 
+## Tools
+
+Use the real course fixture: `course/examples/lesson03-cpu-cycle.eduasm`.
+
+**EduVis:** use this tool during the observation step. **EduGuide:** use the guided PREDICT → OBSERVE → EXPLAIN workflow.
+
+Predict important changes before running the fixture, then compare them with the observation.
+
 ## Next
 
 We now have a complete first mental model of a CPU. Next we look more closely at **machine state**: PC, SP, FLAGS, R0–R7 and memory, and learn how to describe an exact instant in an EduCPU program.
