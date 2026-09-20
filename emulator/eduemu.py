@@ -53,7 +53,6 @@ class Emulator:
         if mapped:
             mapped[0].write(mapped[1], value)
         else:
-            if not mapped:
             self.mem[address] = value
         if self.on_memory_write:
             self.on_memory_write(address, value)
