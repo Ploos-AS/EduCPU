@@ -183,6 +183,18 @@ EduASM: how EduCPU resources perform them
 
 Why is that boundary useful both for compiler design and for teaching?
 
+## Representation checkpoint
+
+Choose one value, such as the result of `x + 2`, and follow it across three levels:
+
+```text
+EduIR temporary → stack slot/register → EduASM instruction sequence
+```
+
+Before displaying generated code, predict which machine resources must be used. Then compare with the actual backend output.
+
+The goal is not to guess the exact generated code, but to explain **why** the generated code needs the resources it uses.
+
 ## Tools
 
 Use the real course fixture: `course/examples/lesson12-ir-codegen.educ`.
