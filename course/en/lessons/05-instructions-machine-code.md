@@ -188,6 +188,14 @@ Be careful: changing an opcode can also change how following bytes are interpret
 
 Solutions are kept separately from the lesson.
 
+## Tools
+
+Use the real course fixture: `course/examples/lesson05-machine-code.eduasm`.
+
+**EduVis:** use this tool during the observation step. **EduGuide:** use the guided PREDICT → OBSERVE → EXPLAIN workflow.
+
+Predict important changes before running the fixture, then compare them with the observation.
+
 ## Next
 
 Machine code is precise, but inconvenient for humans. Next we move back one layer and study **EduASM and what an assembler does**.
