@@ -201,6 +201,14 @@ Dette er en viktig overgang: Du begynner nå å se programmet fra CPU-ens synsvi
 
 Løsningene oppbevares separat fra leksjonen.
 
+## Verktøy
+
+Bruk den ekte kursfixturen: `course/examples/lesson03-cpu-cycle.eduasm`.
+
+**EduVis:** bruk nettleservisualiseringen for å stege gjennom CPU-tilstanden. **eduguide:** bruk den guidede PREDICT → OBSERVE → EXPLAIN-flyten.
+
+Forvent viktige tilstands- eller compiler-endringer før du kjører fixturen, og sammenlign deretter med resultatet.
+
 ## Neste
 
 Vi har nå en komplett første mental modell av en CPU. Neste leksjon ser nærmere på **maskintilstand**: PC, SP, FLAGS, R0–R7 og minne, og lærer hvordan vi kan beskrive et nøyaktig øyeblikk i et EduCPU-program.
