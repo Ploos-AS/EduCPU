@@ -75,3 +75,14 @@ FPGA CI #126 (commit `bdc83a0`) builds and publishes the concrete UPduino v3.1 s
 - artifact: `educpu-upduino-v31-loader-bitstream` PASS
 
 The loader adds only modest logic over the bring-up design while retaining half of the UP5K SPRAM blocks unused. Physical FTDI loading is still an open hardware qualification gate.
+
+## Host toolchain qualification
+
+CI #416 (commit `19714ea`) qualifies all supported host input paths:
+
+- raw `.bin` image → loader image: PASS
+- EduASM `.eduasm` → assembler → loader image: PASS
+- EduC `.educ` → compiler/linker → loader image: PASS
+- protocol-v0 framing validation and size/error checks: PASS
+
+This closes the automated host-side path through machine-code generation. The remaining M0.15 gate is physical UPduino/FTDI transfer and execution on hardware.
