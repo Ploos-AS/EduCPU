@@ -1,0 +1,5 @@
+; Lesson 03 fixture: follow a small fetch/decode/execute sequence.
+MOVI R0, 10
+MOVI R1, 20
+ADD R0, R1
+HALT
