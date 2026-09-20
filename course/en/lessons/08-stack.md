@@ -164,6 +164,14 @@ POP  Rx: Rx → ______ ; SP → ______
 
 Why does this pair naturally produce LIFO ordering?
 
+## Tools
+
+Use the real course fixture: `course/examples/lesson08-stack.eduasm`.
+
+**EduVis:** use this tool during the observation step. **EduGuide:** use the guided PREDICT → OBSERVE → EXPLAIN workflow.
+
+Predict important changes before running the fixture, then compare them with the observation.
+
 ## Next
 
 A stack becomes much more powerful when the CPU can save where a program should return. Next: **functions, CALL/RET and the EduCPU ABI**.
