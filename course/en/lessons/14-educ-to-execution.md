@@ -85,6 +85,12 @@ source → AST → semantics → IR → assembly → object
 
 For each arrow ask: **what information was added, removed or made more concrete?**
 
+## Tools
+
+Use the real course fixture: `course/examples/lesson14-end-to-end.educ`.
+
+**EduGuide:** use the guided PREDICT → OBSERVE → EXPLAIN workflow. Predict important compiler-stage or machine-state changes before running the fixture, then compare them with the observation.
+
 ## Next
 
 Next we go below the architectural level: **how can a CPU be built from an ALU, registers, datapath and control logic, and how does that lead toward an FPGA implementation?**
