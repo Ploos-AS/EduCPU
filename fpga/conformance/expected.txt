@@ -17,3 +17,4 @@ subi pc=0007 sp=ff00 flags=02 halted=1 trap=0 regs=ff 00 00 00 00 00 00 00
 jnz pc=000b sp=ff00 flags=04 halted=1 trap=0 regs=01 00 00 00 00 00 00 00
 invalid_opcode pc=0001 sp=ff00 flags=00 halted=0 trap=1 regs=00 00 00 00 00 00 00 00
 invalid_register pc=0002 sp=ff00 flags=00 halted=0 trap=1 regs=00 00 00 00 00 00 00 00
+jmp pc=0006 sp=ff00 flags=00 halted=1 trap=0 regs=00 00 00 00 00 00 00 00
