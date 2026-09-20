@@ -73,7 +73,31 @@ module tb_educpu_core;
         assert (trap == 1'b1);
         assert (halted == 1'b0);
 
-        $display("EduCPU FPGA M0.3 MOV/MOVI PASS");
+        // Arithmetic/flags: 0x7f + 1 = 0x80 => N,V; then SUBI 0x80 => Z,C.
+        clear_mem();
+        mem[0]=8'h11; mem[1]=8'h00; mem[2]=8'h7F;
+        mem[3]=8'h21; mem[4]=8'h00; mem[5]=8'h01;
+        mem[6]=8'h23; mem[7]=8'h00; mem[8]=8'h80;
+        mem[9]=8'h01;
+        do_reset();
+        repeat (10) begin @(posedge clk); #1; end
+        assert (dut.r[0] == 8'h00);
+        assert (dut.flags == 8'h05); // Z=1, C=1
+        assert (halted == 1'b1);
+        assert (trap == 1'b0);
+
+        // CMP updates flags without changing the register.
+        clear_mem();
+        mem[0]=8'h11; mem[1]=8'h02; mem[2]=8'h2A;
+        mem[3]=8'h25; mem[4]=8'h02; mem[5]=8'h2A;
+        mem[6]=8'h01;
+        do_reset();
+        repeat (7) begin @(posedge clk); #1; end
+        assert (dut.r[2] == 8'h2A);
+        assert (dut.flags == 8'h05);
+        assert (halted == 1'b1);
+
+        $display("EduCPU FPGA M0.4 arithmetic/flags PASS");
         $finish;
     end
 endmodule
