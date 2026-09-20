@@ -148,3 +148,65 @@ def test_invalid_second_register_operand_differential():
     assert state(emulator) == state(reference)
     assert emulator.trap == "INVALID_OPERAND"
     assert emulator.pc == 3
+
+
+def test_add_and_addi_flags_differential():
+    assert_differential(bytes([
+        0x11, 0x00, 0x7F,
+        0x21, 0x00, 0x01,       # signed overflow: 0x7f + 1
+        0x11, 0x01, 0xFF,
+        0x21, 0x01, 0x01,       # carry + zero
+        0x20, 0x00, 0x01,
+        0x01,
+    ]))
+
+
+def test_sub_subi_cmp_cmpi_flags_differential():
+    assert_differential(bytes([
+        0x11, 0x00, 0x80,
+        0x23, 0x00, 0x01,
+        0x11, 0x01, 0x01,
+        0x22, 0x01, 0x00,
+        0x24, 0x00, 0x01,
+        0x25, 0x00, 0x7F,
+        0x01,
+    ]))
+
+
+def test_logic_and_not_flags_differential():
+    assert_differential(bytes([
+        0x11, 0x00, 0xF0,
+        0x11, 0x01, 0x0F,
+        0x28, 0x00, 0x01,
+        0x29, 0x00, 0x01,
+        0x2A, 0x00, 0x01,
+        0x2B, 0x00,
+        0x01,
+    ]))
+
+
+def test_shift_carry_zero_and_negative_differential():
+    assert_differential(bytes([
+        0x11, 0x00, 0x80,
+        0x2C, 0x00,             # SHL: carry=1, zero=1
+        0x11, 0x01, 0x01,
+        0x2D, 0x01,             # SHR: carry=1, zero=1
+        0x11, 0x02, 0x40,
+        0x2C, 0x02,             # result 0x80, negative=1
+        0x01,
+    ]))
+
+
+def test_alu_invalid_register_operand_differential():
+    for program in (
+        bytes([0x20, 0x08, 0x00]),
+        bytes([0x20, 0x00, 0x08]),
+        bytes([0x21, 0x08, 0x01]),
+        bytes([0x2B, 0x08]),
+        bytes([0x2C, 0x08]),
+    ):
+        reference, emulator = machines(program)
+        reference.step()
+        emulator.step()
+        assert state(emulator) == state(reference)
+        assert emulator.trap == "INVALID_OPERAND"
