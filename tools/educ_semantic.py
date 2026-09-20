@@ -51,7 +51,9 @@ def _stmt(st,fn,vars,functions):
  elif isinstance(st,While):
   if _expr(st.condition,vars,functions)!="bool":raise SemanticError(f"{fn.name}: while condition must be bool")
   for x in st.body:_stmt(x,fn,vars,functions)
- elif isinstance(st,ExprStmt):_expr(st.value,vars,functions)
+ elif isinstance(st,ExprStmt):
+  if isinstance(st.value,Call):_call(st.value,vars,functions,allow_void=True)
+  else:_expr(st.value,vars,functions)
  else:raise SemanticError(f"{fn.name}: unsupported statement {type(st).__name__}")
 
 def _expr(x,vars,functions):
@@ -84,6 +86,16 @@ def _expr(x,vars,functions):
    if a==b and a in ("byte","bool"):return "bool"
    raise SemanticError(f"operator {x.op} requires matching value types")
  raise SemanticError(f"unsupported expression {type(x).__name__}")
+
+def _call(x,vars,functions,allow_void):
+ if x.name not in functions:raise SemanticError(f"unknown function: {x.name}")
+ sig=functions[x.name]
+ if len(x.args)!=len(sig.params):raise SemanticError(f"{x.name}: expected {len(sig.params)} arguments, got {len(x.args)}")
+ for i,(arg,want) in enumerate(zip(x.args,sig.params),1):
+  got=_expr(arg,vars,functions)
+  if got!=want:raise SemanticError(f"{x.name}: argument {i} is {got}, expected {want}")
+ if sig.return_type=="void" and not allow_void:raise SemanticError(f"void function {x.name} cannot be used as a value")
+ return sig.return_type
 
 def _block_returns(body):
  for st in body:
