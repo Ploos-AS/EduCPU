@@ -199,7 +199,7 @@ Poenget er ikke å gjette nøyaktig kodegenerering, men å kunne forklare **hvor
 
 Bruk den ekte kursfixturen: `course/examples/lesson12-ir-codegen.educ`.
 
-**EduGuide:** bruk nettleservisualiseringen for å stege gjennom CPU-tilstanden.
+**EduGuide:** bruk den guidede PREDICT → OBSERVE → EXPLAIN-flyten. For CPU-kjøring kan du bruke EduVis.
 
 Forvent viktige tilstands- eller compiler-endringer før du kjører fixturen, og sammenlign deretter med resultatet.
 
