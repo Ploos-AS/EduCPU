@@ -1,0 +1,41 @@
+name: Ebooks
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "course/**"
+      - "tools/build_ebook.py"
+      - ".github/workflows/ebooks.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  epub:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install ebook tools
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y pandoc epubcheck
+      - name: Build manuscripts
+        run: |
+          python tools/build_ebook.py en build/educpu-en.md
+          python tools/build_ebook.py no build/educpu-no.md
+      - name: Build EPUB editions
+        run: |
+          pandoc build/educpu-en.md -o build/EduCPU-en.epub --toc --metadata title="EduCPU Course" --metadata author="Ploos AS" --metadata lang="en"
+          pandoc build/educpu-no.md -o build/EduCPU-no.epub --toc --metadata title="EduCPU-kurset" --metadata author="Ploos AS" --metadata lang="nb-NO"
+      - name: Validate EPUB
+        run: |
+          epubcheck build/EduCPU-en.epub
+          epubcheck build/EduCPU-no.epub
+      - uses: actions/upload-artifact@v4
+        with:
+          name: EduCPU-ebooks
+          path: |
+            build/EduCPU-en.epub
+            build/EduCPU-no.epub
