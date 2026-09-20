@@ -74,7 +74,7 @@ Separate faithful implementation, deterministic devices, debugger hooks and diff
 - [ ] add debugger hooks and bounded execution
 - [ ] add deterministic device abstraction and tests
 - [ ] differential-test EduASM programs against reference CPU
-- [ ] differential-test compiled EduC programs against reference CPU
+- [x] differential-test compiled EduC programs against reference CPU — lessons 10, 12 and 14
 - [ ] M8 qualification — CI green
 ## M9 — FPGA realization
 Synthesizable realization of frozen architecture and qualification against ISA vectors.
