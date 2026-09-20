@@ -10,13 +10,25 @@ def frame(image: bytes) -> bytes:
     n=len(image)
     return bytes((0x55,0xaa,n&0xff,(n>>8)&0xff))+image
 
+def image_bytes(path: pathlib.Path) -> bytes:
+    suffix=path.suffix.lower()
+    if suffix==".eduasm":
+        from eduasm import assemble_text
+        data,_,_=assemble_text(path.read_text())
+        return data
+    if suffix==".educ":
+        from educ import compile_source
+        *_,data,_=compile_source(path.read_text(),str(path))
+        return data
+    return path.read_bytes()
+
 def main():
     ap=argparse.ArgumentParser(description="Load an EduCPU binary over UART")
     ap.add_argument("image",type=pathlib.Path,help="raw .bin, EduASM .eduasm, or EduC .educ")
     ap.add_argument("--port",required=True,help="serial port, e.g. /dev/ttyUSB0 or COM4")
     ap.add_argument("--baud",type=int,default=115200)
     args=ap.parse_args()
-    suffix=args.image.suffix.lower()\n    if suffix==".eduasm":\n        from eduasm import assemble_text\n        data,_,_=assemble_text(args.image.read_text())\n    elif suffix==".educ":\n        from educ import compile_source\n        *_,data,_=compile_source(args.image.read_text(),str(args.image))\n    else:\n        data=args.image.read_bytes()
+    data=image_bytes(args.image)
     packet=frame(data)
     try:
         import serial
