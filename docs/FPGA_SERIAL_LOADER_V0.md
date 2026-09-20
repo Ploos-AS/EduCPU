@@ -33,3 +33,24 @@ python tools/eduload.py program.bin --port /dev/ttyUSB0
 On Windows, use the assigned COM port, for example `--port COM4`. The default baud rate is 115200.
 
 The host tool intentionally sends raw machine code. Assembly/compiler integration remains upstream: EduASM/EduC produce the image, then `eduload.py` transports it.
+
+## Protocol v1 roadmap: integrity and status
+
+Protocol v0 is intentionally the smallest bring-up transport. The next revision must not silently start a corrupted image.
+
+Proposed v1 frame:
+
+```text
+55 AA 01 <length-lo> <length-hi> <payload...> <crc-lo> <crc-hi>
+```
+
+The CRC is CRC-16/CCITT-FALSE over `version || length-lo || length-hi || payload` (poly 0x1021, init 0xffff, refin=false, refout=false, xorout=0x0000). The CPU remains in reset until the complete frame and CRC have been accepted.
+
+FPGA-to-host status bytes over TX:
+
+- `0x06` ACK: image accepted and CPU released
+- `0x15` NACK: framing, length, or CRC failure; CPU remains in reset
+- `0x48` HALT: loaded program reached HALT
+- `0x54` TRAP: loaded program trapped
+
+Protocol v0 remains supported for M0.15 physical bring-up. V1 is a separate hardening step so the already-qualified v0 path is not silently changed before physical validation.
