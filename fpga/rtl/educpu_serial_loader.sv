@@ -10,22 +10,23 @@ module educpu_serial_loader (
 );
     typedef enum logic [2:0] {SYNC55,SYNCAA,LEN_LO,LEN_HI,PAYLOAD,DONE} state_t;
     state_t state;
-    logic [15:0] length, remaining;
+    logic [15:0] length;
     logic pending;
+    logic [15:0] remaining_q;
 
     assign load_mode = (state != DONE);
     assign load_valid = pending;
 
     always_ff @(posedge clk) begin
       if (reset) begin
-        state<=SYNC55; length<=0; remaining<=0; load_addr<=0; load_data<=0;
+        state<=SYNC55; length<=0; remaining_q<=0; load_addr<=0; load_data<=0;
         pending<=0; started<=0; protocol_error<=0;
       end else begin
         started<=0;
         if (pending && load_ready) begin
           pending<=0;
-          if (remaining == 16'd1) begin state<=DONE; started<=1; remaining<=0; end
-          else begin remaining<=remaining-1'b1; load_addr<=load_addr+1'b1; end
+          if (remaining_q == 16'd1) begin state<=DONE; started<=1; remaining_q<=0; end
+          else begin remaining_q<=remaining_q-1'b1; load_addr<=load_addr+1'b1; end
         end
         if (rx_valid && !pending) begin
           case(state)
@@ -34,7 +35,7 @@ module educpu_serial_loader (
             LEN_LO: begin length[7:0]<=rx_data; state<=LEN_HI; end
             LEN_HI: begin
               length[15:8]<=rx_data;
-              remaining<={rx_data,length[7:0]};
+              remaining_q<={rx_data,length[7:0]};
               load_addr<=0;
               if ({rx_data,length[7:0]}==0) begin protocol_error<=1; state<=SYNC55; end
               else state<=PAYLOAD;
