@@ -52,11 +52,11 @@ Course from binary/hex through compiler construction and complete execution. See
 - [x] course structure and teaching-environment requirements
 - [x] bilingual Markdown course framework and lesson template
 - [x] GitHub Pages generation pipeline
-- [ ] first binary/hex lesson
-- [ ] guided runner and compile-trace integration
+- [x] lessons 01–15 in English and Norwegian
+- [x] compile-trace integration in guided end-to-end lesson
 - [ ] simulator/visualizer lesson integration
-- [ ] complete progressive course coverage
-- [ ] executable lesson fixtures and checks
+- [x] complete progressive course coverage
+- [x] executable lesson fixtures and checks
 - [ ] M7 qualification
 ## M8 — EduCPU emulator
 Separate faithful implementation, deterministic devices, debugger hooks and differential/conformance testing.
