@@ -1,0 +1,7 @@
+byte add(byte a, byte b) {
+    return a + b;
+}
+
+byte main() {
+    return add(20, 22);
+}
