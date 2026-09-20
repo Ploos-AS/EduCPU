@@ -362,3 +362,19 @@ class Emulator:
             self.step()
             count += 1
         return count
+
+
+def run_trace(emulator, limit=100000):
+    events = []
+    def before(cpu):
+        events.append({"event": "before", "pc": cpu.pc, "state": cpu.snapshot()})
+    def after(cpu):
+        events.append({"event": "after", "pc": cpu.pc, "state": cpu.snapshot()})
+    old_before, old_after = emulator.before_step, emulator.after_step
+    emulator.before_step, emulator.after_step = before, after
+    try:
+        result = emulator.run_bounded(limit)
+    finally:
+        emulator.before_step, emulator.after_step = old_before, old_after
+    result["trace"] = events
+    return result
