@@ -37,28 +37,33 @@ The tested path includes:
 
 Lesson 14 explicitly distinguishes compile-time correlation from runtime execution tracing.
 
-## Publication qualification
+## Publication and teaching-tool qualification
 
-GitHub Actions at the completion of lessons 01–15:
+Final M7 qualification includes the original course-content qualification plus the completed teaching and ebook extensions:
 
-- CI run **#138**: PASS on commit `a7334f423d61c434133b77cbcf93cba8ad459294`.
-- Pages run **#70**: PASS on the same commit.
-
-Both the test suite and generated course site therefore passed before the final M7 documentation cleanup.
+- CI run **#175**: PASS on commit `f547b21e571c30eef26ea4044718df49145b4465`.
+- Pages run **#86**: PASS after the bilingual Lesson 03 EduVis integration.
+- Ebooks run **#8**: PASS after the same course update.
+- The bilingual EPUB workflow generates English and Norwegian editions from the Markdown source, includes deterministic covers and publication metadata, and validates both editions with `epubcheck`.
+- Kindle distribution is documented as a release workflow using the validated EPUB as input; Amazon conversion/preview remains a manual release gate.
+- `tools/eduguide.py` provides deterministic PREDICT → STEP → OBSERVE → EXPLAIN execution using the reference CPU.
+- `tools/eduvis.py` can open course `.eduasm` files directly, creates source/debug mapping, and provides browser instruction/micro-step visualization.
+- EduVis reset restores the complete initial memory image; this behavior and direct course-source loading are covered by automated tests.
+- Separate English and Norwegian exercise solutions are published outside the lesson bodies.
+- The course landing pages point learners onward to EduAVR.
 
 ## Deliberately deferred
 
-The following are useful extensions but are not required for the course-content qualification:
+The following remain optional future improvements and do not block M7:
 
-- a dedicated interactive guided runner;
-- deeper one-click simulator/visualizer launch integration;
-- separate exercise solution material;
-- additional real screenshots and diagrams from the tools.
+- additional real screenshots and diagrams derived from the tools;
+- further visual polish and accessibility work;
+- release-time Kindle preview on Amazon's conversion tooling.
 
 These can evolve without changing the frozen ISA or invalidating the qualified lessons.
 
 ## Result
 
-**M7 course content and publication pipeline: PASS.**
+**M7 Guided Teaching Environment: PASS.**
 
-The remaining interactive teaching-environment enhancements are tracked as follow-on work rather than blockers for the 15-lesson course.
+All M7 roadmap requirements are complete: bilingual course content, executable fixtures, guided execution, simulator/visualizer integration, web publication, exercise solutions and bilingual validated EPUB generation. M8 may proceed without carrying an M7 functional blocker.
