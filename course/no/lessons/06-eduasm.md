@@ -219,6 +219,14 @@ Legg merke til at navnet i kildekoden er det samme selv om maskinadressen endres
 Løsningene oppbevares separat fra leksjonen.
 
 
+## Verktøy
+
+Bruk den ekte kursfixturen: `course/examples/lesson06-eduasm.eduasm`.
+
+**EduVis:** bruk nettleservisualiseringen for å stege gjennom CPU-tilstanden. **eduguide:** bruk den guidede PREDICT → OBSERVE → EXPLAIN-flyten.
+
+Forvent viktige tilstands- eller compiler-endringer før du kjører fixturen, og sammenlign deretter med resultatet.
+
 ## Neste
 
 Nå kan vi skrive lesbare programmer nær maskinnivået. Neste leksjon handler om **aritmetikk, FLAGS og branches**, der CPU-en begynner å ta valg basert på tidligere resultater.
