@@ -14,7 +14,7 @@ bringup-test:
 	$(VVP) bringup-simv
 
 loader-test:
-	$(IVERILOG) -g2012 -o loader-simv serial-loader-simv educpu_core.sv educpu_loader_mux.sv tb_loader.sv
+	$(IVERILOG) -g2012 -o loader-simv educpu_core.sv educpu_loader_mux.sv tb_loader.sv
 	$(VVP) loader-simv
 
 serial-loader-test:
