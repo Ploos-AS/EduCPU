@@ -48,7 +48,14 @@ M5 covers source syntax, semantic meaning, explicit EduIR lowering and independe
 - [x] M6 qualification — 82 tests PASS on Python 3.11, 3.12 and 3.13; see docs/M6_QUALIFICATION.md
 
 ## M7 — Guided teaching environment
-Course from binary/hex through compiler construction and complete execution.
+Course from binary/hex through compiler construction and complete execution. See `docs/M7_TEACHING_ENVIRONMENT.md`.
+- [x] course structure and teaching-environment requirements
+- [ ] lesson framework and first binary/hex lesson
+- [ ] guided runner and compile-trace integration
+- [ ] simulator/visualizer lesson integration
+- [ ] complete progressive course coverage
+- [ ] executable lesson fixtures and checks
+- [ ] M7 qualification
 ## M8 — EduCPU emulator
 Separate faithful implementation, deterministic devices, debugger hooks and differential/conformance testing.
 ## M9 — FPGA realization
