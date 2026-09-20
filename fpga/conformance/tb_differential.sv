@@ -4,7 +4,8 @@ module tb_differential;
     logic [7:0] mem_rdata;
     logic [15:0] mem_addr;
     logic [7:0] mem_wdata;
-    logic mem_we, halted, trap;
+    logic mem_we, mem_valid, halted, trap;
+    logic mem_ready = 1'b1;
     integer i, cycles;
     logic [31:0] mem_hash;
     reg [1023:0] image;
@@ -13,7 +14,7 @@ module tb_differential;
     always @(posedge clk) if(mem_we) mem[mem_addr] <= mem_wdata;
     always #5 clk=~clk;
 
-    educpu_core dut(.clk,.reset,.mem_rdata,.mem_addr,.mem_wdata,.mem_we,.halted,.trap);
+    educpu_core dut(.clk,.reset,.mem_rdata,.mem_addr,.mem_wdata,.mem_we,.mem_valid,.mem_ready,.halted,.trap);
 
     initial begin
         for(i=0;i<65536;i=i+1) mem[i]=0;
