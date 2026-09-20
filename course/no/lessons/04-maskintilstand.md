@@ -229,6 +229,14 @@ Hvilken framstilling gjør det enklest å oppdage endringer? Hvilken er best der
 
 Løsningene oppbevares separat fra leksjonen.
 
+## Verktøy
+
+Bruk den ekte kursfixturen: `course/examples/lesson04-machine-state.eduasm`.
+
+**EduVis:** bruk nettleservisualiseringen for å stege gjennom CPU-tilstanden. **eduguide:** bruk den guidede PREDICT → OBSERVE → EXPLAIN-flyten.
+
+Forvent viktige tilstands- eller compiler-endringer før du kjører fixturen, og sammenlign deretter med resultatet.
+
 ## Neste
 
 Nå kan vi beskrive maskinen på et nøyaktig tidspunkt. Dermed kan vi se nærmere på hva CPU-en faktisk leser fra minnet. Neste: **instruksjoner og maskinkode**.
