@@ -1,0 +1,15 @@
+; Lesson 07 fixture: arithmetic flags drive control flow.
+MOVI R0, 0xFF
+ADDI R0, 1
+JZ wrapped
+MOVI R1, 0xEE
+wrapped:
+MOVI R1, 10
+CMPI R1, 10
+JNZ wrong
+SUBI R1, 10
+JZ done
+wrong:
+MOVI R0, 0xEE
+done:
+HALT
