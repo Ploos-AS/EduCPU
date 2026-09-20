@@ -116,3 +116,19 @@ def test_lesson06_labels_and_execution():
     assert cpu.trap is None
     assert cpu.r[0] == 0
     assert cpu.pc == len(data)
+
+
+def test_lesson07_flags_drive_branches():
+    source = ROOT / "course" / "examples" / "lesson07-flags-branches.eduasm"
+    data, labels, _ = assemble_text(source.read_text())
+    cpu = CPU()
+    cpu.mem[:len(data)] = data
+    cpu.run()
+    assert cpu.halted
+    assert cpu.trap is None
+    assert cpu.r[0] == 0
+    assert cpu.r[1] == 0
+    assert cpu.flags == (CPU.Z | CPU.C)
+    assert cpu.pc == len(data)
+    assert labels["wrapped"] > 0
+    assert labels["done"] < len(data)
