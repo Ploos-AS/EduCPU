@@ -1,0 +1,12 @@
+; Lesson 02 fixture: logical operations on two byte patterns.
+MOVI R0, 0b11001100
+MOVI R1, 0b10101010
+MOV R2, R0
+AND R2, R1
+MOV R3, R0
+OR R3, R1
+MOV R4, R0
+XOR R4, R1
+MOV R5, R0
+NOT R5
+HALT
