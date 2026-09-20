@@ -76,3 +76,23 @@ def test_all_unsigned_comparisons():
 def test_boolean_not():
  assert run_function("bool f(bool x){return !x;}",(0,)).r[0]==1
  assert run_function("bool f(bool x){return !x;}",(1,)).r[0]==0
+
+def test_function_call_executes():
+ source="byte add(byte a,byte b){return a+b;} byte main(){return add(20,22);}"
+ c=run_function(source)
+ assert c.r[0]==42 and c.halted and c.sp==0xFF00
+
+def test_nested_calls_execute():
+ source="byte inc(byte x){return x+1;} byte twice(byte x){return inc(inc(x));} byte main(){return twice(40);}"
+ c=run_function(source)
+ assert c.r[0]==42 and c.halted and c.sp==0xFF00
+
+def test_recursion_executes():
+ source="byte sum(byte n){if(n==0){return 0;}else{return n+sum(n-1);}} byte main(){return sum(10);}"
+ c=run_function(source)
+ assert c.r[0]==55 and c.halted and c.sp==0xFF00
+
+def test_void_call_statement_executes():
+ source="void ping(){return;} byte main(){ping();return 42;}"
+ c=run_function(source)
+ assert c.r[0]==42 and c.halted and c.sp==0xFF00
