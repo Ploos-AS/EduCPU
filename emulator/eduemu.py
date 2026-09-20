@@ -274,6 +274,25 @@ class Emulator:
             self.pc = low | (high << 8)
             return
 
+        if opcode == 0x46:  # ENTER frame_size
+            frame_size = self._fetch()
+            self.sp = (self.sp - 1) & 0xFFFF
+            self.mem[self.sp] = (self.r[7] >> 8) & 0xFF
+            self.sp = (self.sp - 1) & 0xFFFF
+            self.mem[self.sp] = self.r[7] & 0xFF
+            self.r[7] = self.sp
+            self.sp = (self.sp - frame_size) & 0xFFFF
+            return
+
+        if opcode == 0x47:  # LEAVE
+            self.sp = self.r[7]
+            low = self.mem[self.sp]
+            self.sp = (self.sp + 1) & 0xFFFF
+            high = self.mem[self.sp]
+            self.sp = (self.sp + 1) & 0xFFFF
+            self.r[7] = low | (high << 8)
+            return
+
         self.trap = "INVALID_OPCODE"
 
     def run(self, limit: int = 100000) -> int:
