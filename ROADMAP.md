@@ -75,7 +75,7 @@ Separate faithful implementation, deterministic devices, debugger hooks and diff
 - [x] add deterministic device abstraction and tests
 - [x] differential-test EduASM programs against reference CPU — course fixtures 01–09
 - [x] differential-test compiled EduC programs against reference CPU — lessons 10, 12 and 14
-- [ ] M8 qualification — final CI + release qualification
+- [x] M8 qualification — final CI + release qualification (CI #214 PASS; see docs/M8_CONFORMANCE_COVERAGE.md)
 ## M9 — FPGA realization
 Synthesizable realization of frozen architecture and qualification against ISA vectors.
 ## M10 — Advanced and experimental concepts
