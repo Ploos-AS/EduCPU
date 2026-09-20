@@ -190,6 +190,18 @@ semantic: does that structure ______ according to the language rules?
 
 Why is it useful to keep these jobs separate?
 
+## Prediction exercise
+
+Before displaying the AST, draw your own tree for:
+
+```c
+return a + b - 1;
+```
+
+First decide how the expression groups. Then run the parser and compare the tree.
+
+For semantics, create one syntactically valid but semantically invalid variant. **Predict which stage should reject it before running the compiler.**
+
 ## Tools
 
 Use the real course fixture: `course/examples/lesson11-ast-semantics.educ`.
