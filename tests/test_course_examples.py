@@ -309,3 +309,37 @@ def test_lesson12_real_ir_codegen_pipeline_executes():
     assert cpu.halted
     assert cpu.trap is None
     assert cpu.sp == 0xFF00
+
+
+def test_lesson13_objects_relocations_and_linking():
+    main_source = ROOT / "course" / "examples" / "lesson13-main.eduasm"
+    math_source = ROOT / "course" / "examples" / "lesson13-math.eduasm"
+
+    main_obj, _ = assemble_object(main_source.read_text())
+    math_obj, _ = assemble_object(math_source.read_text())
+
+    assert main_obj["exports"]["main"] == 0
+    assert main_obj["imports"] == ["add_two"]
+    relocs = [r for r in main_obj["relocations"] if r["symbol"] == "add_two"]
+    assert len(relocs) == 1
+    assert relocs[0]["type"] == "abs16le"
+    assert math_obj["exports"]["add_two"] == 0
+
+    data, symbols, bases = link([main_obj, math_obj])
+    assert bases == [0, len(bytes.fromhex(main_obj["data"]))]
+    assert symbols["main"] == 0
+    assert symbols["add_two"] == bases[1]
+
+    reloc = relocs[0]
+    target = data[reloc["offset"]] | (data[reloc["offset"] + 1] << 8)
+    assert target == symbols["add_two"]
+
+    cpu = CPU()
+    cpu.mem[:len(data)] = data
+    cpu.pc = symbols["main"]
+    cpu.run()
+
+    assert cpu.r[0] == 42
+    assert cpu.halted
+    assert cpu.trap is None
+    assert cpu.sp == 0xFF00
