@@ -25,6 +25,9 @@ jobs:
       - name: Run board-neutral Yosys/iCE40 synthesis
         working-directory: fpga/rtl
         run: make synth
+      - name: Synthesize integrated CPU + synchronous memory machine
+        working-directory: fpga/rtl
+        run: make machine-synth
       - name: Run iCE40UP5K place-and-route smoke qualification
         working-directory: fpga/rtl
         run: make up5k
