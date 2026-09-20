@@ -30,7 +30,8 @@ The repository includes:
 - EduSim and the conceptual micro-step model;
 - EduVis browser visualization;
 - EduC front end, semantic analysis, EduIR and compiler backend;
-- executable examples and qualification tests.
+- executable examples and qualification tests;
+- EduGuide guided lesson runner for predict → step → observe → explain exercises.
 
 The software path is intentionally inspectable:
 
@@ -43,9 +44,9 @@ The hardware-learning path builds upward:
 ## Status
 
 M0–M6 established and qualified the architecture, assembler/object pipeline,
-simulator/debugger, ABI and EduC compiler backend. M7 is building the guided
-teaching environment. Later roadmap milestones include the emulator and FPGA
-realization.
+simulator/debugger, ABI and EduC compiler backend. M7 provides the qualified
+bilingual guided course, executable fixtures and EduGuide lesson runner. Later
+roadmap milestones include the emulator and FPGA realization.
 
 See [ROADMAP.md](ROADMAP.md) for milestone details.
 
