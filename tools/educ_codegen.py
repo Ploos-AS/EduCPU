@@ -55,6 +55,12 @@ def _function(f):
   elif x.op=="jmp":out.append(f"    JMP {x.args[0]}")
   elif x.op=="br":
    load(x.args[0],"R7");out.append("    CMPI R7, 0");out.append(f"    JNZ {x.args[1]}");out.append(f"    JMP {x.args[2]}")
+  elif x.op in ("call","callvoid"):
+   fn=x.args[0];args=x.args[1:]
+   if len(args)>4:raise CodegenError(f"{f.name}: call to {fn} exceeds four ABI register arguments")
+   for i,v in enumerate(args):load(v,f"R{i}")
+   out.append(f"    CALL {fn}")
+   if x.op=="call":store(x.dest,"R0")
   elif x.op=="ret":
    if x.args:load(x.args[0],"R0")
    out.append(f"    JMP {epilogue}")
