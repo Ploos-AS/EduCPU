@@ -190,6 +190,12 @@ semantic: does that structure ______ according to the language rules?
 
 Why is it useful to keep these jobs separate?
 
+## Tools
+
+Use the real course fixture: `course/examples/lesson11-ast-semantics.educ`.
+
+**EduGuide:** use the guided PREDICT → OBSERVE → EXPLAIN workflow. Predict important compiler-stage or machine-state changes before running the fixture, then compare them with the observation.
+
 ## Next
 
 Next we lower the checked program into **EduIR** and see how high-level expressions become explicit, machine-independent operations ready for code generation.
