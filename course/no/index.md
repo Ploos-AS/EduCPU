@@ -23,3 +23,9 @@ EduCPU er en bevisst liten undervisningsdatamaskin. Kurset starter med bits og b
 15. Hvordan en CPU kan bygges: ALU, datapath, kontroll og veien mot FPGA
 
 Gjennom hele kurset stiller vi spørsmålet: **Hvordan vet EduCPU det?**
+
+## Videre lesning
+
+Hvis du ønsker en bok ved siden av kurset med samme type bottom-up-utforskning, anbefaler vi J. Clark Scotts *But How Do It Know? — The Basic Principles of Computers for Everyone* som videre lesning. Den bygger opp ideene fra enkel digital logikk mot en fungerende CPU, mens EduCPU er et selvstendig prosjekt og kurs.
+
+**Boklenke:** kommer. Når en kjøpslenke er en affiliate-lenke, vil dette merkes tydelig; Ploos AS kan motta provisjon uten ekstra kostnad for deg.
