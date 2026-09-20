@@ -65,3 +65,18 @@ observed LED state.
 Synthesis, place-and-route and bitstream generation are qualified in CI. Physical
 UPduino execution is intentionally not marked PASS until it has been observed on
 real hardware.
+
+## M0.14 simulated bring-up gate
+
+FPGA CI #105 validates the exact power-on bring-up program before physical testing:
+
+- boot ROM execution: PASS (`EduCPU UPduino bring-up program PASS`)
+- expected path: MOVI → MOVI → CMP → JNZ(not taken) → HALT
+- UPduino bitstream synthesis/place-and-route: PASS
+- logic: 1061 / 5280 ICESTORM_LC (20%)
+- SPRAM: 2 / 4 blocks (50%)
+- timing: 20.61 MHz achieved, PASS at 12 MHz
+- bitstream artifact: PASS
+- full RTL/reference differential suite: 20 programs PASS
+
+This closes the simulated/bitstream portion of M0.14. The physical-board gate remains open until the same bitstream is programmed and observed on an actual UPduino.
