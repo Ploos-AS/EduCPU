@@ -183,6 +183,18 @@ EduASM: hvordan EduCPU-ressurser utfører dem
 
 Hvorfor er dette skillet nyttig både for compilerdesign og undervisning?
 
+## Representasjonssjekk
+
+Velg én verdi, for eksempel resultatet av `x + 2`, og følg den gjennom tre nivåer:
+
+```text
+EduIR temporary → stack slot/register → EduASM instruction sequence
+```
+
+Før du viser generert kode, forutsi hvilke maskinressurser som må brukes. Deretter sammenligner du med den faktiske backend-outputen.
+
+Poenget er ikke å gjette nøyaktig kodegenerering, men å kunne forklare **hvorfor** den genererte koden trenger de ressursene den bruker.
+
 ## Verktøy
 
 Bruk den ekte kursfixturen: `course/examples/lesson12-ir-codegen.educ`.
