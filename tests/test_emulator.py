@@ -72,3 +72,79 @@ def test_step_after_halt_or_trap_is_stable():
         emulator.step()
         assert state(emulator) == before
         assert state(emulator) == state(reference)
+
+
+def assert_differential(program, setup=None, memory_addresses=()):
+    reference, emulator = machines(program)
+    if setup:
+        setup(reference)
+        setup(emulator)
+    reference.run()
+    emulator.run()
+    assert state(emulator) == state(reference)
+    for address in memory_addresses:
+        assert emulator.mem[address] == reference.mem[address]
+
+
+def test_mov_and_movi_differential():
+    assert_differential(bytes([
+        0x11, 0x01, 0xA5,       # MOVI R1,0xA5
+        0x10, 0x02, 0x01,       # MOV R2,R1
+        0x01,
+    ]))
+
+
+def test_absolute_load_store_differential():
+    assert_differential(bytes([
+        0x11, 0x03, 0x5A,
+        0x13, 0x34, 0x12, 0x03, # STORE [0x1234],R3
+        0x12, 0x04, 0x34, 0x12, # LOAD R4,[0x1234]
+        0x01,
+    ]), memory_addresses=(0x1234,))
+
+
+def test_register_indirect_load_store_differential():
+    assert_differential(bytes([
+        0x11, 0x00, 0x80,       # address in page zero
+        0x11, 0x01, 0xCC,
+        0x15, 0x00, 0x01,       # STORER [R0],R1
+        0x14, 0x02, 0x00,       # LOADR R2,[R0]
+        0x01,
+    ]), memory_addresses=(0x0080,))
+
+
+def test_sp_relative_load_store_positive_and_negative_offsets():
+    def setup(cpu):
+        cpu.sp = 0x9000
+
+    assert_differential(bytes([
+        0x11, 0x01, 0x12,
+        0x17, 0x05, 0x01,       # STORES [SP+5],R1
+        0x16, 0x02, 0x05,       # LOADS R2,[SP+5]
+        0x11, 0x03, 0x34,
+        0x17, 0xFE, 0x03,       # STORES [SP-2],R3
+        0x16, 0x04, 0xFE,       # LOADS R4,[SP-2]
+        0x01,
+    ]), setup=setup, memory_addresses=(0x9005, 0x8FFE))
+
+
+def test_data_movement_preserves_flags():
+    def setup(cpu):
+        cpu.flags = cpu.Z | cpu.N | cpu.C | cpu.V
+
+    assert_differential(bytes([
+        0x11, 0x00, 0x20,
+        0x11, 0x01, 0x7E,
+        0x15, 0x00, 0x01,
+        0x14, 0x02, 0x00,
+        0x01,
+    ]), setup=setup, memory_addresses=(0x20,))
+
+
+def test_invalid_second_register_operand_differential():
+    reference, emulator = machines(bytes([0x10, 0x00, 0x08]))
+    reference.step()
+    emulator.step()
+    assert state(emulator) == state(reference)
+    assert emulator.trap == "INVALID_OPERAND"
+    assert emulator.pc == 3
