@@ -6,6 +6,7 @@ from educ import parse
 from educ_ir import lower
 from educ_codegen import generate,CodegenError
 from eduasm import assemble_object
+from edulink import link
 from educpu import CPU
 
 def compile_asm(source):
