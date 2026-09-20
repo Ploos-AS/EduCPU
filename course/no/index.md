@@ -10,6 +10,22 @@ Kurset er laget for nybegynnere. Du trenger ikke kunne CPU-design, assembly elle
 
 Forvent omtrent **30–60 minutter per leksjon** for gjennomgang og enkle øvelser. Leksjon 10–15 kan ta **60–120 minutter** dersom du gjør de praktiske oppgavene og følger hele toolchainen.
 
+## Begreper vi bruker konsekvent
+
+- **bit / byte** — én bit er 0 eller 1; én byte er 8 bits.
+- **register** — liten, navngitt lagringsplass i CPU-en.
+- **maskintilstand** — verdiene i registre, PC, SP, FLAGS og relevant minne/arkitektonisk tilstand.
+- **instruksjon** — en arkitektonisk operasjon som CPU-en skal utføre.
+- **opcode** — bitmønsteret som identifiserer instruksjonens operasjon.
+- **ISA** — kontrakten som beskriver instruksjoner, encoding og observerbar oppførsel.
+- **referanse-CPU** — den autoritative programvaremodellen som brukes til å definere og kontrollere arkitektonisk oppførsel.
+- **emulator** — en separat implementasjon som etterligner EduCPU og kan sammenlignes med referanse-CPU-en.
+- **datapath** — hardware-strukturen som flytter og behandler verdier.
+- **kontroll-logikk** — logikken som velger hvilke datapath-handlinger som skal skje.
+- **implementasjon** — en konkret realisering av ISA-en, for eksempel programvare eller FPGA-logikk.
+
+**Arkitektur og implementasjon holdes adskilt gjennom hele kurset.** EduCPU er et frittstående prosjekt og undervisningssystem. Eksterne CPU- eller hardwareprosjekter er ikke en del av EduCPU-arkitekturen eller kursets roadmap.
+
 ## Kurskart
 
 ```text
