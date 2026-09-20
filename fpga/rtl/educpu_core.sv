@@ -48,6 +48,7 @@ module educpu_core (
     logic [7:0] alu_out;
     logic [15:0] operand_addr;
     logic [2:0] store_reg;
+    logic [7:0] stack_data;
     integer i;
 
     localparam logic [15:0] RESET_SP = 16'hFF00;
@@ -99,6 +100,7 @@ module educpu_core (
             current_op <= 8'h00;
             operand_addr <= 16'h0000;
             store_reg <= 3'd0;
+            stack_data <= 8'h00;
             for (i = 0; i < 8; i = i + 1)
                 r[i] <= 8'h00;
         end else if (!halted && !trap) begin
@@ -296,7 +298,7 @@ module educpu_core (
                     if (mem_rdata > 8'd7) trap <= 1'b1;
                     else begin
                         operand_rd <= mem_rdata[2:0];
-                        if (current_op == OP_PUSH) begin sp <= sp - 16'd1; operand_addr <= sp - 16'd1; state <= S_PUSH_WRITE; end
+                        if (current_op == OP_PUSH) begin stack_data <= r[mem_rdata[2:0]]; sp <= sp - 16'd1; operand_addr <= sp - 16'd1; state <= S_PUSH_WRITE; end
                         else begin operand_addr <= sp; state <= S_POP_READ; end
                     end
                 end
@@ -371,6 +373,7 @@ module educpu_core (
                       (state == S_CALL_PUSH_HI || state == S_CALL_PUSH_LO || state == S_RET_LO || state == S_RET_HI) ? sp : pc;
     assign mem_wdata = (state == S_CALL_PUSH_HI) ? pc[15:8] :
                        (state == S_CALL_PUSH_LO) ? pc[7:0] :
+                       (state == S_PUSH_WRITE) ? stack_data :
                        (state == S_MEM_ACCESS && (current_op == OP_STORE || current_op == OP_STORER || current_op == OP_STORES)) ? r[store_reg] : r[operand_rd];
     assign mem_we = ((state == S_MEM_ACCESS) &&
                     (current_op == OP_STORE || current_op == OP_STORER || current_op == OP_STORES)) ||
