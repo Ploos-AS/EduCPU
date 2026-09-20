@@ -31,7 +31,7 @@ instruction memory -> fetch/decode/control -> register file <-> ALU
 ## Qualification gates
 
 - [x] RTL elaborates
-- [ ] lint passes
+- [ ] lint passes — dedicated lint gate still pending (Yosys `check` passes)
 - [x] reset test passes — architectural state initialized and smoke-tested
 - [x] NOP/HALT passes — RTL fetch loop and sticky HALT qualified
 - [x] arithmetic/logic/flags passes — ADD/SUB/CMP, immediate forms, AND/OR/XOR/NOT and SHL/SHR with ISA v0 Z/N/C/V semantics
@@ -41,7 +41,7 @@ instruction memory -> fetch/decode/control -> register file <-> ALU
 - [x] full ISA conformance passes — 20 reference↔RTL differential programs cover every frozen ISA v0 opcode, invalid-opcode and invalid-register traps, architectural state, and full-memory signatures
 
 M0.2 also verifies invalid opcodes enter the architectural trap state and that execution remains stable after HALT/trap.
-- [ ] synthesis passes for selected target
+- [x] synthesis passes for selected target — Yosys + nextpnr iCE40UP5K SG48: 932/5280 logic cells (17%), 20.68 MHz estimated max clock, PASS at 12 MHz; board-neutral core only, external memory not included
 - [ ] physical FPGA bring-up passes
 
 The RTL must be checked against the already-qualified reference CPU and emulator. Shared machine-code fixtures should be reused wherever practical.
