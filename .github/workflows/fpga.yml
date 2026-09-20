@@ -22,6 +22,9 @@ jobs:
       - name: Run RTL smoke test
         working-directory: fpga/rtl
         run: make test
+      - name: Run UPduino bring-up program simulation
+        working-directory: fpga/rtl
+        run: make bringup-test
       - name: Run board-neutral Yosys/iCE40 synthesis
         working-directory: fpga/rtl
         run: make synth
