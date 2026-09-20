@@ -47,8 +47,8 @@ M5 covers source syntax, semantic meaning, explicit EduIR lowering and independe
 - [x] source to AST to IR to assembly to bytes to execution correlation
 - [x] M6 qualification — 82 tests PASS on Python 3.11, 3.12 and 3.13; see docs/M6_QUALIFICATION.md
 
-## M7 — Guided teaching environment
-Course from binary/hex through compiler construction and complete execution. See `docs/M7_TEACHING_ENVIRONMENT.md`.
+## M7 — Guided teaching environment — COMPLETE
+Course from binary/hex through compiler construction and complete execution. Final qualification: `docs/M7_QUALIFICATION.md`.
 - [x] course structure and teaching-environment requirements
 - [x] bilingual Markdown course framework and lesson template
 - [x] GitHub Pages generation pipeline
