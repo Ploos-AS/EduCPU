@@ -1,0 +1,5 @@
+; Lesson 04 fixture: observe architectural state changes.
+MOVI R0, 5
+MOVI R1, 5
+SUB R0, R1
+HALT
