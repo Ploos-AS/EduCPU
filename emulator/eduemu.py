@@ -216,6 +216,21 @@ class Emulator:
             self.r[register] = result
             return
 
+        if 0x30 <= opcode <= 0x36:
+            address = self._addr_operand()
+            take = {
+                0x30: True,
+                0x31: bool(self.flags & self.Z),
+                0x32: not bool(self.flags & self.Z),
+                0x33: bool(self.flags & self.C),
+                0x34: not bool(self.flags & self.C),
+                0x35: bool(self.flags & self.N),
+                0x36: not bool(self.flags & self.N),
+            }[opcode]
+            if take:
+                self.pc = address
+            return
+
         self.trap = "INVALID_OPCODE"
 
     def run(self, limit: int = 100000) -> int:
