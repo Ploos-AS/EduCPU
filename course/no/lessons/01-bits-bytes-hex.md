@@ -97,7 +97,7 @@ MOVI R0, 0x2A
 MOVI R0, 0b00101010
 ```
 
-Prøv hver form separat i et lite program som avsluttes med `HALT`. Før du assemblerer programmet, forutsi hvilken byteverdi R0 vil inneholde.
+Prøv hver form separat i et lite program som avsluttes med `HALT`. Repoet inneholder også den CI-testede fixturen `course/examples/lesson01-number-formats.eduasm`, som laster de tre skrivemåtene inn i R0, R1 og R2. Før du assemblerer programmet, forutsi hvilken byteverdi R0 vil inneholde.
 
 Se deretter på de assemblerte bytene og CPU-tilstanden med EduCPU-verktøyene. Notasjonen i kildekoden endres, men verdien som lastes inn i R0 er identisk.
 
