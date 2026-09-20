@@ -210,6 +210,12 @@ symbolic CALL
 
 Which information exists only during build time?
 
+## Tools
+
+Use the real course fixture: `course/examples/lesson13-main.eduasm + lesson13-math.eduasm`.
+
+**EduGuide:** use the guided PREDICT → OBSERVE → EXPLAIN workflow. Predict important compiler-stage or machine-state changes before running the fixture, then compare them with the observation.
+
 ## Next
 
 Next we put everything together and follow **one complete program from EduC source all the way to execution**, correlating source, IR, generated assembly, bytes and CPU state.
