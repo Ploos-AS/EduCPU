@@ -25,6 +25,7 @@ def _function(f):
  def store(v,r):
   if v not in slots:raise CodegenError(f"{f.name}: destination has no stack slot: {v}")
   out.append(f"    STORES [{slots[v]}], {r}")
+ def ir_label(v):return f"__{f.name}_{v}"
  def boolean_result(dest,jump):
   yes=f"__{f.name}_bool_true_{len(out)}";end=f"__{f.name}_bool_end_{len(out)}"
   out.append(f"    {jump} {yes}");out.append("    MOVI R7, 0");out.append(f"    JMP {end}")
@@ -51,10 +52,10 @@ def _function(f):
    else:
     no=f"__{f.name}_gt_false_{len(out)}";end=f"__{f.name}_gt_end_{len(out)}"
     out.append(f"    JNC {no}");out.append(f"    JZ {no}");out.append("    MOVI R7, 1");out.append(f"    JMP {end}");out.append(f"{no}:");out.append("    MOVI R7, 0");out.append(f"{end}:");store(x.dest,"R7")
-  elif x.op=="label":out.append(f"{x.args[0]}:")
-  elif x.op=="jmp":out.append(f"    JMP {x.args[0]}")
+  elif x.op=="label":out.append(f"{ir_label(x.args[0])}:")
+  elif x.op=="jmp":out.append(f"    JMP {ir_label(x.args[0])}")
   elif x.op=="br":
-   load(x.args[0],"R7");out.append("    CMPI R7, 0");out.append(f"    JNZ {x.args[1]}");out.append(f"    JMP {x.args[2]}")
+   load(x.args[0],"R7");out.append("    CMPI R7, 0");out.append(f"    JNZ {ir_label(x.args[1])}");out.append(f"    JMP {ir_label(x.args[2])}")
   elif x.op in ("call","callvoid"):
    fn=x.args[0];args=x.args[1:]
    if len(args)>4:raise CodegenError(f"{f.name}: call to {fn} exceeds four ABI register arguments")
