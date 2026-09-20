@@ -210,6 +210,17 @@ symbolsk CALL
 
 Hvilken informasjon eksisterer bare under bygging?
 
+## Linker-prediksjon
+
+Før du kjører linkeren:
+
+1. finn importen `add_two`;
+2. finn relocationen som representerer den;
+3. forutsi hvilket symbol som skal løse den;
+4. forutsi at den ferdige CALL-operanden må være en numerisk little-endian-adresse.
+
+Kjør deretter linkeren og kontroller hvert punkt. Dette skiller en **symbolsk byggereferanse** fra en **runtime-adresse**.
+
 ## Verktøy
 
 Bruk den ekte kursfixturen: `course/examples/lesson13-main.eduasm + lesson13-math.eduasm`.
