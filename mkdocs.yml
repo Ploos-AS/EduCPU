@@ -1,0 +1,15 @@
+site_name: EduCPU Course
+site_description: Learn how computers work with EduCPU
+repo_url: https://github.com/Ploos-AS/EduCPU
+docs_dir: course
+site_dir: site
+theme:
+  name: mkdocs
+nav:
+  - Home:
+      - English: en/index.md
+      - Norsk: no/index.md
+markdown_extensions:
+  - fenced_code
+  - tables
+  - toc
