@@ -3,11 +3,15 @@ VVP ?= vvp
 YOSYS ?= yosys
 NEXTPNR ?= nextpnr-ice40
 
-.PHONY: test synth machine-synth up5k machine-up5k spram-up5k upduino-v31 clean
+.PHONY: test bringup-test synth machine-synth up5k machine-up5k spram-up5k upduino-v31 clean
 
 test:
 	$(IVERILOG) -g2012 -o simv educpu_core.sv tb_educpu_core.sv
 	$(VVP) simv
+
+bringup-test:
+	$(IVERILOG) -g2012 -o bringup-simv educpu_core.sv educpu_bringup_rom.sv tb_upduino_bringup.sv
+	$(VVP) bringup-simv
 
 synth:
 	$(YOSYS) -q -p 'read_verilog -sv educpu_core.sv; hierarchy -check -top educpu_core; proc; opt; check; synth_ice40 -top educpu_core -json educpu_core.json; stat'
@@ -32,4 +36,4 @@ machine-up5k: machine-synth
 	$(NEXTPNR) --up5k --package sg48 --json educpu_machine.json --asc educpu_machine.asc --freq 12 --report educpu_machine-report.json --pcf-allow-unconstrained
 
 clean:
-	rm -f simv educpu_core.json educpu_machine.json educpu_core.asc educpu_core-report.json educpu_machine.asc educpu_machine-report.json educpu_up5k_machine.json educpu_up5k_machine.asc educpu_up5k_machine-report.json educpu_upduino_v31.json educpu_upduino_v31.asc educpu_upduino_v31.bin educpu_upduino_v31-report.json
+	rm -f simv bringup-simv educpu_core.json educpu_machine.json educpu_core.asc educpu_core-report.json educpu_machine.asc educpu_machine-report.json educpu_up5k_machine.json educpu_up5k_machine.asc educpu_up5k_machine-report.json educpu_upduino_v31.json educpu_upduino_v31.asc educpu_upduino_v31.bin educpu_upduino_v31-report.json
