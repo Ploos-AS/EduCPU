@@ -190,6 +190,14 @@ semantic: gir strukturen ______ etter språkreglene?
 
 Hvorfor er det nyttig å holde disse jobbene adskilt?
 
+## Verktøy
+
+Bruk den ekte kursfixturen: `course/examples/lesson11-ast-semantics.educ`.
+
+**EduGuide:** bruk nettleservisualiseringen for å stege gjennom CPU-tilstanden.
+
+Forvent viktige tilstands- eller compiler-endringer før du kjører fixturen, og sammenlign deretter med resultatet.
+
 ## Neste
 
 Neste leksjon senker det kontrollerte programmet til **EduIR** og viser hvordan høynivåuttrykk blir eksplisitte, maskinuavhengige operasjoner klare for kodegenerering.
