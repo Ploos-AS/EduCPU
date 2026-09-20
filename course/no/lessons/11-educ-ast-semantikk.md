@@ -206,7 +206,7 @@ For den semantiske delen: lag én syntaktisk gyldig, men semantisk ugyldig varia
 
 Bruk den ekte kursfixturen: `course/examples/lesson11-ast-semantics.educ`.
 
-**EduGuide:** bruk nettleservisualiseringen for å stege gjennom CPU-tilstanden.
+**EduGuide:** bruk den guidede PREDICT → OBSERVE → EXPLAIN-flyten. For CPU-kjøring kan du bruke EduVis.
 
 Forvent viktige tilstands- eller compiler-endringer før du kjører fixturen, og sammenlign deretter med resultatet.
 
