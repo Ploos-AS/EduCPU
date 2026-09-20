@@ -2,7 +2,7 @@ import sys
 from pathlib import Path
 ROOT=Path(__file__).resolve().parents[1]
 sys.path[:0]=[str(ROOT/"tools"),str(ROOT/"reference")]
-from educ import parse,compile_source
+from educ import parse,compile_source,compile_trace
 from educ_ir import lower
 from educ_codegen import generate,CodegenError
 from eduasm import assemble_object
@@ -122,3 +122,17 @@ def test_complete_educ_compile_pipeline_executes():
  c.sp-=1;c.mem[c.sp]=(halt>>8)&255;c.sp-=1;c.mem[c.sp]=halt&255
  c.run()
  assert c.r[0]==42 and c.halted and c.sp==0xFF00
+
+
+def test_compile_trace_correlates_all_pipeline_stages():
+ source="byte main(){byte x=40;return x+2;}"
+ trace=compile_trace(source,"trace.educ")
+ assert trace["format"]=="educpu-compile-trace-v0"
+ assert trace["source"]["text"]==source and trace["source"]["name"]=="trace.educ"
+ assert trace["ast"]["node"]=="Program"
+ assert "func byte main()" in trace["ir"]
+ assert ".export main" in trace["assembly"]
+ assert trace["machine"]["symbols"]["main"]==0
+ assert bytes.fromhex(trace["machine"]["bytes"])
+ ins=trace["machine"]["instructions"]
+ assert ins and ins[0]["address"]==0 and all("assembly" in x and "bytes" in x for x in ins)
