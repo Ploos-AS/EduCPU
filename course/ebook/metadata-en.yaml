@@ -1,0 +1,11 @@
+---
+title: "EduCPU Course"
+subtitle: "Learn how a computer works, one understandable layer at a time"
+author: "Ploos AS"
+lang: "en"
+rights: "Course text © 2026 Ploos AS. Licensed CC BY 4.0."
+publisher: "Ploos AS"
+subject: "Computer architecture; programming; assembly language; compilers; digital logic"
+description: "A pedagogy-first course that follows the complete path from bits and machine state through assembly and compilation to CPU execution."
+identifier: "https://github.com/Ploos-AS/EduCPU"
+---
