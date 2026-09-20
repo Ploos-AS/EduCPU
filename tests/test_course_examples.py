@@ -2,6 +2,7 @@ from pathlib import Path
 
 from eduasm import assemble_text
 from educpu import CPU
+from educ import compile_source
 
 ROOT = Path(__file__).resolve().parents[1]
 FIXTURE = ROOT / "course" / "examples" / "lesson01-number-formats.eduasm"
@@ -199,3 +200,30 @@ def test_lesson09_call_ret_abi_stack_layout():
     assert cpu.trap is None
     assert cpu.r[0] == 42
     assert cpu.pc == return_pc + 1
+
+
+def test_lesson10_real_compiler_pipeline_executes():
+    source = ROOT / "course" / "examples" / "lesson10-compiler.educ"
+    tree, ir, asm, obj, data, symbols = compile_source(
+        source.read_text(), str(source)
+    )
+    assert tree.functions
+    assert ir.functions
+    assert ".export main" in asm
+    assert obj["format"] == "educpu-object-v0"
+
+    cpu = CPU()
+    cpu.mem[:len(data)] = data
+    cpu.pc = symbols["main"]
+    halt = len(data)
+    cpu.mem[halt] = 0x01
+    cpu.sp -= 1
+    cpu.mem[cpu.sp] = (halt >> 8) & 0xFF
+    cpu.sp -= 1
+    cpu.mem[cpu.sp] = halt & 0xFF
+    cpu.run()
+
+    assert cpu.r[0] == 42
+    assert cpu.halted
+    assert cpu.trap is None
+    assert cpu.sp == 0xFF00
