@@ -294,7 +294,8 @@ def test_call_ret_differential_and_return_address_bytes():
     emulator.run()
     assert state(emulator) == state(reference)
     assert emulator.halted
-    assert emulator.sp == 0x9000
+    # CALL does not return here; HALT is the callee, so the return address remains on the stack.
+    assert emulator.sp == 0x8FFE
 
 
 def test_call_pushes_high_then_low_and_ret_restores_pc():
