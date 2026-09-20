@@ -190,6 +190,18 @@ semantic: gir strukturen ______ etter språkreglene?
 
 Hvorfor er det nyttig å holde disse jobbene adskilt?
 
+## Prediksjonsøvelse
+
+Før du viser AST-en, tegn den selv for:
+
+```c
+return a + b - 1;
+```
+
+Bestem først hvordan uttrykket grupperes. Deretter kjører du parseren og sammenligner treet.
+
+For den semantiske delen: lag én syntaktisk gyldig, men semantisk ugyldig variant. **Forutsi hvilket steg som skal avvise den før du kjører compileren.**
+
 ## Verktøy
 
 Bruk den ekte kursfixturen: `course/examples/lesson11-ast-semantics.educ`.
