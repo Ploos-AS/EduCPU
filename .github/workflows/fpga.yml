@@ -52,6 +52,15 @@ jobs:
           name: educpu-upduino-v31-bitstream
           path: fpga/rtl/educpu_upduino_v31.bin
           if-no-files-found: error
+      - name: Build UPduino serial-loader bitstream
+        working-directory: fpga/rtl
+        run: make upduino-v31-loader
+      - name: Upload UPduino serial-loader bitstream
+        uses: actions/upload-artifact@v4
+        with:
+          name: educpu-upduino-v31-loader-bitstream
+          path: fpga/rtl/educpu_upduino_v31_loader.bin
+          if-no-files-found: error
       - name: Check reference-model conformance vectors
         run: sh fpga/conformance/check_reference.sh
       - name: Run RTL/reference differential conformance
