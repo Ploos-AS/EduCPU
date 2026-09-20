@@ -4,7 +4,7 @@ module tb_upduino_bringup;
     logic [15:0] mem_addr;
     logic [7:0] mem_wdata, mem_rdata, rom_data;
     logic mem_we, mem_valid, mem_ready, halted, trap, rom_hit;
-    logic rom_pending, wait_release;
+    logic rom_pending;
     logic [15:0] rom_addr_q;
 
     always #5 clk = ~clk;
@@ -22,13 +22,9 @@ module tb_upduino_bringup;
     always_ff @(posedge clk) begin
         if (reset) begin
             rom_pending <= 0;
-            wait_release <= 0;
             rom_addr_q <= 0;
         end else if (rom_pending) begin
             rom_pending <= 0;
-            wait_release <= 1;
-        end else if (wait_release) begin
-            if (!mem_valid) wait_release <= 0;
         end else if (mem_valid && rom_hit) begin
             rom_addr_q <= mem_addr;
             rom_pending <= 1;
