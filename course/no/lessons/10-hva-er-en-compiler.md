@@ -182,6 +182,14 @@ Forklar setningen:
 
 Hvor, helt konkret, blir forbindelsen mellom disse to verdenene skapt?
 
+## Verktøy
+
+Bruk den ekte kursfixturen: `course/examples/lesson10-compiler.educ`.
+
+**EduGuide:** bruk nettleservisualiseringen for å stege gjennom CPU-tilstanden.
+
+Forvent viktige tilstands- eller compiler-endringer før du kjører fixturen, og sammenlign deretter med resultatet.
+
 ## Neste
 
 Neste leksjon undersøker de første stegene i detalj: **EduC, AST og semantisk analyse**.
