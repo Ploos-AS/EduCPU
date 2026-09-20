@@ -24,7 +24,7 @@ spram-up5k:
 	$(NEXTPNR) --up5k --package sg48 --json educpu_up5k_machine.json --asc educpu_up5k_machine.asc --freq 12 --report educpu_up5k_machine-report.json --pcf-allow-unconstrained
 
 upduino-v31:
-	$(YOSYS) -q -p 'read_verilog -lib -specify +/ice40/cells_sim.v; read_verilog -sv educpu_core.sv educpu_up5k_spram.sv educpu_up5k_machine.sv ../boards/upduino-v3.1/educpu_upduino_v31.sv; hierarchy -check -top educpu_upduino_v31; proc; opt; check; synth_ice40 -top educpu_upduino_v31 -json educpu_upduino_v31.json'
+	$(YOSYS) -q -p 'read_verilog -lib -specify +/ice40/cells_sim.v; read_verilog -sv educpu_core.sv educpu_up5k_spram.sv educpu_bringup_rom.sv ../boards/upduino-v3.1/educpu_upduino_v31.sv; hierarchy -check -top educpu_upduino_v31; proc; opt; check; synth_ice40 -top educpu_upduino_v31 -json educpu_upduino_v31.json'
 	$(NEXTPNR) --up5k --package sg48 --json educpu_upduino_v31.json --pcf ../boards/upduino-v3.1/upduino_v31.pcf --asc educpu_upduino_v31.asc --report educpu_upduino_v31-report.json
 	icepack educpu_upduino_v31.asc educpu_upduino_v31.bin
 
