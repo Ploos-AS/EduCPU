@@ -17,4 +17,4 @@ Course text, educational illustrations and other original teaching material in t
 
 Copyright © 2026 Ploos AS.
 
-See [../LICENSES/CC-BY-4.0.txt](../LICENSES/CC-BY-4.0.txt) and [../docs/LICENSING.md](../docs/LICENSING.md).
+The full CC BY 4.0 licence text and repository licensing boundaries are maintained in the repository root under `LICENSES/CC-BY-4.0.txt` and `docs/LICENSING.md`.
