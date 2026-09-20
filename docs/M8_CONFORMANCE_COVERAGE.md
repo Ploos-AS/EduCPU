@@ -60,3 +60,14 @@ The opcode implementation and current differential suite cover every opcode list
 ISA v0. Final M8 qualification still requires a clean CI run after the final cleanup,
 plus explicit EduASM differential fixtures and any remaining machine-layer qualification
 gates.
+
+
+## CI qualification
+
+The full CI workflow passed on commit `19b8abf1305db7c3bff6c0582432d665d0ceada2`.
+
+Latest qualification run: **#214 — PASS**.
+
+This run includes the complete emulator test suite, reference differential tests,
+EduASM course fixtures, compiled EduC fixtures, debugger/trace tests and deterministic
+device tests.
