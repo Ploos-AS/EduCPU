@@ -2,7 +2,29 @@
 
 **Learn how a computer works, one understandable layer at a time.**
 
-EduCPU is a deliberately small teaching computer. This course starts with bits and builds toward a complete understanding of how an EduC program becomes machine instructions and observable CPU state changes.
+EduCPU is a deliberately small teaching computer.
+
+## Before you begin
+
+The course is designed for beginners. You do not need prior knowledge of CPU design, assembly or programming. Basic arithmetic is useful, but the required concepts are introduced as you go. The course works for both self-study and classroom/lab use.
+
+Allow roughly **30–60 minutes per lesson** for the reading and basic exercises. Lessons 10–15 may take **60–120 minutes** when you complete the practical exercises and follow the full toolchain.
+
+## Course map
+
+```text
+bits → logic → CPU state → ISA → assembly → stack/ABI
+                                      ↓
+                         compiler → IR → object/linking
+                                      ↓
+                             machine code → CPU
+                                      ↓
+                         datapath/control → FPGA
+```
+
+You do not need to understand the whole map beforehand. The course builds it layer by layer.
+
+**Tools from lesson 3 onward:** EduVis lets you inspect CPU state step by step in a browser. EduGuide supports the course's **PREDICT → OBSERVE → EXPLAIN** workflow. This course starts with bits and builds toward a complete understanding of how an EduC program becomes machine instructions and observable CPU state changes.
 
 ## The journey
 
