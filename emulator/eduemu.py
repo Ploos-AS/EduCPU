@@ -49,6 +49,38 @@ class Emulator:
         value = self._fetch()
         return value - 256 if value & 0x80 else value
 
+    def _set_zn(self, value: int) -> None:
+        self.flags &= ~(self.Z | self.N)
+        if (value & 0xFF) == 0:
+            self.flags |= self.Z
+        if value & 0x80:
+            self.flags |= self.N
+
+    def _logic_flags(self, value: int) -> None:
+        self.flags = 0
+        self._set_zn(value)
+
+    def _add8(self, left: int, right: int) -> int:
+        total = left + right
+        result = total & 0xFF
+        self.flags = 0
+        self._set_zn(result)
+        if total > 0xFF:
+            self.flags |= self.C
+        if (~(left ^ right) & (left ^ result) & 0x80) != 0:
+            self.flags |= self.V
+        return result
+
+    def _sub8(self, left: int, right: int) -> int:
+        result = (left - right) & 0xFF
+        self.flags = 0
+        self._set_zn(result)
+        if left >= right:
+            self.flags |= self.C
+        if ((left ^ right) & (left ^ result) & 0x80) != 0:
+            self.flags |= self.V
+        return result
+
     def step(self) -> None:
         if self.halted or self.trap:
             return
@@ -120,6 +152,68 @@ class Emulator:
             if source is None:
                 return
             self.mem[(self.sp + offset) & 0xFFFF] = self.r[source]
+            return
+
+        if opcode in (0x20, 0x22, 0x24, 0x28, 0x29, 0x2A):
+            left = self._reg_operand()
+            if left is None:
+                return
+            right = self._reg_operand()
+            if right is None:
+                return
+            if opcode == 0x20:
+                self.r[left] = self._add8(self.r[left], self.r[right])
+            elif opcode == 0x22:
+                self.r[left] = self._sub8(self.r[left], self.r[right])
+            elif opcode == 0x24:
+                self._sub8(self.r[left], self.r[right])
+            elif opcode == 0x28:
+                self.r[left] &= self.r[right]
+                self._logic_flags(self.r[left])
+            elif opcode == 0x29:
+                self.r[left] |= self.r[right]
+                self._logic_flags(self.r[left])
+            else:
+                self.r[left] ^= self.r[right]
+                self._logic_flags(self.r[left])
+            return
+
+        if opcode in (0x21, 0x23, 0x25):
+            register = self._reg_operand()
+            if register is None:
+                return
+            immediate = self._fetch()
+            if opcode == 0x21:
+                self.r[register] = self._add8(self.r[register], immediate)
+            elif opcode == 0x23:
+                self.r[register] = self._sub8(self.r[register], immediate)
+            else:
+                self._sub8(self.r[register], immediate)
+            return
+
+        if opcode == 0x2B:
+            register = self._reg_operand()
+            if register is None:
+                return
+            self.r[register] = (~self.r[register]) & 0xFF
+            self._logic_flags(self.r[register])
+            return
+
+        if opcode in (0x2C, 0x2D):
+            register = self._reg_operand()
+            if register is None:
+                return
+            old = self.r[register]
+            if opcode == 0x2C:
+                result = (old << 1) & 0xFF
+                carry = (old >> 7) & 1
+            else:
+                result = old >> 1
+                carry = old & 1
+            self._logic_flags(result)
+            if carry:
+                self.flags |= self.C
+            self.r[register] = result
             return
 
         self.trap = "INVALID_OPCODE"
