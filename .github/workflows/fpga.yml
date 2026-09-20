@@ -18,13 +18,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Install RTL and synthesis tools
-        run: sudo apt-get update && sudo apt-get install -y iverilog yosys
+        run: sudo apt-get update && sudo apt-get install -y iverilog yosys nextpnr-ice40
       - name: Run RTL smoke test
         working-directory: fpga/rtl
         run: make test
       - name: Run board-neutral Yosys/iCE40 synthesis
         working-directory: fpga/rtl
         run: make synth
+      - name: Run iCE40UP5K place-and-route smoke qualification
+        working-directory: fpga/rtl
+        run: make up5k
       - name: Check reference-model conformance vectors
         run: sh fpga/conformance/check_reference.sh
       - name: Run RTL/reference differential conformance
