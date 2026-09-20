@@ -213,7 +213,7 @@ module tb_educpu_core;
         mem[9]=8'h19; mem[10]=8'h04;
         mem[11]=8'h01;
         do_reset();
-        repeat (12) begin @(posedge clk); #1; end
+        wait (halted || trap); #1;
         assert (dut.r[1] == 8'h5A) else $fatal(1, "assertion failed");
         assert (dut.sp == 16'hFF00) else $fatal(1, "assertion failed");
         assert (mem[16'hFEFF] == 8'h5A) else $fatal(1, "assertion failed");
@@ -227,7 +227,7 @@ module tb_educpu_core;
         mem[8]=8'h11; mem[9]=8'h02; mem[10]=8'h33;
         mem[11]=8'h39;                             // RET
         do_reset();
-        repeat (12) begin @(posedge clk); #1; end
+        wait (halted || trap); #1;
         assert (dut.r[2] == 8'h33) else $fatal(1, "assertion failed");
         assert (dut.sp == 16'hFF00) else $fatal(1, "assertion failed");
         assert (mem[16'hFEFF] == 8'h00) else $fatal(1, "assertion failed"); // return high
