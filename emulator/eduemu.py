@@ -100,7 +100,7 @@ class Emulator:
             self.flags |= self.V
         return result
 
-    def step(self) -> None:
+    def _step(self) -> None:
         if self.halted or self.trap:
             return
 
@@ -325,6 +325,15 @@ class Emulator:
             return
 
         self.trap = "INVALID_OPCODE"
+
+    def step(self) -> None:
+        if self.halted or self.trap:
+            return
+        if self.before_step:
+            self.before_step(self)
+        self._step()
+        if self.after_step:
+            self.after_step(self)
 
     def run(self, limit: int = 100000) -> int:
         count = 0
