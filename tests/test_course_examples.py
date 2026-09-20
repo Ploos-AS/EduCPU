@@ -168,3 +168,34 @@ def test_lesson08_stack_intermediate_states():
     # POP moves SP; it does not erase the old stack bytes.
     assert cpu.mem[0xFEFE] == 0x22
     assert cpu.mem[0xFEFF] == 0x11
+
+
+def test_lesson09_call_ret_abi_stack_layout():
+    source = ROOT / "course" / "examples" / "lesson09-call-ret-abi.eduasm"
+    data, labels, _ = assemble_text(source.read_text())
+    cpu = CPU()
+    cpu.mem[:len(data)] = data
+
+    cpu.step()  # MOVI R0,20
+    cpu.step()  # MOVI R1,22
+    return_pc = cpu.pc + 3
+    assert cpu.sp == 0xFF00
+
+    cpu.step()  # CALL add
+    assert cpu.pc == labels["add"]
+    assert cpu.sp == 0xFEFE
+    assert cpu.mem[0xFEFE] == (return_pc & 0xFF)
+    assert cpu.mem[0xFEFF] == ((return_pc >> 8) & 0xFF)
+
+    cpu.step()  # ADD R0,R1
+    assert cpu.r[0] == 42
+
+    cpu.step()  # RET
+    assert cpu.pc == return_pc
+    assert cpu.sp == 0xFF00
+
+    cpu.step()  # HALT
+    assert cpu.halted
+    assert cpu.trap is None
+    assert cpu.r[0] == 42
+    assert cpu.pc == len(data)
