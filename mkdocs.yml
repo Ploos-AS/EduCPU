@@ -25,6 +25,7 @@ nav:
       - "13 — Object files, relocations and linking": en/lessons/13-objects-relocations-linking.md
       - "14 — From EduC to execution": en/lessons/14-educ-to-execution.md
       - "15 — How a CPU is built": en/lessons/15-how-a-cpu-is-built.md
+      - "Exercise solutions": en/solutions.md
   - Norske leksjoner:
       - "01 — Bits, bytes, binært og heksadesimalt": no/lessons/01-bits-bytes-hex.md
       - "02 — Logikk og lagring av informasjon": no/lessons/02-logikk-og-lagring.md
@@ -41,6 +42,7 @@ nav:
       - "13 — Objektfiler, relocations og linking": no/lessons/13-objektfiler-relocations-linking.md
       - "14 — Fra EduC til kjøring": no/lessons/14-educ-til-kjoring.md
       - "15 — Hvordan en CPU bygges": no/lessons/15-hvordan-en-cpu-bygges.md
+      - "Løsninger til oppgavene": no/losninger.md
 markdown_extensions:
   - fenced_code
   - tables
