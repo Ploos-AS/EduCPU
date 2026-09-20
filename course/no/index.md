@@ -35,4 +35,4 @@ Hvis du ønsker en bok ved siden av kurset med samme type bottom-up-utforskning,
 
 Etter EduCPU er **EduAVR** et naturlig neste steg: gå fra den bevisst lille undervisnings-CPU-en til en ekte AVR-mikrokontroller, reelle embedded-verktøy og fysisk hardware. EduCPU forklarer mekanismene først; EduAVR lar deg bruke de samme ideene på en praktisk mikrokontrollerplattform.
 
-Lenke til EduAVR-kurset legges inn her når den offentlige kurssiden er klar.
+Fortsett med [EduAVR](https://ploos-as.github.io/EduAVR/).
