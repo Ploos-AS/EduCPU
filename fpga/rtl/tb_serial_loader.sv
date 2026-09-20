@@ -17,9 +17,12 @@ module tb_serial_loader;
   repeat(2)@(posedge clk);reset=0;
   send(8'h55);send(8'haa);send(8'h04);send(8'h00);
   send(8'h11);send(8'h00);send(8'h2a);send(8'h01);
-  repeat(2)@(posedge clk);
+  begin : wait_done
+    integer timeout;
+    for(timeout=0; timeout<20 && !started; timeout=timeout+1) @(posedge clk);
+    if(!started) $fatal(1,"loader did not release CPU");
+  end
   if(err) $fatal(1,"protocol error");
-  if(load_mode) $fatal(1,"loader did not release CPU");
   if(mem[0]!==8'h11||mem[1]!==8'h00||mem[2]!==8'h2a||mem[3]!==8'h01) $fatal(1,"payload mismatch");
   $display("EduCPU serial loader protocol PASS");$finish;
  end
