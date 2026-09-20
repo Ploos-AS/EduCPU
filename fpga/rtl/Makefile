@@ -21,6 +21,10 @@ serial-loader-test:
 	$(IVERILOG) -g2012 -o serial-loader-simv educpu_serial_loader.sv tb_serial_loader.sv
 	$(VVP) serial-loader-simv
 
+serial-loader-v1-test:
+	$(IVERILOG) -g2012 -o serial-loader-v1-simv educpu_serial_loader_v1.sv tb_serial_loader_v1.sv
+	$(VVP) serial-loader-v1-simv
+
 serial-e2e-test:
 	$(IVERILOG) -g2012 -o serial-e2e-simv educpu_core.sv educpu_loader_mux.sv educpu_uart_rx.sv educpu_serial_loader.sv tb_serial_e2e.sv
 	$(VVP) serial-e2e-simv
