@@ -138,6 +138,16 @@ def compile_source(text,source_name=None):
  tree=parse(text);ir=lower(tree);asm=generate(ir);obj,_=assemble_object(asm,source_name);data,symbols,_=link([obj])
  return tree,ir,asm,obj,data,symbols
 
+def compile_trace(text,source_name=None):
+ from educ_ir import format_ir
+ from eduasm import assemble_object
+ tree,ir,asm,obj,data,symbols=compile_source(text,source_name)
+ _,rows=assemble_object(asm,source_name)
+ instructions=[{"address":pc,"bytes":b.hex(),"assembly_line":no,"assembly":src.strip()} for pc,b,src,no in rows]
+ return {"format":"educpu-compile-trace-v0","source":{"name":source_name,"text":text},
+         "ast":ast_dict(tree),"ir":format_ir(ir),"assembly":asm,
+         "machine":{"bytes":data.hex(),"size":len(data),"symbols":symbols,"instructions":instructions}}
+
 def main():
  p=argparse.ArgumentParser(prog="educ");p.add_argument("source");p.add_argument("--tokens",action="store_true");p.add_argument("--ast",action="store_true");p.add_argument("--check",action="store_true");p.add_argument("--ir",action="store_true");p.add_argument("--ir-check",action="store_true");p.add_argument("-S","--assembly",action="store_true");p.add_argument("-c","--object",action="store_true");p.add_argument("--trace",action="store_true");p.add_argument("-o","--output");a=p.parse_args();src=Path(a.source);text=src.read_text()
  if a.tokens:
