@@ -18,3 +18,18 @@ A loader session is:
 - v0 has no checksum; checksum/CRC and explicit status responses are later hardening gates
 
 The protocol is intentionally independent of EduASM/EduC. Host tooling will compile/assemble first and send the resulting machine-code image.
+
+## Host tool
+
+`tools/eduload.py` constructs protocol-v0 frames and sends a raw EduCPU machine-code image over an 8N1 serial port. It requires Python 3 and pyserial for actual serial I/O.
+
+Example:
+
+```sh
+python -m pip install pyserial
+python tools/eduload.py program.bin --port /dev/ttyUSB0
+```
+
+On Windows, use the assigned COM port, for example `--port COM4`. The default baud rate is 115200.
+
+The host tool intentionally sends raw machine code. Assembly/compiler integration remains upstream: EduASM/EduC produce the image, then `eduload.py` transports it.
