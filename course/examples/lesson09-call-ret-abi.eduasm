@@ -1,0 +1,9 @@
+; Lesson 09 fixture: ABI arguments, CALL return address, and return value.
+MOVI R0, 20
+MOVI R1, 22
+CALL add
+HALT
+
+add:
+    ADD R0, R1
+    RET
