@@ -24,3 +24,5 @@ jobs:
         run: make test
       - name: Check reference-model conformance vectors
         run: sh fpga/conformance/check_reference.sh
+      - name: Run RTL/reference differential conformance
+        run: python3 fpga/conformance/run_differential.py
