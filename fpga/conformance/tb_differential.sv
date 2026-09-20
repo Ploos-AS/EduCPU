@@ -5,13 +5,29 @@ module tb_differential;
     logic [15:0] mem_addr;
     logic [7:0] mem_wdata;
     logic mem_we, mem_valid, halted, trap;
-    logic mem_ready = 1'b1;
+    logic mem_ready = 1'b0;
+    logic pending = 1'b0;
+    logic [15:0] pending_addr;
+    logic pending_we;
+    logic [7:0] pending_wdata;
     integer i, cycles;
     logic [31:0] mem_hash;
     reg [1023:0] image;
 
-    assign mem_rdata=mem[mem_addr];
-    always @(posedge clk) if(mem_we) mem[mem_addr] <= mem_wdata;
+    always @(posedge clk) begin
+        mem_ready <= 1'b0;
+        if (pending) begin
+            mem_rdata <= mem[pending_addr];
+            if (pending_we) mem[pending_addr] <= pending_wdata;
+            mem_ready <= 1'b1;
+            pending <= 1'b0;
+        end else if (mem_valid) begin
+            pending_addr <= mem_addr;
+            pending_we <= mem_we;
+            pending_wdata <= mem_wdata;
+            pending <= 1'b1;
+        end
+    end
     always #5 clk=~clk;
 
     educpu_core dut(.clk,.reset,.mem_rdata,.mem_addr,.mem_wdata,.mem_we,.mem_valid,.mem_ready,.halted,.trap);
