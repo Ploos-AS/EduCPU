@@ -229,6 +229,14 @@ Which representation is easier for spotting changes? Which is better for reconst
 
 Solutions are kept separately from the lesson.
 
+## Tools
+
+Use the real course fixture: `course/examples/lesson04-machine-state.eduasm`.
+
+**EduVis:** use this tool during the observation step. **EduGuide:** use the guided PREDICT → OBSERVE → EXPLAIN workflow.
+
+Predict important changes before running the fixture, then compare them with the observation.
+
 ## Next
 
 Now that we can describe the machine at an exact instant, we can look at what the CPU actually reads from memory. Next: **instructions and machine code**.
