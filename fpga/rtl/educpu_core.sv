@@ -13,7 +13,7 @@ module educpu_core (
     logic [15:0] sp;
     logic [7:0]  flags;
 
-    typedef enum logic [3:0] {
+    typedef enum logic [4:0] {
         S_FETCH,
         S_MOV_RD,
         S_MOV_RS,
@@ -28,7 +28,17 @@ module educpu_core (
         S_MEM_ADDR_HI,
         S_MEM_ACCESS,
         S_BRANCH_LO,
-        S_BRANCH_HI
+        S_BRANCH_HI,
+        S_FRAME_IMM,
+        S_STACK_REG,
+        S_PUSH_WRITE,
+        S_POP_READ,
+        S_CALL_LO,
+        S_CALL_HI,
+        S_CALL_PUSH_HI,
+        S_CALL_PUSH_LO,
+        S_RET_LO,
+        S_RET_HI
     } state_t;
 
     state_t state;
@@ -69,6 +79,12 @@ module educpu_core (
     localparam logic [7:0] OP_JNC  = 8'h34;
     localparam logic [7:0] OP_JN   = 8'h35;
     localparam logic [7:0] OP_JP   = 8'h36;
+    localparam logic [7:0] OP_ENTER = 8'h18;
+    localparam logic [7:0] OP_LEAVE = 8'h19;
+    localparam logic [7:0] OP_CALL = 8'h38;
+    localparam logic [7:0] OP_RET  = 8'h39;
+    localparam logic [7:0] OP_PUSH = 8'h40;
+    localparam logic [7:0] OP_POP  = 8'h41;
 
     always_ff @(posedge clk) begin
         if (reset) begin
@@ -110,6 +126,18 @@ module educpu_core (
                             current_op <= mem_rdata;
                             pc <= pc + 16'd1;
                             state <= S_ALU_RD;
+                        end
+                        OP_ENTER, OP_LEAVE: begin
+                            current_op <= mem_rdata; pc <= pc + 16'd1; state <= S_FRAME_IMM;
+                        end
+                        OP_PUSH, OP_POP: begin
+                            current_op <= mem_rdata; pc <= pc + 16'd1; state <= S_STACK_REG;
+                        end
+                        OP_CALL: begin
+                            current_op <= mem_rdata; pc <= pc + 16'd1; state <= S_CALL_LO;
+                        end
+                        OP_RET: begin
+                            pc <= pc + 16'd1; state <= S_RET_LO;
                         end
                         OP_JMP, OP_JZ, OP_JNZ, OP_JC, OP_JNC, OP_JN, OP_JP: begin
                             current_op <= mem_rdata;
@@ -251,6 +279,37 @@ module educpu_core (
                     state <= S_FETCH;
                 end
 
+                S_FRAME_IMM: begin
+                    pc <= pc + 16'd1;
+                    if (current_op == OP_ENTER) sp <= sp - {8'h00, mem_rdata};
+                    else sp <= sp + {8'h00, mem_rdata};
+                    state <= S_FETCH;
+                end
+
+                S_STACK_REG: begin
+                    pc <= pc + 16'd1;
+                    if (mem_rdata > 8'd7) trap <= 1'b1;
+                    else begin
+                        operand_rd <= mem_rdata[2:0];
+                        if (current_op == OP_PUSH) begin sp <= sp - 16'd1; operand_addr <= sp - 16'd1; state <= S_PUSH_WRITE; end
+                        else begin operand_addr <= sp; state <= S_POP_READ; end
+                    end
+                end
+
+                S_PUSH_WRITE: state <= S_FETCH;
+                S_POP_READ: begin r[operand_rd] <= mem_rdata; sp <= sp + 16'd1; state <= S_FETCH; end
+
+                S_CALL_LO: begin operand_addr[7:0] <= mem_rdata; pc <= pc + 16'd1; state <= S_CALL_HI; end
+                S_CALL_HI: begin
+                    operand_addr[15:8] <= mem_rdata; pc <= pc + 16'd1;
+                    sp <= sp - 16'd1; state <= S_CALL_PUSH_HI;
+                end
+                S_CALL_PUSH_HI: begin sp <= sp - 16'd1; state <= S_CALL_PUSH_LO; end
+                S_CALL_PUSH_LO: begin pc <= operand_addr; state <= S_FETCH; end
+
+                S_RET_LO: begin operand_addr[7:0] <= mem_rdata; sp <= sp + 16'd1; state <= S_RET_HI; end
+                S_RET_HI: begin pc <= {mem_rdata, operand_addr[7:0]}; sp <= sp + 16'd1; state <= S_FETCH; end
+
                 S_BRANCH_LO: begin
                     operand_addr[7:0] <= mem_rdata;
                     pc <= pc + 16'd1;
@@ -302,8 +361,11 @@ module educpu_core (
         end
     end
 
-    assign mem_addr = (state == S_MEM_ACCESS) ? operand_addr : pc;
-    assign mem_wdata = r[operand_rd];
-    assign mem_we = (state == S_MEM_ACCESS) &&
-                    (current_op == OP_STORE || current_op == OP_STORER || current_op == OP_STORES);
+    assign mem_addr = (state == S_MEM_ACCESS || state == S_PUSH_WRITE || state == S_CALL_PUSH_HI || state == S_CALL_PUSH_LO || state == S_RET_LO || state == S_RET_HI) ?
+                      ((state == S_RET_LO || state == S_RET_HI) ? sp : operand_addr) : pc;
+    assign mem_wdata = (state == S_CALL_PUSH_HI) ? pc[15:8] :
+                       (state == S_CALL_PUSH_LO) ? pc[7:0] : r[operand_rd];
+    assign mem_we = ((state == S_MEM_ACCESS) &&
+                    (current_op == OP_STORE || current_op == OP_STORER || current_op == OP_STORES)) ||
+                    state == S_PUSH_WRITE || state == S_CALL_PUSH_HI || state == S_CALL_PUSH_LO;
 endmodule
