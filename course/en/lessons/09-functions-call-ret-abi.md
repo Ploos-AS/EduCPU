@@ -175,6 +175,14 @@ caller → argument registers → CALL → return address on stack
 
 Which parts are hardware/ISA behaviour, and which parts exist only because software agrees on the ABI?
 
+## Tools
+
+Use the real course fixture: `course/examples/lesson09-call-ret-abi.eduasm`.
+
+**EduVis:** use this tool during the observation step. **EduGuide:** use the guided PREDICT → OBSERVE → EXPLAIN workflow.
+
+Predict important changes before running the fixture, then compare them with the observation.
+
 ## Next
 
 We now know enough low-level machinery to ask a much bigger question: how can a programmer write something more expressive and have tools produce all of this automatically? Next: **what is a compiler?**
