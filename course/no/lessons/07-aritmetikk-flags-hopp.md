@@ -134,6 +134,14 @@ aritmetikk → FLAGS → betinget hopp → PC → neste instruksjon
 
 Hvilken del av kjeden gjør et valg på høyt nivå mulig uten at CPU-en forstår betydningen av programmet?
 
+## Verktøy
+
+Bruk den ekte kursfixturen: `course/examples/lesson07-flags-branches.eduasm`.
+
+**EduVis:** bruk nettleservisualiseringen for å stege gjennom CPU-tilstanden. **eduguide:** bruk den guidede PREDICT → OBSERVE → EXPLAIN-flyten.
+
+Forvent viktige tilstands- eller compiler-endringer før du kjører fixturen, og sammenlign deretter med resultatet.
+
 ## Neste
 
 Neste leksjon introduserer **stacken**: en disiplinert bruk av minnet styrt av SP som lar programmer lagre verdier midlertidig og senere støtte funksjonskall.
