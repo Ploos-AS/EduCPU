@@ -31,9 +31,9 @@ jobs:
       - name: Run iCE40UP5K core place-and-route qualification
         working-directory: fpga/rtl
         run: make up5k
-      - name: Run integrated machine iCE40UP5K place-and-route qualification
+      - name: Run explicit SPRAM iCE40UP5K machine qualification
         working-directory: fpga/rtl
-        run: make machine-up5k
+        run: make spram-up5k
       - name: Check reference-model conformance vectors
         run: sh fpga/conformance/check_reference.sh
       - name: Run RTL/reference differential conformance
