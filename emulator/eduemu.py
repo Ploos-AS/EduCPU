@@ -274,6 +274,18 @@ class Emulator:
             self.pc = low | (high << 8)
             return
 
+        if opcode == 0x48:  # PUSHA
+            for register in range(8):
+                self.sp = (self.sp - 1) & 0xFFFF
+                self.mem[self.sp] = self.r[register]
+            return
+
+        if opcode == 0x49:  # POPA
+            for register in reversed(range(8)):
+                self.r[register] = self.mem[self.sp]
+                self.sp = (self.sp + 1) & 0xFFFF
+            return
+
         if opcode == 0x46:  # ENTER frame_size
             frame_size = self._fetch()
             self.sp = (self.sp - 1) & 0xFFFF
