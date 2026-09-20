@@ -58,6 +58,10 @@ Course from binary/hex through compiler construction and complete execution. See
 - [x] complete progressive course coverage
 - [x] executable lesson fixtures and checks
 - [x] M7 course-content qualification — CI and Pages PASS; see docs/M7_QUALIFICATION.md
+- [x] separate bilingual exercise solutions
+- [x] EduAVR further-learning path on course landing pages
+- [ ] bilingual EPUB generation + validation
+- [ ] Kindle distribution workflow from generated EPUB
 ## M8 — EduCPU emulator
 Separate faithful implementation, deterministic devices, debugger hooks and differential/conformance testing.
 ## M9 — FPGA realization
