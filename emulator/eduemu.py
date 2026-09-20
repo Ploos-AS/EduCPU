@@ -231,6 +231,49 @@ class Emulator:
                 self.pc = address
             return
 
+        if opcode in (0x40, 0x41):
+            register = self._reg_operand()
+            if register is None:
+                return
+            if opcode == 0x40:
+                self.sp = (self.sp - 1) & 0xFFFF
+                self.mem[self.sp] = self.r[register]
+            else:
+                self.r[register] = self.mem[self.sp]
+                self.sp = (self.sp + 1) & 0xFFFF
+            return
+
+        if opcode == 0x42:
+            self.sp = (self.sp - 1) & 0xFFFF
+            self.mem[self.sp] = (self.pc >> 8) & 0xFF
+            self.sp = (self.sp - 1) & 0xFFFF
+            self.mem[self.sp] = self.pc & 0xFF
+            return
+
+        if opcode == 0x43:
+            low = self.mem[self.sp]
+            self.sp = (self.sp + 1) & 0xFFFF
+            high = self.mem[self.sp]
+            self.sp = (self.sp + 1) & 0xFFFF
+            self.pc = low | (high << 8)
+            return
+
+        if opcode == 0x44:
+            self.sp = (self.sp - 1) & 0xFFFF
+            self.mem[self.sp] = (self.pc >> 8) & 0xFF
+            self.sp = (self.sp - 1) & 0xFFFF
+            self.mem[self.sp] = self.pc & 0xFF
+            self.pc = self._addr_operand()
+            return
+
+        if opcode == 0x45:
+            low = self.mem[self.sp]
+            self.sp = (self.sp + 1) & 0xFFFF
+            high = self.mem[self.sp]
+            self.sp = (self.sp + 1) & 0xFFFF
+            self.pc = low | (high << 8)
+            return
+
         self.trap = "INVALID_OPCODE"
 
     def run(self, limit: int = 100000) -> int:
