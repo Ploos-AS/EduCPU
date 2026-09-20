@@ -4,6 +4,31 @@
 
 After this lesson, you should be able to explain the roles of registers, the ALU, datapath and control logic, describe how an instruction causes data to move through a CPU, distinguish architectural behaviour from one hardware implementation, and connect the EduCPU model to a future FPGA realization.
 
+## Before reading further: predict the datapath
+
+Consider:
+
+```asm
+MOVI R0, 20
+MOVI R1, 22
+ADD R0, R1
+```
+
+Before reading the hardware section, draw a minimal datapath on paper.
+
+Mark:
+
+- where the instruction is fetched;
+- where the immediate value goes;
+- where R0 and R1 are read;
+- where the ALU result goes;
+- how FLAGS receive information;
+- how PC advances.
+
+You do not need to draw every multiplexer. The goal is to form a first hypothesis about **which information must be able to move where**.
+
+After the walkthrough, compare your drawing with the conceptual datapath below. Correct only what was actually wrong.
+
 ## We have reached the hardware boundary
 
 So far we have treated EduCPU as an architecture:
