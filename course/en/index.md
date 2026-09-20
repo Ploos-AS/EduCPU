@@ -35,4 +35,4 @@ If you want a companion book for the same kind of bottom-up exploration, J. Clar
 
 After EduCPU, **EduAVR** is a natural next step: move from the deliberately small teaching CPU to a real AVR microcontroller, real embedded tooling and physical hardware. EduCPU explains the mechanisms first; EduAVR lets you apply the same ideas on a practical microcontroller platform.
 
-The EduAVR course link will be added here when its public course site is ready.
+Continue with [EduAVR](https://ploos-as.github.io/EduAVR/).
