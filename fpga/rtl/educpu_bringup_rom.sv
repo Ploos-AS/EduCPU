@@ -13,7 +13,7 @@ module educpu_bringup_rom (
     output logic        hit
 );
     always_comb begin
-        hit = (addr < 16'd12);
+        hit = (addr < 16'd14);
         case (addr)
             16'd0:  data = 8'h11; // MOVI
             16'd1:  data = 8'h00; // R0
@@ -25,9 +25,10 @@ module educpu_bringup_rom (
             16'd7:  data = 8'h00; // R0
             16'd8:  data = 8'h01; // R1
             16'd9:  data = 8'h32; // JNZ
-            16'd10: data = 8'h0c; // fail = 0x000c
+            16'd10: data = 8'h0d; // fail = 0x000d
             16'd11: data = 8'h00;
-            16'd12: data = 8'h01; // HALT (not overlay hit; kept as documentation)
+            16'd12: data = 8'h01; // HALT
+            16'd13: data = 8'hff; // invalid opcode -> TRAP
             default:data = 8'hff;
         endcase
     end
