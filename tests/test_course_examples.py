@@ -43,3 +43,17 @@ def test_lesson02_logic_fixture():
     assert cpu.r[3] == 0xEE  # OR
     assert cpu.r[4] == 0x66  # XOR
     assert cpu.r[5] == 0x33  # NOT
+
+
+def test_lesson03_cpu_cycle_fixture():
+    source = ROOT / "course" / "examples" / "lesson03-cpu-cycle.eduasm"
+    data, _, _ = assemble_text(source.read_text())
+    cpu = CPU()
+    cpu.mem[:len(data)] = data
+    cpu.run()
+    assert cpu.halted
+    assert cpu.trap is None
+    assert cpu.r[0] == 30
+    assert cpu.r[1] == 20
+    assert cpu.pc == len(data)
+    assert cpu.flags == 0
