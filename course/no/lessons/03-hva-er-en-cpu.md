@@ -143,6 +143,15 @@ Assembler og kjør deretter programmet med EduCPU-verktøyene.
 
 Den automatiserte kurstesten kjører den samme fixturen mot den kjørbare referanse-CPU-en.
 
+Du kan også åpne akkurat denne kildefilen direkte i nettleservisualiseringen:
+
+```sh
+PYTHONPATH=tools:reference python tools/eduvis.py course/examples/lesson03-cpu-cycle.eduasm
+```
+
+Åpne deretter `http://127.0.0.1:8080/`. Bruk **Micro-step** for å følge de pedagogiske fasene gjennom PC, minne, dekoder, registre, ALU og FLAGS, eller **Instruction step** for å kjøre én komplett arkitektonisk instruksjon.
+
+
 ## Forklar resultatet
 
 Det viktige er ikke bare at en instruksjon produserte en verdi. CPU-en klarte å **velge en instruksjon fra minnet, identifisere operasjonen, hente operandene, endre maskintilstanden og gå videre til neste instruksjon**.
