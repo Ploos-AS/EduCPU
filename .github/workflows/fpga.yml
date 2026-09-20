@@ -25,6 +25,9 @@ jobs:
       - name: Run UPduino bring-up program simulation
         working-directory: fpga/rtl
         run: make bringup-test
+      - name: Run loader hand-off simulation
+        working-directory: fpga/rtl
+        run: make loader-test
       - name: Run board-neutral Yosys/iCE40 synthesis
         working-directory: fpga/rtl
         run: make synth
