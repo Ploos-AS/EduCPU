@@ -2,7 +2,29 @@
 
 **Lær hvordan en datamaskin fungerer, ett forståelig lag om gangen.**
 
-EduCPU er en bevisst liten undervisningsdatamaskin. Kurset starter med bits og bygger gradvis opp en komplett forståelse av hvordan et EduC-program blir til maskininstruksjoner og observerbare endringer i CPU-tilstanden.
+EduCPU er en bevisst liten undervisningsdatamaskin.
+
+## Før du begynner
+
+Kurset er laget for nybegynnere. Du trenger ikke kunne CPU-design, assembly eller programmering på forhånd. Litt grunnleggende regning er nyttig, men alle nødvendige begreper introduseres underveis. Kurset passer både for selvstudium og undervisning i klasserom/lab.
+
+Forvent omtrent **30–60 minutter per leksjon** for gjennomgang og enkle øvelser. Leksjon 10–15 kan ta **60–120 minutter** dersom du gjør de praktiske oppgavene og følger hele toolchainen.
+
+## Kurskart
+
+```text
+bits → logikk → CPU-tilstand → ISA → assembly → stack/ABI
+                                      ↓
+                         compiler → IR → object/linking
+                                      ↓
+                              maskinkode → CPU
+                                      ↓
+                         datapath/control → FPGA
+```
+
+Du trenger ikke forstå hele kartet på forhånd. Det er nettopp dette kurset bygger opp, lag for lag.
+
+**Verktøy fra leksjon 3 og utover:** EduVis lar deg se CPU-tilstanden steg for steg i nettleseren. EduGuide lar deg jobbe etter mønsteret **FORUTSI → OBSERVER → FORKLAR**. Kurset starter med bits og bygger gradvis opp en komplett forståelse av hvordan et EduC-program blir til maskininstruksjoner og observerbare endringer i CPU-tilstanden.
 
 ## Reisen
 
