@@ -9,6 +9,10 @@ nav:
   - Home:
       - English: en/index.md
       - Norsk: no/index.md
+  - English lessons:
+      - "01 — Bits, bytes, binary and hexadecimal": en/lessons/01-bits-bytes-hex.md
+  - Norske leksjoner:
+      - "01 — Bits, bytes, binært og heksadesimalt": no/lessons/01-bits-bytes-hex.md
 markdown_extensions:
   - fenced_code
   - tables
