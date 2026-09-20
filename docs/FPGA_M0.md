@@ -30,15 +30,15 @@ instruction memory -> fetch/decode/control -> register file <-> ALU
 
 ## Qualification gates
 
-- [ ] RTL elaborates
+- [x] RTL elaborates
 - [ ] lint passes
 - [x] reset test passes — architectural state initialized and smoke-tested
 - [x] NOP/HALT passes — RTL fetch loop and sticky HALT qualified
 - [x] arithmetic/logic/flags passes — ADD/SUB/CMP, immediate forms, AND/OR/XOR/NOT and SHL/SHR with ISA v0 Z/N/C/V semantics
-- [ ] memory passes
-- [ ] branches pass
-- [ ] stack/CALL/RET passes
-- [ ] full ISA conformance passes
+- [x] memory passes — absolute, register-indirect and signed SP-relative forms are smoke- and differential-tested
+- [x] branches pass — JMP/JZ/JNZ/JC/JNC/JN/JP covered by differential programs
+- [x] stack/CALL/RET passes — PUSH/POP, CALL/RET and ENTER/LEAVE covered
+- [ ] full ISA conformance passes — 19 reference↔RTL differential programs currently pass, including full-memory signatures and trap cases; opcode coverage matrix remains the closing gate
 
 M0.2 also verifies invalid opcodes enter the architectural trap state and that execution remains stable after HALT/trap.
 - [ ] synthesis passes for selected target
