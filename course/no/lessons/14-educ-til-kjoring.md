@@ -85,6 +85,14 @@ source → AST → semantics → IR → assembly → object
 
 For hver pil spør du: **Hvilken informasjon ble lagt til, fjernet eller gjort mer konkret?**
 
+## Verktøy
+
+Bruk den ekte kursfixturen: `course/examples/lesson14-end-to-end.educ`.
+
+**EduVis:** bruk dette verktøyet i observasjonsdelen. **EduGuide:** bruk den guidede PREDICT → OBSERVE → EXPLAIN-flyten.
+
+Forutsi viktige endringer før du kjører fixturen, og sammenlign deretter med observasjonen.
+
 ## Neste
 
 Neste går vi under arkitekturnivået: **Hvordan kan en CPU bygges av ALU, registre, datapath og kontroll-logikk, og hvordan leder det mot en FPGA-implementasjon?**
