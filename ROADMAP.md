@@ -26,15 +26,27 @@
 - [x] conservative all-path return validation
 - [x] CLI semantic check: educ --check
 - [x] semantic-analysis tests
-- [ ] documented simple IR
-- [ ] AST to IR lowering
-- [ ] IR validation and inspection CLI
+- [x] documented simple IR
+- [x] AST to IR lowering
+- [x] IR validation and inspection CLI
 - [x] M5 front-end qualification — CI green on Python 3.11, 3.12 and 3.13
 
-M5 now covers source syntax, semantic meaning, explicit EduIR lowering and independent IR validation. The complete front-end pipeline is qualified in CI. M5 is complete; M6 starts with lowering validated EduIR to EduASM.
+M5 covers source syntax, semantic meaning, explicit EduIR lowering and independent IR validation. The complete front-end pipeline is qualified in CI.
 
 ## M6 — EduC compiler back end
-IR lowering, simple register allocation, code generation and complete source to AST to IR to assembly to bytes to execution correlation.
+- [x] documented backend strategy
+- [x] EduIR to EduASM code generator
+- [x] ABI register parameters and return-value mapping
+- [x] stack-backed parameters, locals and temporaries
+- [x] constants, copies and byte add/sub
+- [x] comparisons and control flow
+- [x] function-local label namespacing
+- [x] function calls, void calls and recursion
+- [x] generated EduASM object assembly and EduLink execution tests
+- [ ] complete EduC to executable CLI pipeline
+- [ ] source to AST to IR to assembly to bytes to execution correlation
+- [ ] M6 qualification
+
 ## M7 — Guided teaching environment
 Course from binary/hex through compiler construction and complete execution.
 ## M8 — EduCPU emulator
