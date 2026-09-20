@@ -65,17 +65,17 @@ Course from binary/hex through compiler construction and complete execution. Fin
 ## M8 — EduCPU emulator
 Separate faithful implementation, deterministic devices, debugger hooks and differential/conformance testing. See `docs/M8_EMULATOR.md`.
 - [x] define emulator architecture, independence rule and qualification gate
-- [ ] implement independent ISA v0 execution core
-- [ ] add reset/NOP/HALT and trap conformance
-- [ ] add data movement and memory conformance
-- [ ] add arithmetic/flags/logic/shift conformance
-- [ ] add branch conformance
-- [ ] add stack/CALL/RET/frame conformance
-- [ ] add debugger hooks and bounded execution
-- [ ] add deterministic device abstraction and tests
-- [ ] differential-test EduASM programs against reference CPU
+- [x] implement independent ISA v0 execution core
+- [x] add reset/NOP/HALT and trap conformance
+- [x] add data movement and memory conformance
+- [x] add arithmetic/flags/logic/shift conformance
+- [x] add branch conformance
+- [x] add stack/CALL/RET/frame conformance
+- [x] add debugger hooks and bounded execution
+- [x] add deterministic device abstraction and tests
+- [x] differential-test EduASM programs against reference CPU — course fixtures 01–09
 - [x] differential-test compiled EduC programs against reference CPU — lessons 10, 12 and 14
-- [ ] M8 qualification — CI green
+- [ ] M8 qualification — final CI + release qualification
 ## M9 — FPGA realization
 Synthesizable realization of frozen architecture and qualification against ISA vectors.
 ## M10 — Advanced and experimental concepts
