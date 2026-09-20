@@ -87,10 +87,11 @@ Optional interrupts, richer I/O, microcode, privilege, VM, pipelines/hazards, ca
 - [x] board-neutral FPGA project structure
 - [x] SystemVerilog CPU-core boundary
 - [x] reset simulation skeleton
-- [ ] complete ISA v0 RTL implementation
-- [ ] RTL/reference-CPU conformance
+- [x] complete ISA v0 RTL implementation
+- [x] RTL/reference-CPU conformance — 20-program opcode-complete differential suite
 - [x] select iCE40UP5K as initial FPGA family/target
 - [x] define own-PCB-first hardware strategy
+- [ ] synchronous FPGA memory subsystem + requalification
 - [ ] UPduino v3.1 target wrapper and synthesis
 - [ ] iCEBreaker/compatible UP5K target wrapper
 - [ ] EduCPU custom PCB schematic/layout
