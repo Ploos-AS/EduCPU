@@ -38,7 +38,7 @@ instruction memory -> fetch/decode/control -> register file <-> ALU
 - [x] memory passes — absolute, register-indirect and signed SP-relative forms are smoke- and differential-tested
 - [x] branches pass — JMP/JZ/JNZ/JC/JNC/JN/JP covered by differential programs
 - [x] stack/CALL/RET passes — PUSH/POP, CALL/RET and ENTER/LEAVE covered
-- [ ] full ISA conformance passes — 19 reference↔RTL differential programs currently pass, including full-memory signatures and trap cases; opcode coverage matrix remains the closing gate
+- [x] full ISA conformance passes — 20 reference↔RTL differential programs cover every frozen ISA v0 opcode, invalid-opcode and invalid-register traps, architectural state, and full-memory signatures
 
 M0.2 also verifies invalid opcodes enter the architectural trap state and that execution remains stable after HALT/trap.
 - [ ] synthesis passes for selected target
