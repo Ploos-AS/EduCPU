@@ -48,6 +48,22 @@ The important idea is:
 
 > The ISA defines **what** the machine must do. The hardware design decides **how** signals, storage and logic make it happen.
 
+## What is real and what is provisional?
+
+This lesson describes the **architecture**, not a finished FPGA netlist or a claimed physical schematic.
+
+What is already concrete and testable is:
+
+- ISA v0 and its instruction encoding;
+- the reference CPU;
+- the independent emulator;
+- differential/conformance tests;
+- compiler and toolchain results.
+
+The FPGA datapath is the next implementation layer. For that reason, this lesson deliberately uses a conceptual datapath rather than pretending it is the final circuit design.
+
+When the HDL implementation exists, this lesson can be upgraded with an actual EduCPU block diagram and identify which parts are architectural requirements versus concrete FPGA design choices.
+
 ## Registers: small pieces of state
 
 A register stores bits.
