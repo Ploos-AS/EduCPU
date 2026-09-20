@@ -50,7 +50,9 @@ M5 covers source syntax, semantic meaning, explicit EduIR lowering and independe
 ## M7 — Guided teaching environment
 Course from binary/hex through compiler construction and complete execution. See `docs/M7_TEACHING_ENVIRONMENT.md`.
 - [x] course structure and teaching-environment requirements
-- [ ] lesson framework and first binary/hex lesson
+- [x] bilingual Markdown course framework and lesson template
+- [x] GitHub Pages generation pipeline
+- [ ] first binary/hex lesson
 - [ ] guided runner and compile-trace integration
 - [ ] simulator/visualizer lesson integration
 - [ ] complete progressive course coverage
