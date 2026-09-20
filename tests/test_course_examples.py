@@ -27,3 +27,19 @@ def test_lesson01_number_formats_execute_as_same_value():
     assert cpu.halted
     assert cpu.trap is None
     assert cpu.r[:3] == [42, 42, 42]
+
+
+def test_lesson02_logic_fixture():
+    source = ROOT / "course" / "examples" / "lesson02-logic.eduasm"
+    data, _, _ = assemble_text(source.read_text())
+    cpu = CPU()
+    cpu.mem[:len(data)] = data
+    cpu.run()
+    assert cpu.halted
+    assert cpu.trap is None
+    assert cpu.r[0] == 0xCC
+    assert cpu.r[1] == 0xAA
+    assert cpu.r[2] == 0x88  # AND
+    assert cpu.r[3] == 0xEE  # OR
+    assert cpu.r[4] == 0x66  # XOR
+    assert cpu.r[5] == 0x33  # NOT
