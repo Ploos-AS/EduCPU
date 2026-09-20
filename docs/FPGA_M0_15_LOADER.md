@@ -41,3 +41,15 @@ FTDI/UART details.
 
 Physical USB/serial loading is a later gate and must not be marked PASS from RTL
 simulation alone.
+
+## Qualification status
+
+FPGA CI #119 (commit `5c98ba8`) establishes the loader layers through the byte-protocol boundary:
+
+- board-neutral loader hand-off simulation: PASS
+- serial loader protocol parser: PASS
+- M0.14 bring-up regression: PASS
+- ISA/reference differential suite: 20 programs PASS
+- UP5K/UPduino timing regression: PASS at 12 MHz
+
+The next gate is end-to-end serial transport: UART waveform → UART RX → protocol parser → loader mux → SPRAM → CPU execution → HALT. Physical USB/FTDI loading remains unqualified until observed on hardware.
