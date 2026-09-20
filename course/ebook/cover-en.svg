@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="2560" viewBox="0 0 1600 2560">
+<rect width="1600" height="2560" fill="#10243e"/>
+<rect x="110" y="110" width="1380" height="2340" rx="24" fill="none" stroke="#7fb3d5" stroke-width="5"/>
+<text x="140" y="240" fill="#ffffff" font-family="sans-serif" font-size="42" letter-spacing="12">PLOOS AS</text>
+<text x="140" y="720" fill="#ffffff" font-family="sans-serif" font-weight="bold" font-size="210">EduCPU</text>
+<text x="140" y="850" fill="#b9d8ea" font-family="sans-serif" font-size="54">Learn how a computer works</text>
+<g stroke="#4f8fb7" stroke-width="6" fill="none" opacity="0.75">
+<path d="M140 1200 H500 V1080 H760"/><path d="M140 1320 H620 V1460 H940"/><path d="M140 1440 H420 V1640 H800"/>
+<path d="M1460 1200 H1100 V1080 H840"/><path d="M1460 1320 H980 V1460 H660"/><path d="M1460 1440 H1180 V1640 H800"/>
+</g>
+<rect x="590" y="1120" width="420" height="420" rx="38" fill="#172f4e" stroke="#b9d8ea" stroke-width="8"/>
+<text x="800" y="1370" text-anchor="middle" fill="#ffffff" font-family="monospace" font-weight="bold" font-size="76">CPU</text>
+<text x="140" y="2110" fill="#ffffff" font-family="sans-serif" font-size="48">Bits · Assembly · Compilers · Hardware</text>
+<text x="140" y="2300" fill="#b9d8ea" font-family="sans-serif" font-size="38">ENGLISH EDITION</text>
+</svg>
