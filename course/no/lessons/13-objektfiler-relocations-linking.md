@@ -210,6 +210,14 @@ symbolsk CALL
 
 Hvilken informasjon eksisterer bare under bygging?
 
+## Verktøy
+
+Bruk den ekte kursfixturen: `course/examples/lesson13-main.eduasm + lesson13-math.eduasm`.
+
+**EduGuide:** bruk dette verktøyet i observasjonsdelen.
+
+Forutsi viktige endringer før du kjører fixturen, og sammenlign deretter med observasjonen.
+
 ## Neste
 
 Neste leksjon setter alt sammen og følger **ett komplett program fra EduC-kildekode helt til kjøring**, med korrelasjon mellom kildekode, IR, generert assembly, bytes og CPU-tilstand.
