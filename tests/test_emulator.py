@@ -486,3 +486,23 @@ def test_device_ranges_cannot_overlap():
         pass
     else:
         raise AssertionError("overlapping device range accepted")
+
+
+def test_educpu_asm_course_fixtures_differential():
+    fixtures = [
+        ROOT / "course" / "examples" / "lesson01-number-formats.eduasm",
+        ROOT / "course" / "examples" / "lesson02-logic.eduasm",
+        ROOT / "course" / "examples" / "lesson03-cpu-cycle.eduasm",
+        ROOT / "course" / "examples" / "lesson06-eduasm.eduasm",
+        ROOT / "course" / "examples" / "lesson07-flags-branches.eduasm",
+        ROOT / "course" / "examples" / "lesson08-stack.eduasm",
+        ROOT / "course" / "examples" / "lesson09-call-ret-abi.eduasm",
+    ]
+    from eduasm import assemble_text
+    for fixture in fixtures:
+        data, _, _ = assemble_text(fixture.read_text())
+        reference, emulator = machines(data)
+        reference.run()
+        emulator.run()
+        assert state(emulator) == state(reference), fixture.name
+        assert emulator.mem == reference.mem, fixture.name
