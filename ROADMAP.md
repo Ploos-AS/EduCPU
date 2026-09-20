@@ -89,5 +89,9 @@ Optional interrupts, richer I/O, microcode, privilege, VM, pipelines/hazards, ca
 - [x] reset simulation skeleton
 - [ ] complete ISA v0 RTL implementation
 - [ ] RTL/reference-CPU conformance
-- [ ] synthesis target selection
+- [x] select iCE40UP5K as initial FPGA family/target
+- [x] define own-PCB-first hardware strategy
+- [ ] UPduino v3.1 target wrapper and synthesis
+- [ ] iCEBreaker/compatible UP5K target wrapper
+- [ ] EduCPU custom PCB schematic/layout
 - [ ] physical FPGA bring-up
