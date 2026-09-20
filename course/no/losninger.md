@@ -2,6 +2,10 @@
 
 Disse løsningene er et tillegg til leksjonene, ikke en erstatning for å forutsi og eksperimentere selv. Prøv oppgaven først og sammenlign deretter resonnementet.
 
+### Om praktiske og utforskende oppgaver
+
+Praktiske oppgaver har ikke alltid én fasit. De er laget for at du skal kjøre ekte EduCPU-verktøy, gjøre en prediksjon og kontrollere den mot maskinens faktiske tilstand. Når det finnes en forventet observasjon, beskriver løsningen både **hva** som skal skje og **hvorfor**. For `Praktisk` og `Utforsk selv` bør du derfor bruke løsningen som et resonnementsspor, ikke bare som et svarark.
+
 ## 01 — Bits, bytes og heksadesimalt
 
 42 er `00101010₂`, `0x2A` og desimalt 42. Én byte har 256 mulige bitmønstre, fra 0 til 255 når den tolkes som en unsigned EduCPU-byte.
