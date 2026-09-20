@@ -23,6 +23,7 @@ nav:
       - "11 — EduC, AST and semantic analysis": en/lessons/11-educ-ast-semantics.md
       - "12 — EduIR and code generation": en/lessons/12-eduir-codegen.md
       - "13 — Object files, relocations and linking": en/lessons/13-objects-relocations-linking.md
+      - "14 — From EduC to execution": en/lessons/14-educ-to-execution.md
   - Norske leksjoner:
       - "01 — Bits, bytes, binært og heksadesimalt": no/lessons/01-bits-bytes-hex.md
       - "02 — Logikk og lagring av informasjon": no/lessons/02-logikk-og-lagring.md
@@ -37,6 +38,7 @@ nav:
       - "11 — EduC, AST og semantisk analyse": no/lessons/11-educ-ast-semantikk.md
       - "12 — EduIR og kodegenerering": no/lessons/12-eduir-kodegenerering.md
       - "13 — Objektfiler, relocations og linking": no/lessons/13-objektfiler-relocations-linking.md
+      - "14 — Fra EduC til kjøring": no/lessons/14-educ-til-kjoring.md
 markdown_extensions:
   - fenced_code
   - tables
