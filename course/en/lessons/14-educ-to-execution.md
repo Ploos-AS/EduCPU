@@ -35,6 +35,24 @@ EduC can produce an `educpu-compile-trace-v0` artifact correlating source, AST, 
 
 The CI-tested fixture is `course/examples/lesson14-end-to-end.educ`. The test verifies the real compile trace and compiled image, then executes that image and records actual state transitions until the program returns 42 with a balanced stack.
 
+## Run with EduGuide
+
+From the repository root, run the real lesson fixture through the guided runner:
+
+```bash
+PYTHONPATH=tools:reference python tools/eduguide.py course/examples/lesson14-end-to-end.educ
+```
+
+For each architectural instruction EduGuide prints the current instruction, asks you to **PREDICT**, shows the actual state changes under **OBSERVE**, prints the resulting PC/SP/FLAGS/register state, and asks you to **EXPLAIN** which ISA rule caused it.
+
+To verify only the final result:
+
+```bash
+PYTHONPATH=tools:reference python tools/eduguide.py course/examples/lesson14-end-to-end.educ --summary
+```
+
+EduGuide uses the same compiler and reference CPU as the qualification tests; it is not a separate teaching-only CPU model.
+
 ## Follow one instruction
 
 Pick an instruction from the trace. Record its address, generated assembly and encoded bytes. Predict the opcode, operands, state change and next PC. Run one CPU step and compare.
