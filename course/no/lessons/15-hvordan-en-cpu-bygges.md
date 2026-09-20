@@ -4,6 +4,31 @@
 
 Etter denne leksjonen skal du kunne forklare rollene til registre, ALU, datapath og kontroll-logikk, beskrive hvordan en instruksjon får data til å bevege seg gjennom en CPU, skille arkitektonisk oppførsel fra én bestemt hardware-implementasjon og koble EduCPU-modellen til en framtidig FPGA-realisering.
 
+## Før du leser videre: forutsi datapathen
+
+Se på:
+
+```asm
+MOVI R0, 20
+MOVI R1, 22
+ADD R0, R1
+```
+
+Før du leser hardware-delen, tegn en minimal datapath på papir.
+
+Marker:
+
+- hvor instruksjonen hentes;
+- hvor immediate-verdien går;
+- hvor R0 og R1 leses;
+- hvor ALU-resultatet går;
+- hvor FLAGS får informasjon;
+- hvordan PC går videre.
+
+Du trenger ikke tegne alle muxer. Målet er å lage en første hypotese om **hvilken informasjon som må kunne flyttes hvor**.
+
+Etter gjennomgangen: sammenlign tegningen med den konseptuelle datapathen under. Rett bare det som faktisk var feil.
+
 ## Vi har nådd hardware-grensen
 
 Så langt har vi behandlet EduCPU som en arkitektur:
