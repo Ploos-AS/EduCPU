@@ -101,3 +101,7 @@ Markdown is the single source of truth for course content. Generated HTML is a p
 The course will use parallel English and Norwegian content and publish generated HTML through GitHub Pages. CI should validate course structure, links and executable examples before publication.
 
 Real screenshots and diagrams derived from the actual EduCPU tools should be preferred when showing concrete interfaces or implementation behavior.
+
+### Ebook publishing
+
+The linear 15-lesson structure is also suitable for ebook publication. Markdown remains the single source of truth; EPUB is generated output, just like the HTML site. English and Norwegian should be built as separate editions with their own metadata, table of contents, cover and solutions section. Kindle delivery should use the generated EPUB rather than treating a proprietary Kindle source format as another editable course source.
