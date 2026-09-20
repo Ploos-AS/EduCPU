@@ -415,3 +415,33 @@ def test_memory_observation_hooks_capture_writes():
     emulator.run()
     assert (0x8FFF, 0x5A) in writes
     assert any(address == 0 for address, _ in reads)
+
+
+def test_bounded_run_reports_limit_without_hanging():
+    emulator = Emulator()
+    emulator.mem[0:2] = bytes([0x00, 0x00])
+    result = emulator.run_bounded(2)
+    assert result["executed"] == 2
+    assert result["limit_reached"] is True
+    assert result["halted"] is False
+    assert result["trap"] is None
+    assert result["state"] == emulator.snapshot()
+
+
+def test_trace_is_deterministic_and_restores_existing_hooks():
+    from eduemu import run_trace
+    emulator = Emulator()
+    emulator.mem[0:2] = bytes([0x00, 0x01])
+    old_events = []
+    emulator.before_step = lambda cpu: old_events.append("before")
+    emulator.after_step = lambda cpu: old_events.append("after")
+    first = run_trace(emulator, 10)
+    assert [event["event"] for event in first["trace"]] == ["before", "after", "before", "after"]
+    assert emulator.before_step is not None
+    assert emulator.after_step is not None
+    assert first["halted"] is True
+
+    emulator.reset()
+    emulator.mem[0:2] = bytes([0x00, 0x01])
+    second = run_trace(emulator, 10)
+    assert first["trace"] == second["trace"]
