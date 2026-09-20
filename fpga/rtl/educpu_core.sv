@@ -1,14 +1,14 @@
 module educpu_core (
     input  logic clk,
     input  logic reset,
-    input  logic [15:0] mem_rdata,
+    input  logic [7:0]  mem_rdata,
     output logic [15:0] mem_addr,
-    output logic [15:0] mem_wdata,
+    output logic [7:0]  mem_wdata,
     output logic mem_we,
     output logic halted,
     output logic trap
 );
-    logic [15:0] r [0:7];
+    logic [7:0] r [0:7];
     logic [15:0] pc;
     logic [15:0] sp;
     logic [7:0] flags;
@@ -26,7 +26,7 @@ module educpu_core (
     end
 
     assign mem_addr = pc;
-    assign mem_wdata = 16'h0000;
+    assign mem_wdata = 8'h00;
     assign mem_we = 1'b0;
 
     // M0.1 architectural-state observability for simulation and future conformance harnesses.
