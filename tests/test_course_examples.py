@@ -343,3 +343,46 @@ def test_lesson13_objects_relocations_and_linking():
     assert cpu.halted
     assert cpu.trap is None
     assert cpu.sp == 0xFF00
+
+
+def test_lesson14_compile_trace_and_runtime_state_transitions():
+    source = ROOT / "course" / "examples" / "lesson14-end-to-end.educ"
+    text = source.read_text()
+    trace = compile_trace(text, str(source))
+    tree, ir, asm, obj, data, symbols = compile_source(text, str(source))
+
+    assert trace["format"] == "educpu-compile-trace-v0"
+    assert trace["source"]["text"] == text
+    assert trace["ast"]["node"] == "Program"
+    assert "func byte main()" in trace["ir"]
+    assert ".export main" in trace["assembly"]
+    assert bytes.fromhex(trace["machine"]["bytes"]) == data
+    assert trace["machine"]["symbols"]["main"] == symbols["main"]
+    assert trace["machine"]["instructions"]
+    assert all("address" in x and "bytes" in x and "assembly" in x
+               for x in trace["machine"]["instructions"])
+
+    cpu = CPU()
+    cpu.mem[:len(data)] = data
+    cpu.pc = symbols["main"]
+    halt = len(data)
+    cpu.mem[halt] = 0x01
+    cpu.sp -= 1
+    cpu.mem[cpu.sp] = (halt >> 8) & 0xFF
+    cpu.sp -= 1
+    cpu.mem[cpu.sp] = halt & 0xFF
+
+    states = []
+    while not cpu.halted and cpu.trap is None:
+        before = (cpu.pc, cpu.sp, tuple(cpu.r))
+        cpu.step()
+        after = (cpu.pc, cpu.sp, tuple(cpu.r))
+        states.append((before, after))
+
+    assert states
+    assert any(before != after for before, after in states)
+    assert any(before[1] != after[1] for before, after in states)
+    assert cpu.r[0] == 42
+    assert cpu.halted
+    assert cpu.trap is None
+    assert cpu.sp == 0xFF00
