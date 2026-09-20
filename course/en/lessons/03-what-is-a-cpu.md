@@ -143,6 +143,15 @@ Then assemble and execute the program using the EduCPU tools.
 
 The automated course test runs the same fixture against the executable reference CPU.
 
+You can also open this exact source file directly in the browser visualizer:
+
+```sh
+PYTHONPATH=tools:reference python tools/eduvis.py course/examples/lesson03-cpu-cycle.eduasm
+```
+
+Then open `http://127.0.0.1:8080/`. Use **Micro-step** to follow the teaching phases through PC, memory, decode, registers, ALU and FLAGS, or **Instruction step** to execute one complete architectural instruction.
+
+
 ## Explain the result
 
 The important idea is not merely that an instruction produced a value. The CPU was able to **select an instruction from memory, identify its operation, obtain its operands, change machine state and move on to the next instruction**.
