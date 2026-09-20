@@ -63,3 +63,15 @@ FPGA CI #122 (commit `d319c5a`) passes the complete simulated loading path:
 Result: **PASS** (`EduCPU UART-to-CPU end-to-end PASS`). Existing bring-up, loader, protocol, timing, bitstream, and 20-program differential conformance regressions also remain green.
 
 This qualifies the digital architecture through the serial pin boundary in simulation. It does **not** qualify the physical FTDI/UPduino pin connection yet.
+
+## UPduino loader bitstream qualification
+
+FPGA CI #126 (commit `bdc83a0`) builds and publishes the concrete UPduino v3.1 serial-loader bitstream successfully.
+
+- ICESTORM_LC: 1196 / 5280 (22%)
+- ICESTORM_SPRAM: 2 / 4 (50%)
+- timing: 21.10 MHz achieved, PASS at the 12 MHz target
+- `icepack`: PASS
+- artifact: `educpu-upduino-v31-loader-bitstream` PASS
+
+The loader adds only modest logic over the bring-up design while retaining half of the UP5K SPRAM blocks unused. Physical FTDI loading is still an open hardware qualification gate.
