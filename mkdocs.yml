@@ -19,6 +19,7 @@ nav:
       - "07 — Arithmetic, FLAGS and branches": en/lessons/07-arithmetic-flags-branches.md
       - "08 — The stack": en/lessons/08-stack.md
       - "09 — Functions, CALL/RET and the ABI": en/lessons/09-functions-call-ret-abi.md
+      - "10 — What is a compiler?": en/lessons/10-what-is-a-compiler.md
   - Norske leksjoner:
       - "01 — Bits, bytes, binært og heksadesimalt": no/lessons/01-bits-bytes-hex.md
       - "02 — Logikk og lagring av informasjon": no/lessons/02-logikk-og-lagring.md
@@ -29,6 +30,7 @@ nav:
       - "07 — Aritmetikk, FLAGS og hopp": no/lessons/07-aritmetikk-flags-hopp.md
       - "08 — Stacken": no/lessons/08-stacken.md
       - "09 — Funksjoner, CALL/RET og ABI": no/lessons/09-funksjoner-call-ret-abi.md
+      - "10 — Hva er en compiler?": no/lessons/10-hva-er-en-compiler.md
 markdown_extensions:
   - fenced_code
   - tables
