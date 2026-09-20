@@ -12,7 +12,7 @@ module tb_serial_loader;
  always_ff @(posedge clk) begin
    if(load_valid) mem[load_addr]<=load_data;
  end
- task send(input[7:0] b); begin rx_data=b;rx_valid=1;@(posedge clk);rx_valid=0;repeat(2)@(posedge clk);end endtask
+ task send(input[7:0] b); begin @(negedge clk); rx_data=b; rx_valid=1; @(negedge clk); rx_valid=0; repeat(1) @(negedge clk); end endtask
  initial begin
   repeat(2)@(posedge clk);reset=0;
   send(8'h55);send(8'haa);send(8'h04);send(8'h00);
