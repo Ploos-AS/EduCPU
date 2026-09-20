@@ -97,7 +97,7 @@ MOVI R0, 0x2A
 MOVI R0, 0b00101010
 ```
 
-Try each form separately in a tiny program ending with `HALT`. Before assembling it, predict what byte value R0 will contain.
+Try each form separately in a tiny program ending with `HALT`. The repository also contains the CI-tested fixture `course/examples/lesson01-number-formats.eduasm`, which loads all three spellings into R0, R1 and R2. Before assembling it, predict what byte value R0 will contain.
 
 Then inspect the assembled bytes and CPU state with the EduCPU tools. The notation in the source changes, but the value loaded into R0 is identical.
 
