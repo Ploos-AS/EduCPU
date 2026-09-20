@@ -27,10 +27,11 @@ module educpu_upduino_v31 (
         if (reset) begin
             rom_pending <= 1'b0;
             rom_addr_q <= 16'h0000;
-        end else begin
-            rom_pending <= mem_valid && rom_hit;
-            if (mem_valid && rom_hit)
-                rom_addr_q <= mem_addr;
+        end else if (rom_pending) begin
+            rom_pending <= 1'b0;
+        end else if (mem_valid && rom_hit) begin
+            rom_pending <= 1'b1;
+            rom_addr_q <= mem_addr;
         end
     end
     assign reset = (reset_count != 0);
