@@ -361,8 +361,8 @@ module educpu_core (
         end
     end
 
-    assign mem_addr = (state == S_MEM_ACCESS || state == S_PUSH_WRITE || state == S_CALL_PUSH_HI || state == S_CALL_PUSH_LO || state == S_RET_LO || state == S_RET_HI) ?
-                      ((state == S_RET_LO || state == S_RET_HI) ? sp : operand_addr) : pc;
+    assign mem_addr = (state == S_MEM_ACCESS) ? operand_addr :
+                      (state == S_PUSH_WRITE || state == S_CALL_PUSH_HI || state == S_CALL_PUSH_LO || state == S_RET_LO || state == S_RET_HI) ? sp : pc;
     assign mem_wdata = (state == S_CALL_PUSH_HI) ? pc[15:8] :
                        (state == S_CALL_PUSH_LO) ? pc[7:0] : r[operand_rd];
     assign mem_we = ((state == S_MEM_ACCESS) &&
