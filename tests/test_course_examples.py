@@ -78,3 +78,22 @@ def test_lesson04_machine_state_step_by_step():
     cpu.step()
     assert cpu.halted
     assert cpu.pc == len(data)
+
+
+def test_lesson05_exact_machine_code():
+    source = ROOT / "course" / "examples" / "lesson05-machine-code.eduasm"
+    data, _, rows = assemble_text(source.read_text())
+    assert data == bytes([
+        0x11, 0x00, 0x2A,
+        0x11, 0x01, 0x01,
+        0x20, 0x00, 0x01,
+        0x01,
+    ])
+    assert [(pc, len(encoded)) for pc, encoded, _, _ in rows] == [
+        (0x0000, 3), (0x0003, 3), (0x0006, 3), (0x0009, 1)
+    ]
+
+
+def test_lesson05_little_endian_address_encoding():
+    data, _, _ = assemble_text("JMP 0x1234\n")
+    assert data == bytes([0x30, 0x34, 0x12])
