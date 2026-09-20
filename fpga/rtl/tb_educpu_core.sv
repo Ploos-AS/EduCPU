@@ -5,7 +5,8 @@ module tb_educpu_core;
     logic [7:0] mem_rdata;
     logic [15:0] mem_addr;
     logic [7:0] mem_wdata;
-    logic mem_we, halted, trap;
+    logic mem_we, mem_valid, halted, trap;
+    logic mem_ready = 1'b1;
     integer i;
 
     assign mem_rdata = mem[mem_addr];
@@ -14,7 +15,7 @@ module tb_educpu_core;
     end
 
     educpu_core dut (
-        .clk, .reset, .mem_rdata, .mem_addr, .mem_wdata, .mem_we, .halted, .trap
+        .clk, .reset, .mem_rdata, .mem_addr, .mem_wdata, .mem_we, .mem_valid, .mem_ready, .halted, .trap
     );
 
     always #5 clk = ~clk;
