@@ -42,7 +42,7 @@ A learner should be able to start with bits and bytes and progressively understa
 - [x] create lesson document/template and first binary/hex lesson
 - [x] add guided example runner (`tools/eduguide.py`)
 - [x] integrate compile-trace stages into guided lessons
-- [ ] add simulator/visualizer launch path for lesson examples
+- [x] add simulator/visualizer launch path for lesson examples
 - [x] cover machine state, machine code and EduASM
 - [x] cover flags, branches, stack, calls and ABI
 - [x] cover EduC, AST, semantic analysis and EduIR
