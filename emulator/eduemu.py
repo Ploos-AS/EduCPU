@@ -5,6 +5,7 @@ The reference model is an oracle used only by differential tests.
 """
 from dataclasses import dataclass, field
 from typing import Callable
+import copy
 
 MEM_SIZE = 65536
 
@@ -334,6 +335,16 @@ class Emulator:
         self._step()
         if self.after_step:
             self.after_step(self)
+
+    def snapshot(self) -> dict:
+        return {"r": list(self.r), "pc": self.pc, "sp": self.sp, "flags": self.flags, "halted": self.halted, "trap": self.trap}
+
+    def run_bounded(self, limit: int = 100000) -> dict:
+        executed = 0
+        while not self.halted and not self.trap and executed < limit:
+            self.step()
+            executed += 1
+        return {"executed": executed, "halted": self.halted, "trap": self.trap, "limit_reached": executed >= limit and not self.halted and not self.trap, "state": self.snapshot()}
 
     def run(self, limit: int = 100000) -> int:
         count = 0
