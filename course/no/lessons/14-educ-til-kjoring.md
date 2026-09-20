@@ -35,6 +35,24 @@ EduC kan produsere et `educpu-compile-trace-v0`-artifact som korrelerer source, 
 
 Den CI-testede fixturen er `course/examples/lesson14-end-to-end.educ`. Testen verifiserer ekte compile trace og kompilert image, kjører deretter imaget og registrerer faktiske tilstandsendringer til programmet returnerer 42 med balansert stack.
 
+## Kjør med EduGuide
+
+Fra roten av repositoryet kan du kjøre den virkelige leksjonsfixturen gjennom den guidede runneren:
+
+```bash
+PYTHONPATH=tools:reference python tools/eduguide.py course/examples/lesson14-end-to-end.educ
+```
+
+For hver arkitektoniske instruksjon viser EduGuide instruksjonen, ber deg **FORUTSI**, viser de faktiske tilstandsendringene under **OBSERVER**, skriver resulterende PC/SP/FLAGS/registertilstand og ber deg **FORKLARE** hvilken ISA-regel som forårsaket endringen.
+
+For bare å kontrollere sluttresultatet:
+
+```bash
+PYTHONPATH=tools:reference python tools/eduguide.py course/examples/lesson14-end-to-end.educ --summary
+```
+
+EduGuide bruker samme compiler og referanse-CPU som kvalifikasjonstestene; det er ikke en separat undervisnings-CPU.
+
 ## Følg én instruksjon
 
 Velg en instruksjon fra trace. Noter adresse, generert assembly og kodede bytes. Forutsi opcode, operander, tilstandsendring og neste PC. Kjør ett CPU-steg og sammenlign.
