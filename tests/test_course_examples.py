@@ -132,3 +132,39 @@ def test_lesson07_flags_drive_branches():
     assert cpu.pc == len(data)
     assert labels["wrapped"] > 0
     assert labels["done"] < len(data)
+
+
+def test_lesson08_stack_intermediate_states():
+    source = ROOT / "course" / "examples" / "lesson08-stack.eduasm"
+    data, _, _ = assemble_text(source.read_text())
+    cpu = CPU()
+    cpu.mem[:len(data)] = data
+
+    cpu.step()
+    cpu.step()
+    assert cpu.sp == 0xFF00
+
+    cpu.step()
+    assert cpu.sp == 0xFEFF
+    assert cpu.mem[0xFEFF] == 0x11
+
+    cpu.step()
+    assert cpu.sp == 0xFEFE
+    assert cpu.mem[0xFEFE] == 0x22
+    assert cpu.mem[0xFEFF] == 0x11
+
+    cpu.step()
+    assert cpu.r[2] == 0x22
+    assert cpu.sp == 0xFEFF
+
+    cpu.step()
+    assert cpu.r[3] == 0x11
+    assert cpu.sp == 0xFF00
+
+    cpu.step()
+    assert cpu.halted
+    assert cpu.trap is None
+    assert cpu.pc == len(data)
+    # POP moves SP; it does not erase the old stack bytes.
+    assert cpu.mem[0xFEFE] == 0x22
+    assert cpu.mem[0xFEFF] == 0x11
