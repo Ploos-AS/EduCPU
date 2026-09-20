@@ -20,7 +20,8 @@ module educpu_core (
         S_MOVI_RD,
         S_MOVI_IMM,
         S_ALU_RD,
-        S_ALU_SRC
+        S_ALU_SRC,
+        S_UNARY_RD
     } state_t;
 
     state_t state;
@@ -41,6 +42,12 @@ module educpu_core (
     localparam logic [7:0] OP_SUBI = 8'h23;
     localparam logic [7:0] OP_CMP  = 8'h24;
     localparam logic [7:0] OP_CMPI = 8'h25;
+    localparam logic [7:0] OP_AND  = 8'h28;
+    localparam logic [7:0] OP_OR   = 8'h29;
+    localparam logic [7:0] OP_XOR  = 8'h2A;
+    localparam logic [7:0] OP_NOT  = 8'h2B;
+    localparam logic [7:0] OP_SHL  = 8'h2C;
+    localparam logic [7:0] OP_SHR  = 8'h2D;
 
     always_ff @(posedge clk) begin
         if (reset) begin
@@ -71,10 +78,16 @@ module educpu_core (
                             pc <= pc + 16'd1;
                             state <= S_MOVI_RD;
                         end
-                        OP_ADD, OP_ADDI, OP_SUB, OP_SUBI, OP_CMP, OP_CMPI: begin
+                        OP_ADD, OP_ADDI, OP_SUB, OP_SUBI, OP_CMP, OP_CMPI,
+                        OP_AND, OP_OR, OP_XOR: begin
                             current_op <= mem_rdata;
                             pc <= pc + 16'd1;
                             state <= S_ALU_RD;
+                        end
+                        OP_NOT, OP_SHL, OP_SHR: begin
+                            current_op <= mem_rdata;
+                            pc <= pc + 16'd1;
+                            state <= S_UNARY_RD;
                         end
                         default: begin
                             pc <= pc + 16'd1;
@@ -131,10 +144,16 @@ module educpu_core (
 
                 S_ALU_SRC: begin
                     pc <= pc + 16'd1;
-                    if ((current_op == OP_ADD || current_op == OP_SUB || current_op == OP_CMP) && mem_rdata > 8'd7)
+                    if ((current_op == OP_ADD || current_op == OP_SUB || current_op == OP_CMP || current_op == OP_AND || current_op == OP_OR || current_op == OP_XOR) && mem_rdata > 8'd7)
                         trap <= 1'b1;
                     else begin
-                        if (current_op == OP_ADD || current_op == OP_ADDI) begin
+                        if (current_op == OP_AND || current_op == OP_OR || current_op == OP_XOR) begin
+                            if (current_op == OP_AND) alu_out = r[operand_rd] & r[mem_rdata[2:0]];
+                            else if (current_op == OP_OR) alu_out = r[operand_rd] | r[mem_rdata[2:0]];
+                            else alu_out = r[operand_rd] ^ r[mem_rdata[2:0]];
+                            r[operand_rd] <= alu_out;
+                            flags <= {6'b000000, alu_out[7], alu_out == 8'h00};
+                        end else if (current_op == OP_ADD || current_op == OP_ADDI) begin
                             alu_ext = {1'b0, r[operand_rd]} + {1'b0, (current_op == OP_ADD ? r[mem_rdata[2:0]] : mem_rdata)};
                             alu_out = alu_ext[7:0];
                             flags <= {4'b0000,
@@ -148,6 +167,28 @@ module educpu_core (
                                       r[operand_rd] >= (current_op == OP_SUB || current_op == OP_CMP ? r[mem_rdata[2:0]] : mem_rdata),
                                       alu_out[7], alu_out == 8'h00};
                             if (current_op == OP_SUB || current_op == OP_SUBI) r[operand_rd] <= alu_out;
+                        end
+                        state <= S_FETCH;
+                    end
+                end
+
+                S_UNARY_RD: begin
+                    pc <= pc + 16'd1;
+                    if (mem_rdata > 8'd7)
+                        trap <= 1'b1;
+                    else begin
+                        if (current_op == OP_NOT) begin
+                            alu_out = ~r[mem_rdata[2:0]];
+                            r[mem_rdata[2:0]] <= alu_out;
+                            flags <= {6'b000000, alu_out[7], alu_out == 8'h00};
+                        end else if (current_op == OP_SHL) begin
+                            alu_out = r[mem_rdata[2:0]] << 1;
+                            r[mem_rdata[2:0]] <= alu_out;
+                            flags <= {5'b00000, r[mem_rdata[2:0]][7], alu_out[7], alu_out == 8'h00};
+                        end else begin
+                            alu_out = r[mem_rdata[2:0]] >> 1;
+                            r[mem_rdata[2:0]] <= alu_out;
+                            flags <= {5'b00000, r[mem_rdata[2:0]][0], alu_out[7], alu_out == 8'h00};
                         end
                         state <= S_FETCH;
                     end
