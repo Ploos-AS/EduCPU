@@ -218,6 +218,14 @@ Notice that the source-level name stays the same even though its machine address
 
 Solutions are kept separately from the lesson.
 
+## Tools
+
+Use the real course fixture: `course/examples/lesson06-eduasm.eduasm`.
+
+**EduVis:** use this tool during the observation step. **EduGuide:** use the guided PREDICT → OBSERVE → EXPLAIN workflow.
+
+Predict important changes before running the fixture, then compare them with the observation.
+
 ## Next
 
 Now we can write readable machine-level programs. Next we study **arithmetic, FLAGS and branches**, where the CPU begins making decisions based on previous results.
