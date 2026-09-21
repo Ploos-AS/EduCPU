@@ -92,8 +92,13 @@ Optional interrupts, richer I/O, microcode, privilege, VM, pipelines/hazards, ca
 - [x] select iCE40UP5K as initial FPGA family/target
 - [x] select UPduino v3.1 as canonical EduCPU reference hardware
 - [x] define development-board-first hardware strategy; custom PCB is optional/future
-- [ ] synchronous FPGA memory subsystem + requalification
-- [ ] UPduino v3.1 canonical target wrapper and synthesis
+- [x] synchronous FPGA memory subsystem + requalification
+- [x] UPduino v3.1 canonical target wrapper and synthesis
+- [x] UPduino v3.1 bitstream build and CI artifact
+- [x] UPduino v3.1 UART RX/TX + serial loader simulation
+- [x] protocol v1 bidirectional UART end-to-end simulation
+- [x] UART-to-CPU end-to-end simulation
 - [ ] UPduino v3.1 physical FPGA bring-up and qualification
+- [ ] document reproducible UPduino flash/load/run/readback procedure
 - [ ] iCEBreaker/compatible UP5K secondary target wrapper
 - [ ] optional future EduCPU custom PCB schematic/layout
