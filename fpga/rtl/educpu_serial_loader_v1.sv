@@ -10,7 +10,7 @@ module educpu_serial_loader_v1(
  st_t st; logic [15:0] len_q,remaining_q,crc_q; logic [7:0] crc_lo_q;
  function automatic [15:0] crc_byte(input [15:0] c,input [7:0] d);
    integer i; reg [15:0] x;
-   begin x=c^({d,8'h00}); for(i=0;i<8;i=i+1) x=x[15]?((x<<1)^16'h1021):(x<<1); crc_byte=x; end
+   begin x=c ^ {d,8'h00}; for(i=0;i<8;i=i+1) begin if(x[15]) x={x[14:0],1'b0} ^ 16'h1021; else x={x[14:0],1'b0}; end crc_byte=x; end
  endfunction
  assign load_mode=(st!=SDONE);
  assign load_valid=(st==SPAY)&&rx_valid;
