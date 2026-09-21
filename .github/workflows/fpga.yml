@@ -40,6 +40,9 @@ jobs:
       - name: Run serial loader v1 CRC simulation
         working-directory: fpga/rtl
         run: make serial-loader-v1-test
+      - name: Run protocol v1 bidirectional UART end-to-end simulation
+        working-directory: fpga/rtl
+        run: make serial-v1-e2e-test
       - name: Run UART-to-CPU end-to-end simulation
         working-directory: fpga/rtl
         run: make serial-e2e-test
