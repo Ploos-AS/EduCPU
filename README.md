@@ -6,8 +6,8 @@ and program execution small enough to inspect and understand.
 
 The project deliberately separates the educational architecture from its
 implementations. The executable reference CPU defines ISA behaviour; the
-simulator and visualizer expose that behaviour for learning; a later emulator
-provides faithful machine execution; and the planned FPGA implementation
+simulator and visualizer expose that behaviour for learning; the independent
+emulator provides faithful machine execution; and the FPGA implementation
 realizes the architecture in hardware.
 
 ## Learning path
@@ -30,6 +30,8 @@ The repository includes:
 - EduSim and the conceptual micro-step model;
 - EduVis browser visualization;
 - EduC front end, semantic analysis, EduIR and compiler backend;
+- an independent EduCPU emulator;
+- synthesizable FPGA/RTL implementation and qualification;
 - executable examples and qualification tests;
 - EduGuide guided lesson runner for predict → step → observe → explain exercises.
 
@@ -41,12 +43,25 @@ The hardware-learning path builds upward:
 
 `bits -> logic -> storage -> registers -> ALU -> datapath/control -> CPU -> ISA`
 
+## Reference hardware
+
+**UPduino v3.1 (Lattice iCE40UP5K) is the canonical EduCPU FPGA hardware target.**
+
+EduCPU does not require physical hardware: the simulator and emulator remain
+fully supported teaching and development environments. UPduino v3.1 is the
+primary supported board for physical FPGA qualification, examples, pin
+assignments, bitstreams and UART-based workflows.
+
+Additional compatible FPGA development boards may be supported as secondary
+targets. A dedicated EduCPU PCB is an optional future goal, not a requirement
+for EduCPU completion or releases.
+
 ## Status
 
-M0–M6 established and qualified the architecture, assembler/object pipeline,
-simulator/debugger, ABI and EduC compiler backend. M7 provides the qualified
-bilingual guided course, executable fixtures and EduGuide lesson runner. Later
-roadmap milestones include the emulator and FPGA realization.
+M0–M7 established and qualified the architecture, assembler/object pipeline,
+simulator/debugger, ABI, EduC compiler backend and bilingual guided course.
+M8 provides the independently implemented and qualified emulator. M9 is the
+FPGA realization and physical UPduino v3.1 qualification.
 
 See [ROADMAP.md](ROADMAP.md) for milestone details.
 
