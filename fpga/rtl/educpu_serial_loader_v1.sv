@@ -30,13 +30,17 @@ module educpu_serial_loader_v1(
       if({rx_data,len_q[7:0]}==0) begin protocol_error<=1;st<=SERR;end else st<=SPAY;
     end
     SPAY: begin
+`ifndef SYNTHESIS
       $display("V1_PAY addr=%h data=%02h rem=%0d crc_before=%04h crc_after=%04h",load_addr,rx_data,remaining_q,crc_q,crc_byte(crc_q,rx_data));
+`endif
       crc_q<=crc_byte(crc_q,rx_data);
       if(remaining_q==1) st<=SCRCLO; else begin remaining_q<=remaining_q-1'b1;load_addr<=load_addr+1'b1;end
     end
     SCRCLO: begin crc_lo_q<=rx_data;st<=SCRCHI;end
     SCRCHI: begin
+`ifndef SYNTHESIS
       $display("V1_CRC calculated=%04h received=%02h%02h",crc_q,rx_data,crc_lo_q);
+`endif
       if({rx_data,crc_lo_q}==crc_q) begin accepted<=1;started<=1;st<=SDONE;end else begin protocol_error<=1;st<=SERR;end
     end
     default: ;
