@@ -31,6 +31,9 @@ jobs:
       - name: Run serial loader protocol simulation
         working-directory: fpga/rtl
         run: make serial-loader-test
+      - name: Run UART TX waveform simulation
+        working-directory: fpga/rtl
+        run: make uart-tx-test
       - name: Run loader v1 status simulation
         working-directory: fpga/rtl
         run: make loader-status-test
