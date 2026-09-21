@@ -90,9 +90,10 @@ Optional interrupts, richer I/O, microcode, privilege, VM, pipelines/hazards, ca
 - [x] complete ISA v0 RTL implementation
 - [x] RTL/reference-CPU conformance — 20-program opcode-complete differential suite
 - [x] select iCE40UP5K as initial FPGA family/target
-- [x] define own-PCB-first hardware strategy
+- [x] select UPduino v3.1 as canonical EduCPU reference hardware
+- [x] define development-board-first hardware strategy; custom PCB is optional/future
 - [ ] synchronous FPGA memory subsystem + requalification
-- [ ] UPduino v3.1 target wrapper and synthesis
-- [ ] iCEBreaker/compatible UP5K target wrapper
-- [ ] EduCPU custom PCB schematic/layout
-- [ ] physical FPGA bring-up
+- [ ] UPduino v3.1 canonical target wrapper and synthesis
+- [ ] UPduino v3.1 physical FPGA bring-up and qualification
+- [ ] iCEBreaker/compatible UP5K secondary target wrapper
+- [ ] optional future EduCPU custom PCB schematic/layout
