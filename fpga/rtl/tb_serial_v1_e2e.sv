@@ -2,8 +2,9 @@
 module tb_serial_v1_e2e;
  localparam integer CPB=4; logic clk=0,reset=1,rx=1,tx; logic [7:0] rd;logic rv;
  logic lm,lv,lr,started,err,accepted,cv,cw,cr,mv,mw,mr,halted,trap,tv,tr; logic [15:0] la,ca,ma;logic [7:0] ld,cd,md,mrd,crd,td;
- logic pending;logic [15:0] aq;logic weq;logic [7:0] wdq;logic [7:0] mem[0:65535];integer i;
+ logic pending;logic [15:0] aq;logic weq;logic [7:0] wdq;logic [7:0] mem[0:65535];integer i; integer rx_count=0;
  always #5 clk=~clk;
+ always @(posedge clk) if(rv) begin $display("UART_RX[%0d]=%02h",rx_count,rd); rx_count=rx_count+1; end
  educpu_uart_rx #(.CLKS_PER_BIT(CPB)) urx(.clk,.reset,.rx,.data(rd),.data_valid(rv));
  educpu_serial_loader_v1 sl(.clk,.reset,.rx_data(rd),.rx_valid(rv),.load_mode(lm),.load_valid(lv),.load_addr(la),.load_data(ld),.load_ready(lr),.started,.protocol_error(err),.accepted);
  educpu_core cpu(.clk,.reset(reset|lm),.mem_rdata(crd),.mem_addr(ca),.mem_wdata(cd),.mem_we(cw),.mem_valid(cv),.mem_ready(cr),.halted,.trap);
