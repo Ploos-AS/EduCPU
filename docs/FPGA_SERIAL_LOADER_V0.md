@@ -54,3 +54,15 @@ FPGA-to-host status bytes over TX:
 - `0x54` TRAP: loaded program trapped
 
 Protocol v0 remains supported for M0.15 physical bring-up. V1 is a separate hardening step so the already-qualified v0 path is not silently changed before physical validation.
+
+### V1 CRC RTL qualification
+
+FPGA CI #132 (commit `8c61d9b`) qualifies the first v1 integrity gate:
+
+- valid CRC frame accepted: PASS
+- corrupted CRC frame rejected: PASS
+- rejected frame does not release the loader/CPU: PASS
+- existing UART-to-CPU v0 end-to-end test: PASS
+- existing 20-program ISA differential conformance: PASS
+
+ACK/NACK/HALT/TRAP transmission over UART TX remains the next v1 implementation step.
