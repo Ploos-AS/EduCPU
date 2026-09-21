@@ -16,7 +16,7 @@ module tb_serial_v1_e2e;
  logic[7:0] a,b;
  initial begin
   #2000000;
-  $fatal(1,"timeout waiting for protocol-v1 ACK/HALT");
+  $display("DEBUG lm=%b started=%b err=%b accepted=%b halted=%b trap=%b tv=%b tr=%b tx=%b la=%h mem0=%h",lm,started,err,accepted,halted,trap,tv,tr,tx,la,mem[0]);\n  $fatal(1,"timeout waiting for protocol-v1 ACK/HALT");
  end
  initial begin pending=0;mr=0;mrd=0;for(i=0;i<65536;i=i+1)mem[i]=0;repeat(4)@(posedge clk);reset=0;
   fork
