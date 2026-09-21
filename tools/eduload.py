@@ -22,6 +22,14 @@ def image_bytes(path: pathlib.Path) -> bytes:
         return data
     return path.read_bytes()
 
+def interpret_v1_status(status: bytes, run: bytes):
+    if status == b"\x15": raise RuntimeError("loader rejected image (NACK)")
+    if status != b"\x06": raise RuntimeError("loader did not return ACK")
+    if run == b"H": return "HALT"
+    if run == b"T": raise RuntimeError("CPU TRAP")
+    if run: raise RuntimeError(f"unexpected CPU status 0x{run[0]:02x}")
+    return "ACK"
+
 def main():
     ap=argparse.ArgumentParser(description="Load an EduCPU binary over UART")
     ap.add_argument("image",type=pathlib.Path,help="raw .bin, EduASM .eduasm, or EduC .educ")
