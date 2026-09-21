@@ -29,7 +29,7 @@ module educpu_serial_loader_v1(
       remaining_q<={rx_data,len_q[7:0]};load_addr<=0;
       if({rx_data,len_q[7:0]}==0) begin protocol_error<=1;st<=SERR;end else st<=SPAY;
     end
-    SPAY: if(load_ready) begin
+    SPAY: begin
       crc_q<=crc_byte(crc_q,rx_data);
       if(remaining_q==1) st<=SCRCLO; else begin remaining_q<=remaining_q-1'b1;load_addr<=load_addr+1'b1;end
     end
