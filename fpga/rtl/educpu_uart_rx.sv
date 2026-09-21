@@ -18,7 +18,7 @@ module educpu_uart_rx #(
             count <= 0; bit_index <= 0; shift <= 0; busy <= 0; data <= 0;
         end else if (!busy) begin
             if (!rx) begin
-                busy <= 1'b1; count <= (CLKS_PER_BIT/2) - 1;
+                busy <= 1'b1; count <= CLKS_PER_BIT + (CLKS_PER_BIT/2) - 1;
                 bit_index <= 0;
             end
         end else if (count != 0) begin
