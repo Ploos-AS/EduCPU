@@ -52,6 +52,9 @@ jobs:
       - name: Run iCE40UP5K core place-and-route qualification
         working-directory: fpga/rtl
         run: make up5k
+      - name: Synthesize secondary iCEBreaker UP5K target
+        working-directory: fpga/rtl
+        run: make icebreaker
       - name: Run explicit SPRAM iCE40UP5K machine qualification
         working-directory: fpga/rtl
         run: make spram-up5k
