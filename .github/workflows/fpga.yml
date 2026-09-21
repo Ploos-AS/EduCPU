@@ -31,6 +31,9 @@ jobs:
       - name: Run serial loader protocol simulation
         working-directory: fpga/rtl
         run: make serial-loader-test
+      - name: Run loader v1 status simulation
+        working-directory: fpga/rtl
+        run: make loader-status-test
       - name: Run serial loader v1 CRC simulation
         working-directory: fpga/rtl
         run: make serial-loader-v1-test
