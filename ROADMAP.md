@@ -99,6 +99,6 @@ Optional interrupts, richer I/O, microcode, privilege, VM, pipelines/hazards, ca
 - [x] protocol v1 bidirectional UART end-to-end simulation
 - [x] UART-to-CPU end-to-end simulation
 - [ ] UPduino v3.1 physical FPGA bring-up and qualification
-- [ ] document reproducible UPduino flash/load/run/readback procedure
+- [x] document reproducible UPduino flash/load/run/readback procedure
 - [ ] iCEBreaker/compatible UP5K secondary target wrapper
 - [ ] optional future EduCPU custom PCB schematic/layout
