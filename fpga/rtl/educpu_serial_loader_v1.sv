@@ -34,7 +34,7 @@ module educpu_serial_loader_v1(
       if(remaining_q==1) st<=SCRCLO; else begin remaining_q<=remaining_q-1'b1;load_addr<=load_addr+1'b1;end
     end
     SCRCLO: begin crc_lo_q<=rx_data;st<=SCRCHI;end
-    SCRCHI: if({rx_data,crc_lo_q}==crc_q) begin accepted<=1;started<=1;st<=SDONE;end else begin protocol_error<=1;st<=SERR;end
+    SCRCHI: if({crc_lo_q,rx_data}==crc_q) begin accepted<=1;started<=1;st<=SDONE;end else begin protocol_error<=1;st<=SERR;end
     default: ;
    endcase
   end
