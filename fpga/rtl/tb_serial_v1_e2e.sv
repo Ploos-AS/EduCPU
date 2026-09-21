@@ -14,6 +14,10 @@ module tb_serial_v1_e2e;
  task send(input[7:0]b);integer k;begin rx=0;repeat(CPB)@(posedge clk);for(k=0;k<8;k=k+1)begin rx=b[k];repeat(CPB)@(posedge clk);end rx=1;repeat(CPB*2)@(posedge clk);end endtask
  task recv(output[7:0]b);integer k;begin @(negedge tx);repeat(CPB+CPB/2)@(posedge clk);for(k=0;k<8;k=k+1)begin b[k]=tx;repeat(CPB)@(posedge clk);end repeat(CPB)@(posedge clk);end endtask
  logic[7:0] a,b;
+ initial begin
+  #2000000;
+  $fatal(1,"timeout waiting for protocol-v1 ACK/HALT");
+ end
  initial begin pending=0;mr=0;mrd=0;for(i=0;i<65536;i=i+1)mem[i]=0;repeat(4)@(posedge clk);reset=0;
   fork
    begin recv(a); recv(b); end
