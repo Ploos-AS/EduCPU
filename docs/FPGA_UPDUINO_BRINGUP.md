@@ -6,7 +6,9 @@ This procedure qualifies the first physical EduCPU FPGA target.
 
 - UPduino v3.x / v3.1 with iCE40UP5K-SG48
 - USB connection to the board programmer
-- a bitstream produced by the `upduino-v31` CI/build target
+- a bitstream produced by the `upduino-v31-loader-v1` CI/build target
+- Python 3 with `pyserial`
+- the EduCPU checkout on the same commit as the bitstream
 
 The current wrapper uses the iCE40 UltraPlus internal HF oscillator and therefore
 does not require the optional external 12 MHz oscillator jumper for first bring-up.
@@ -16,23 +18,53 @@ does not require the optional external 12 MHz oscillator jumper for first bring-
 From `fpga/rtl`:
 
 ```sh
-make upduino-v31
+make upduino-v31-loader-v1
 ```
 
-The final file is:
+The canonical physical-qualification bitstream is:
 
 ```text
-educpu_upduino_v31.bin
+educpu_upduino_v31_loader_v1.bin
 ```
 
-CI also publishes this file as the `educpu-upduino-v31-bitstream` artifact.
+The simpler `make upduino-v31` bring-up image remains useful for the LED-only smoke test, but protocol-v1 is the canonical qualification path because it exercises host → UART → loader → memory → CPU → UART → host.
 
 ## Programming
 
-Use the programming method supported by the installed UPduino toolchain. Keep
-programming separate from the build/qualification gate: CI proves that a valid
-bitstream can be generated, while physical-board qualification must be recorded
-from a real board.
+Program `educpu_upduino_v31_loader_v1.bin` with the UPduino-supported programmer/toolchain. Record the exact programming command and tool version in the qualification record. Programming remains separate from CI: CI proves the bitstream can be generated, while hardware qualification proves that the generated image works on a real board.
+
+## Canonical load → run → readback test
+
+Install the host dependency:
+
+```sh
+python -m pip install pyserial
+```
+
+Create a minimal HALT program, for example `/tmp/educpu-hw.eduasm`:
+
+```text
+MOVI R0, 42
+HALT
+```
+
+Find the UPduino serial port after programming, then run from the repository root:
+
+```sh
+PYTHONPATH=reference python tools/eduload.py /tmp/educpu-hw.eduasm \
+  --port /dev/ttyUSB0 --baud 115200 --protocol v1
+```
+
+Use the actual device name on the host (for example `/dev/ttyUSB0`, `/dev/ttyACM0` or a Windows `COMn` port).
+
+A successful protocol-v1 transaction must print both:
+
+```text
+loader ACK
+CPU HALT
+```
+
+This is the canonical end-to-end hardware gate. It verifies the host frame, UART receive, CRC/protocol acceptance, SPRAM loading, CPU execution and UART status return. A NACK, timeout, TRAP or unexpected status is a qualification failure and must not be recorded as PASS.
 
 ## Status LEDs
 
@@ -50,12 +82,14 @@ Bring-up semantics:
 A physical qualification is PASS only when all of the following are observed and
 recorded:
 
-1. the qualified bitstream programs successfully
+1. the protocol-v1 qualified bitstream programs successfully
 2. the board starts without the external 12 MHz clock jumper
 3. reset/power-up is deterministic
-4. the expected test program reaches HALT
-5. the RGB LED indicates HALT, not TRAP
-6. repeated power cycles give the same result
+4. `eduload.py --protocol v1` receives loader ACK
+5. the uploaded test program reaches HALT and the host receives `CPU HALT`
+6. no NACK, TRAP or unexpected status is observed
+7. the RGB LED indicates HALT, not TRAP
+8. at least five cold power-cycle/load/run repetitions give the same result
 
 Record board revision, bitstream commit/SHA, tool/programmer version and the
 observed LED state.
@@ -80,3 +114,23 @@ FPGA CI #105 validates the exact power-on bring-up program before physical testi
 - full RTL/reference differential suite: 20 programs PASS
 
 This closes the simulated/bitstream portion of M0.14. The physical-board gate remains open until the same bitstream is programmed and observed on an actual UPduino.
+
+
+## Qualification record template
+
+Record the following in the eventual M9 physical qualification document:
+
+| Field | Value |
+| --- | --- |
+| Board | UPduino v3.1 |
+| FPGA | Lattice iCE40UP5K-SG48 |
+| EduCPU commit | `<git SHA>` |
+| Bitstream | `educpu_upduino_v31_loader_v1.bin` |
+| Programmer/tool version | `<version>` |
+| Host OS | `<OS/version>` |
+| Serial device | `<device>` |
+| Baud/protocol | 115200 8N1 / v1 |
+| Loader result | ACK / FAIL |
+| CPU result | HALT / TRAP / timeout |
+| Cold-cycle repetitions | 5/5 required |
+| Final result | PASS / FAIL |
