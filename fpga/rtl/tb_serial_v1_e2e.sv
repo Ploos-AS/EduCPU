@@ -11,7 +11,7 @@ module tb_serial_v1_e2e;
  educpu_loader_status st(.clk,.reset,.accepted,.protocol_error(err),.halted,.trap,.tx_ready(tr),.tx_valid(tv),.tx_data(td));
  educpu_uart_tx #(.CLKS_PER_BIT(CPB)) utx(.clk,.reset,.data(td),.valid(tv),.ready(tr),.tx);
  always_ff @(posedge clk) begin mr<=0;if(pending)begin if(weq)mem[aq]<=wdq;else mrd<=mem[aq];mr<=1;pending<=0;end else if(mv)begin aq<=ma;weq<=mw;wdq<=md;pending<=1;end end
- task send(input[7:0]b);integer k;begin rx=0;repeat(CPB)@(posedge clk);for(k=0;k<8;k=k+1)begin rx=b[k];repeat(CPB)@(posedge clk);end rx=1;repeat(CPB)@(posedge clk);end endtask
+ task send(input[7:0]b);integer k;begin rx=0;repeat(CPB)@(posedge clk);for(k=0;k<8;k=k+1)begin rx=b[k];repeat(CPB)@(posedge clk);end rx=1;repeat(CPB+2)@(posedge clk);end endtask
  task recv(output[7:0]b);integer k;begin @(negedge tx);repeat(CPB+CPB/2)@(posedge clk);for(k=0;k<8;k=k+1)begin b[k]=tx;repeat(CPB)@(posedge clk);end repeat(CPB)@(posedge clk);end endtask
  logic[7:0] a,b;
  initial begin
