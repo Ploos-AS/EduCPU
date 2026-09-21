@@ -33,3 +33,30 @@ def test_educ_image(tmp_path):
 def test_raw_image(tmp_path):
     p=tmp_path/"hello.bin"; raw=bytes([0x11,0,0x2a,1]); p.write_bytes(raw)
     assert m.image_bytes(p)==raw
+
+
+def test_v1_ack_halt():
+    assert m.interpret_v1_status(b"\x06",b"H")=="HALT"
+
+def test_v1_ack_only():
+    assert m.interpret_v1_status(b"\x06",b"")=="ACK"
+
+def test_v1_nack():
+    try: m.interpret_v1_status(b"\x15",b"")
+    except RuntimeError as e: assert "NACK" in str(e)
+    else: raise AssertionError("NACK accepted")
+
+def test_v1_trap():
+    try: m.interpret_v1_status(b"\x06",b"T")
+    except RuntimeError as e: assert "TRAP" in str(e)
+    else: raise AssertionError("TRAP accepted")
+
+def test_v1_missing_ack():
+    try: m.interpret_v1_status(b"",b"")
+    except RuntimeError as e: assert "ACK" in str(e)
+    else: raise AssertionError("missing ACK accepted")
+
+def test_v1_unknown_status():
+    try: m.interpret_v1_status(b"\x06",b"X")
+    except RuntimeError as e: assert "0x58" in str(e)
+    else: raise AssertionError("unknown status accepted")
