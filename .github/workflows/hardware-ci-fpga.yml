@@ -13,7 +13,7 @@ on:
 
 jobs:
   upduino-v31:
-    uses: Ploos-AS/hardware-ci/.github/workflows/fpga.yml@main
+    uses: Ploos-AS/hardware-ci/.github/workflows/fpga.yml@v1
     with:
       board: upduino-v3.1
       working_directory: fpga/rtl
