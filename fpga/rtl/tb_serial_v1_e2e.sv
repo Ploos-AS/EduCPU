@@ -16,12 +16,13 @@ module tb_serial_v1_e2e;
  logic[7:0] a,b;
  initial begin
   #2000000;
-  $display("DEBUG lm=%b started=%b err=%b accepted=%b halted=%b trap=%b tv=%b tr=%b tx=%b la=%h mem0=%h",lm,started,err,accepted,halted,trap,tv,tr,tx,la,mem[0]);\n  $fatal(1,"timeout waiting for protocol-v1 ACK/HALT");
+  $display("DEBUG lm=%b started=%b err=%b accepted=%b halted=%b trap=%b tv=%b tr=%b tx=%b la=%h mem0=%h",lm,started,err,accepted,halted,trap,tv,tr,tx,la,mem[0]);
+  $fatal(1,"timeout waiting for protocol-v1 ACK/HALT");
  end
  initial begin pending=0;mr=0;mrd=0;for(i=0;i<65536;i=i+1)mem[i]=0;repeat(4)@(posedge clk);reset=0;
   fork
    begin recv(a); recv(b); end
-   begin send(8'h55);send(8'haa);send(8'h01);send(8'h04);send(0);send(8'h11);send(0);send(8'h2a);send(1);send(8'h04);send(8'h48); end
+   begin send(8'h55);send(8'haa);send(8'h01);send(8'h04);send(0);send(8'h11);send(0);send(8'h2a);send(1);send(8'h04);send(8'h48); repeat(20) @(posedge clk); if(err)$fatal(1,"checkpoint: protocol error after frame"); if(lm)$fatal(1,"checkpoint: frame not accepted/load_mode active la=%h mem0=%h",la,mem[0]); if(mem[0]!==8'h11)$fatal(1,"checkpoint: payload not loaded mem0=%h",mem[0]); end
   join
   if(a!==8'h06)$fatal(1,"missing ACK");if(b!==8'h48)$fatal(1,"missing HALT");if(err||trap)$fatal(1,"v1 execution failed");
   $display("EduCPU UART v1 bidirectional end-to-end PASS");$finish;
