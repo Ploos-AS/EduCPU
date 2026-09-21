@@ -6,3 +6,6 @@ set_io -nowarn led_b 40
 
 # FTDI serial receive: USB host -> FPGA
 set_io -nowarn serial_rxd 15
+
+# FTDI serial transmit: FPGA -> USB host
+set_io -nowarn serial_txd 14
