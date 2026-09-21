@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Send an EduCPU machine-code image using serial loader protocol v0."""
+"""Send an EduCPU image using serial loader protocol v0 or v1."""
 import argparse, pathlib, sys, time
 
 def frame(image: bytes) -> bytes:
@@ -26,10 +26,10 @@ def main():
     ap=argparse.ArgumentParser(description="Load an EduCPU binary over UART")
     ap.add_argument("image",type=pathlib.Path,help="raw .bin, EduASM .eduasm, or EduC .educ")
     ap.add_argument("--port",required=True,help="serial port, e.g. /dev/ttyUSB0 or COM4")
-    ap.add_argument("--baud",type=int,default=115200)
+    ap.add_argument("--baud",type=int,default=115200)\n    ap.add_argument("--protocol",choices=("v0","v1"),default="v0",help="loader protocol; v0 remains default until physical v1 qualification")
     args=ap.parse_args()
     data=image_bytes(args.image)
-    packet=frame(data)
+    if args.protocol==\"v1\":\n        from eduload_protocol import frame_v1\n        packet=frame_v1(data)\n    else:\n        packet=frame(data)
     try:
         import serial
     except ImportError:
