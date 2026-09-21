@@ -1,0 +1,23 @@
+name: FPGA hardware qualification
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "fpga/**"
+      - ".github/workflows/hardware-ci-fpga.yml"
+  pull_request:
+    paths:
+      - "fpga/**"
+      - ".github/workflows/hardware-ci-fpga.yml"
+
+jobs:
+  upduino-v31:
+    uses: Ploos-AS/hardware-ci/.github/workflows/fpga.yml@feature/fpga-qualification
+    with:
+      board: upduino-v3.1
+      working_directory: fpga/rtl
+      test_target: test
+      build_target: upduino-v31-loader-v1
+      bitstream_path: fpga/rtl/educpu_upduino_v31_loader_v1.bin
+      conformance_command: sh fpga/conformance/check_reference.sh && python3 fpga/conformance/run_differential.py
