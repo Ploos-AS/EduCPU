@@ -95,7 +95,7 @@ M10 experiments must remain opt-in. The qualified ISA v0 reference CPU, emulator
 
 ### M10.1 — Interrupts
 
-- [ ] define capability-gated interrupt architecture
+- [x] define capability-gated interrupt architecture
 - [ ] implement interrupt state in experimental reference machine
 - [ ] implement deterministic IRQ entry/return semantics
 - [ ] add focused reference-model tests
