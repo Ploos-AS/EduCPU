@@ -83,13 +83,13 @@ Synthesizable realization of frozen architecture and qualification against ISA v
 ## M10 — Advanced and experimental concepts
 Optional interrupts, richer I/O, microcode, privilege, VM, pipelines/hazards, cache and alternative architecture experiments.
 
-### M10.0 — Experimental architecture framework
+### M10.0 — Experimental architecture framework ✅
 
 - [x] define extension/experiment policy without changing frozen ISA v0 semantics
 - [x] define feature flags/capability discovery for experimental implementations
 - [x] add an experimental reference-machine profile
 - [x] add regression gates proving baseline ISA v0 remains unchanged
-- [ ] document how experiments graduate, remain optional, or are removed
+- [x] document how experiments graduate, remain optional, or are removed
 
 M10 experiments must remain opt-in. The qualified ISA v0 reference CPU, emulator, toolchain and FPGA baseline stay stable while advanced concepts are explored.
 
