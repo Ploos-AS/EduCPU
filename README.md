@@ -52,16 +52,13 @@ fully supported teaching and development environments. UPduino v3.1 is the
 primary supported board for physical FPGA qualification, examples, pin
 assignments, bitstreams and UART-based workflows.
 
-Additional compatible FPGA development boards may be supported as secondary
-targets. A dedicated EduCPU PCB is an optional future goal, not a requirement
-for EduCPU completion or releases.
+The iCEBreaker/compatible iCE40UP5K path is qualified as a secondary synthesis/portability target; physical board pin constraints are only added from verified board documentation. A dedicated EduCPU PCB is an optional future goal, not a requirement for EduCPU completion or releases.
 
 ## Status
 
 M0–M7 established and qualified the architecture, assembler/object pipeline,
 simulator/debugger, ABI, EduC compiler backend and bilingual guided course.
-M8 provides the independently implemented and qualified emulator. M9 is the
-FPGA realization and physical UPduino v3.1 qualification.
+M8 provides the independently implemented and qualified emulator. M9 provides the qualified FPGA realization, canonical UPduino v3.1 bitstreams/UART loader path, and secondary iCEBreaker portability target. The remaining mandatory M9 gate is physical UPduino v3.1 bring-up and qualification on real hardware.
 
 See [ROADMAP.md](ROADMAP.md) for milestone details.
 
