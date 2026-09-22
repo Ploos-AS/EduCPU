@@ -55,6 +55,18 @@ An experiment has one of four states:
 
 Graduation does not modify ISA v0. A future base ISA revision requires its own explicit architecture/versioning process.
 
+### Graduation gate
+
+An experiment may become a graduated optional extension only when its architecture is frozen and documented, reference-model tests are complete, baseline ISA v0 regression remains green, supported emulator/simulator implementations agree with the reference model, tooling requirements are explicit, and any claimed FPGA support has its own qualification evidence. Graduation requires an explicit roadmap/release change; implementation alone is not graduation.
+
+### Removal gate
+
+Proposal-stage features may be removed freely. Experimental features may be removed after their capability/profile is deleted, tests and documentation are updated, and release notes identify the removal. Removed experimental machine-code compatibility is not promised. A removed experiment must never cause its old encodings to acquire different silent meanings in the ISA v0 baseline.
+
+### Compatibility rule
+
+Graduated extensions remain optional and capability-gated. Software that requires one must declare it; software targeting ISA v0 must not acquire an extension dependency implicitly.
+
 ## Teaching principle
 
 Experiments exist to expose concepts such as interrupts, privilege, pipelines and caches. Implementations should favor observability and understandable state transitions over performance or complexity.
