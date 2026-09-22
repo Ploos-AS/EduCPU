@@ -79,9 +79,19 @@ Separate faithful implementation, deterministic devices, debugger hooks and diff
 ## M9 — FPGA realization
 Synthesizable realization of frozen architecture and qualification against ISA vectors.
 
-**Status:** RTL, UP5K memory, canonical UPduino v3.1 build/UART path and secondary iCEBreaker synthesis are qualified in CI. The remaining mandatory completion gate is physical UPduino v3.1 bring-up on real hardware. A custom EduCPU PCB remains optional/future.
+**Status:** RTL, UP5K memory, canonical UPduino v3.1 build/UART path and secondary iCEBreaker synthesis are qualified in CI. Physical UPduino v3.1 bring-up is **PENDING HARDWARE** until a board is available; this is not a development failure and does not block work on M10. A custom EduCPU PCB remains optional/future.
 ## M10 — Advanced and experimental concepts
 Optional interrupts, richer I/O, microcode, privilege, VM, pipelines/hazards, cache and alternative architecture experiments.
+
+### M10.0 — Experimental architecture framework
+
+- [ ] define extension/experiment policy without changing frozen ISA v0 semantics
+- [ ] define feature flags/capability discovery for experimental implementations
+- [ ] add an experimental reference-machine profile
+- [ ] add regression gates proving baseline ISA v0 remains unchanged
+- [ ] document how experiments graduate, remain optional, or are removed
+
+M10 experiments must remain opt-in. The qualified ISA v0 reference CPU, emulator, toolchain and FPGA baseline stay stable while advanced concepts are explored.
 
 
 ## FPGA M0
