@@ -78,6 +78,8 @@ Separate faithful implementation, deterministic devices, debugger hooks and diff
 - [x] M8 qualification — final CI + release qualification (CI #214 PASS; see docs/M8_CONFORMANCE_COVERAGE.md)
 ## M9 — FPGA realization
 Synthesizable realization of frozen architecture and qualification against ISA vectors.
+
+**Status:** RTL, UP5K memory, canonical UPduino v3.1 build/UART path and secondary iCEBreaker synthesis are qualified in CI. The remaining mandatory completion gate is physical UPduino v3.1 bring-up on real hardware. A custom EduCPU PCB remains optional/future.
 ## M10 — Advanced and experimental concepts
 Optional interrupts, richer I/O, microcode, privilege, VM, pipelines/hazards, cache and alternative architecture experiments.
 
