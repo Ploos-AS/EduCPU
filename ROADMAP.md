@@ -86,7 +86,7 @@ Optional interrupts, richer I/O, microcode, privilege, VM, pipelines/hazards, ca
 ### M10.0 — Experimental architecture framework
 
 - [x] define extension/experiment policy without changing frozen ISA v0 semantics
-- [ ] define feature flags/capability discovery for experimental implementations
+- [x] define feature flags/capability discovery for experimental implementations
 - [ ] add an experimental reference-machine profile
 - [ ] add regression gates proving baseline ISA v0 remains unchanged
 - [ ] document how experiments graduate, remain optional, or are removed
