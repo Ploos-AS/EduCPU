@@ -100,5 +100,5 @@ Optional interrupts, richer I/O, microcode, privilege, VM, pipelines/hazards, ca
 - [x] UART-to-CPU end-to-end simulation
 - [ ] UPduino v3.1 physical FPGA bring-up and qualification
 - [x] document reproducible UPduino flash/load/run/readback procedure
-- [ ] iCEBreaker/compatible UP5K secondary target wrapper
+- [x] iCEBreaker/compatible UP5K secondary target wrapper + CI synthesis qualification
 - [ ] optional future EduCPU custom PCB schematic/layout
