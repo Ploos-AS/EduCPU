@@ -87,7 +87,7 @@ Optional interrupts, richer I/O, microcode, privilege, VM, pipelines/hazards, ca
 
 - [x] define extension/experiment policy without changing frozen ISA v0 semantics
 - [x] define feature flags/capability discovery for experimental implementations
-- [ ] add an experimental reference-machine profile
+- [x] add an experimental reference-machine profile
 - [ ] add regression gates proving baseline ISA v0 remains unchanged
 - [ ] document how experiments graduate, remain optional, or are removed
 
