@@ -88,7 +88,7 @@ Optional interrupts, richer I/O, microcode, privilege, VM, pipelines/hazards, ca
 - [x] define extension/experiment policy without changing frozen ISA v0 semantics
 - [x] define feature flags/capability discovery for experimental implementations
 - [x] add an experimental reference-machine profile
-- [ ] add regression gates proving baseline ISA v0 remains unchanged
+- [x] add regression gates proving baseline ISA v0 remains unchanged
 - [ ] document how experiments graduate, remain optional, or are removed
 
 M10 experiments must remain opt-in. The qualified ISA v0 reference CPU, emulator, toolchain and FPGA baseline stay stable while advanced concepts are explored.
