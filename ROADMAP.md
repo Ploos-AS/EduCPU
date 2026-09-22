@@ -93,6 +93,15 @@ Optional interrupts, richer I/O, microcode, privilege, VM, pipelines/hazards, ca
 
 M10 experiments must remain opt-in. The qualified ISA v0 reference CPU, emulator, toolchain and FPGA baseline stay stable while advanced concepts are explored.
 
+### M10.1 — Interrupts
+
+- [ ] define capability-gated interrupt architecture
+- [ ] implement interrupt state in experimental reference machine
+- [ ] implement deterministic IRQ entry/return semantics
+- [ ] add focused reference-model tests
+- [ ] add simulator/emulator support after reference qualification
+- [ ] consider RTL implementation only after software semantics are frozen
+
 
 ## FPGA M0
 
