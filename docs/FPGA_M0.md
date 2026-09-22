@@ -77,3 +77,16 @@ FPGA CI #92 qualifies the first concrete development-board target.
 - RTL/reference differential conformance: PASS (20 programs)
 
 The remaining board gate is physical execution on an actual UPduino. See `FPGA_UPDUINO_BRINGUP.md`; do not mark physical bring-up PASS from CI alone.
+
+
+## M0.15 secondary iCEBreaker portability qualification
+
+FPGA CI qualifies the secondary iCEBreaker-class iCE40UP5K wrapper by synthesis alongside the canonical UPduino target.
+
+- board-neutral EduCPU core reuse: PASS
+- iCE40UP5K SPRAM backend reuse: PASS
+- 12 MHz external-clock wrapper synthesis: PASS
+- FPGA CI on commit `9076c7f`: PASS
+- no board pin constraints are guessed; physical iCEBreaker qualification requires a verified board revision and official pinout
+
+This target demonstrates that the M9 implementation is not coupled to the UPduino wrapper. UPduino v3.1 remains the canonical physical reference hardware.
