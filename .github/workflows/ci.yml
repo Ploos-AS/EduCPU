@@ -15,4 +15,7 @@ jobs:
         with:
           python-version: ${{ matrix.python-version }}
       - run: python -m pip install --upgrade pip pytest
-      - run: python -m pytest -q
+      - name: ISA v0 baseline regression gate
+        run: python -m pytest -q tests/test_reference.py tests/test_capabilities.py tests/test_machine_profiles.py
+      - name: Full test suite
+        run: python -m pytest -q
