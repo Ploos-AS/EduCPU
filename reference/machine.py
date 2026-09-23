@@ -11,6 +11,10 @@ from educpu import CPU
 class ReferenceMachine:
  profile: MachineProfile = ISA_V0
  cpu: CPU = field(default_factory=CPU)
+ irq_pending: bool = False
+ irq_enabled: bool = True
+ irq_vector: int = 0
+ in_interrupt: bool = False
 
  @classmethod
  def named(cls, name: str) -> "ReferenceMachine":
@@ -25,12 +29,38 @@ class ReferenceMachine:
 
  def reset(self) -> None:
   self.cpu.reset()
+  self.irq_pending=False
+  self.irq_enabled=True
+  self.in_interrupt=False
+
+ def request_irq(self) -> None:
+  self.profile.require("experimental.interrupts")
+  self.irq_pending=True
+
+ def _accept_irq(self) -> bool:
+  if not self.supports("experimental.interrupts") or not self.irq_pending or not self.irq_enabled or self.cpu.trap or self.in_interrupt:
+   return False
+  self.irq_pending=False
+  self.cpu.halted=False
+  pc=self.cpu.pc
+  self.cpu.push((pc>>8)&0xff)
+  self.cpu.push(pc&0xff)
+  self.cpu.push(self.cpu.flags)
+  self.in_interrupt=True
+  self.irq_enabled=False
+  self.cpu.pc=self.irq_vector&0xffff
+  return True
 
  def step(self) -> None:
-  self.cpu.step()
+  if not self._accept_irq(): self.cpu.step()
 
  def run(self, limit: int = 100000) -> int:
-  return self.cpu.run(limit)
+  n=0
+  while n<limit and not self.cpu.trap:
+   if self.cpu.halted and not (self.irq_pending and self.irq_enabled and not self.in_interrupt): break
+   self.step();n+=1
+   if self.cpu.halted and not self.irq_pending: break
+  return n
 
 def baseline_machine() -> ReferenceMachine:
  return ReferenceMachine(ISA_V0)
