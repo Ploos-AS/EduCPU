@@ -59,3 +59,20 @@ def test_iret_outside_interrupt_traps_in_experimental_profile():
  m=experimental_machine();m.cpu.mem[0]=0xf0;m.step()
  # Outside interrupt context 0xf0 remains unavailable to normal execution.
  assert m.cpu.trap=="INVALID_OPCODE"
+
+
+def test_trapped_cpu_does_not_accept_pending_irq():
+ m=experimental_machine();m.cpu.pc=0x1234;m.cpu.trap="TEST_TRAP";m.irq_vector=0x8000;m.request_irq();m.step()
+ assert m.cpu.pc==0x1234 and m.cpu.trap=="TEST_TRAP"
+ assert m.irq_pending and not m.in_interrupt
+
+def test_nested_irq_is_deferred_until_iret():
+ m=experimental_machine();m.cpu.pc=0x1234;m.irq_vector=0x8000;m.cpu.mem[0x8000]=0x00;m.cpu.mem[0x8001]=0xf0
+ m.request_irq();m.step()
+ assert m.in_interrupt and not m.irq_enabled and m.cpu.pc==0x8000
+ m.request_irq();m.step()
+ assert m.irq_pending and m.cpu.pc==0x8001 and m.in_interrupt
+ m.step()
+ assert m.cpu.pc==0x1234 and m.irq_enabled and not m.in_interrupt and m.irq_pending
+ m.step()
+ assert m.cpu.pc==0x8000 and m.in_interrupt and not m.irq_pending
