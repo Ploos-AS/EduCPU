@@ -51,8 +51,23 @@ class ReferenceMachine:
   self.cpu.pc=self.irq_vector&0xffff
   return True
 
+ def _iret(self) -> None:
+  self.profile.require("experimental.interrupts")
+  if not self.in_interrupt:
+   self.cpu.trap="INVALID_IRET"
+   return
+  self.cpu.flags=self.cpu.pop()
+  lo=self.cpu.pop();hi=self.cpu.pop()
+  self.cpu.pc=lo|(hi<<8)
+  self.in_interrupt=False
+  self.irq_enabled=True
+
  def step(self) -> None:
-  if not self._accept_irq(): self.cpu.step()
+  if self._accept_irq(): return
+  if self.supports("experimental.interrupts") and self.in_interrupt and self.cpu.mem[self.cpu.pc]==0xf0:
+   self.cpu.pc=(self.cpu.pc+1)&0xffff
+   self._iret();return
+  self.cpu.step()
 
  def run(self, limit: int = 100000) -> int:
   n=0
