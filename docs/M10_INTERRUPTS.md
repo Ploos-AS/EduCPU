@@ -51,9 +51,9 @@ This produces deterministic single-level interrupt handling and reuses concepts 
 
 ## Return semantics
 
-M10.1 requires a dedicated experimental interrupt-return operation because ordinary RET does not restore FLAGS or interrupt state. Its encoding is intentionally **not assigned yet**. Opcode allocation happens only after reference semantics and tooling isolation are qualified.
+M10.1 requires a dedicated experimental interrupt-return operation because ordinary RET does not restore FLAGS or interrupt state. For the experimental profile it is assigned opcode **0xF0** (`IRET`). This encoding is outside the frozen ISA v0 instruction set: baseline ISA v0 continues to trap on 0xF0.
 
-Interrupt return will:
+Interrupt return (`IRET`, experimental opcode `0xF0`) will:
 
 1. restore FLAGS;
 2. restore PC;
