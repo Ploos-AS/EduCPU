@@ -23,3 +23,24 @@ def test_profile_does_not_change_baseline_execution_semantics():
 def test_named_profile_factory():
  assert ReferenceMachine.named("isa-v0").profile.name=="isa-v0"
  assert ReferenceMachine.named("experimental").profile.name=="experimental"
+
+
+def test_experimental_irq_entry_saves_pc_flags_and_vectors():
+ m=experimental_machine();m.cpu.pc=0x1234;m.cpu.flags=0x05;m.irq_vector=0x8000;m.request_irq();m.step()
+ assert m.cpu.pc==0x8000
+ assert m.in_interrupt and not m.irq_enabled and not m.irq_pending
+ assert m.cpu.sp==0xfefd
+ assert list(m.cpu.mem[0xfefd:0xff00])==[0x05,0x34,0x12]
+
+def test_disabled_irq_stays_pending_without_cpu_control_transfer():
+ m=experimental_machine();m.irq_enabled=False;m.irq_vector=0x8000;m.request_irq();m.step()
+ assert m.irq_pending and m.cpu.pc==1 and not m.in_interrupt
+
+def test_irq_wakes_halted_experimental_machine():
+ m=experimental_machine();m.cpu.halted=True;m.cpu.pc=0x0042;m.irq_vector=0x9000;m.request_irq();m.step()
+ assert not m.cpu.halted and m.cpu.pc==0x9000 and m.in_interrupt
+
+def test_baseline_machine_rejects_irq_requests():
+ import pytest
+ m=baseline_machine()
+ with pytest.raises(ValueError,match="does not support"):m.request_irq()
