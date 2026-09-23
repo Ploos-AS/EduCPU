@@ -96,8 +96,8 @@ M10 experiments must remain opt-in. The qualified ISA v0 reference CPU, emulator
 ### M10.1 — Interrupts
 
 - [x] define capability-gated interrupt architecture
-- [ ] implement interrupt state in experimental reference machine
-- [ ] implement deterministic IRQ entry/return semantics
+- [x] implement interrupt state in experimental reference machine
+- [ ] implement deterministic IRQ entry/return semantics — IRQ entry implemented; return pending opcode allocation
 - [ ] add focused reference-model tests
 - [ ] add simulator/emulator support after reference qualification
 - [ ] consider RTL implementation only after software semantics are frozen
