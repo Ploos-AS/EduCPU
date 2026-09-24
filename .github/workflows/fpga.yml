@@ -5,11 +5,19 @@ on:
     paths:
       - "fpga/**"
       - "docs/FPGA_M0.md"
+      - "docs/M10_INTERRUPTS.md"
+      - "docs/M10_RTL_INTEGRATION.md"
+      - "docs/M10_1_QUALIFICATION.md"
+      - "ROADMAP.md"
       - ".github/workflows/fpga.yml"
   pull_request:
     paths:
       - "fpga/**"
       - "docs/FPGA_M0.md"
+      - "docs/M10_INTERRUPTS.md"
+      - "docs/M10_RTL_INTEGRATION.md"
+      - "docs/M10_1_QUALIFICATION.md"
+      - "ROADMAP.md"
       - ".github/workflows/fpga.yml"
 
 jobs:
