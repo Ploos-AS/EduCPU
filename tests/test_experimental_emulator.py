@@ -33,5 +33,8 @@ def test_emulator_nested_irq_is_pending():
     m.request_irq()
     m.step()
     m.request_irq()
+    # Execute a normal handler instruction while the nested request is deferred.
+    m.cpu.mem[0x8000]=0x00
+    m.cpu.mem[0x8001]=0xF0
     m.step()
-    assert m.irq_pending and m.in_interrupt
+    assert m.irq_pending and m.in_interrupt and m.cpu.pc==0x8001
