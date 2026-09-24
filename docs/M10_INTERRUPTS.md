@@ -1,6 +1,6 @@
 # M10.1 interrupt experiment
 
-Status: **proposal**
+Status: **software semantics frozen; RTL controller and entry/IRET sequencer qualified; integrated experimental CPU pending**
 
 Capability: `experimental.interrupts`
 
@@ -72,7 +72,7 @@ The experimental capability must be explicitly selected. No assembler syntax or 
 
 ## Qualification
 
-Before this experiment advances beyond proposal:
+Qualification requirements:
 
 - baseline ISA v0 regression remains green;
 - IRQ entry is tested at an instruction boundary;
@@ -81,3 +81,10 @@ Before this experiment advances beyond proposal:
 - trapped CPU rejects IRQ entry;
 - return restores PC and FLAGS;
 - nested IRQ acceptance is prevented.
+
+
+## RTL qualification status
+
+The experiment has advanced beyond the original proposal stage. The controller boundary and architectural IRQ entry/IRET stack sequencer are implemented as separate RTL modules and run in FPGA CI without modifying the frozen ISA v0 core. Final M10.1 completion still requires an integrated experimental execution target and differential architectural comparison against the software reference model.
+
+See `docs/M10_1_QUALIFICATION.md` for the current qualification boundary and remaining gate.
