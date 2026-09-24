@@ -46,6 +46,12 @@ jobs:
       - name: Run UART-to-CPU end-to-end simulation
         working-directory: fpga/rtl
         run: make serial-e2e-test
+      - name: Run M10 experimental IRQ boundary simulation
+        working-directory: fpga/rtl
+        run: make experimental-irq-test
+      - name: Run M10 experimental IRQ entry/IRET simulation
+        working-directory: fpga/rtl
+        run: make experimental-irq-entry-test
       - name: Run board-neutral Yosys/iCE40 synthesis
         working-directory: fpga/rtl
         run: make synth
