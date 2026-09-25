@@ -32,9 +32,9 @@ module educpu_experimental_irq_entry (
     PUSH_HI: begin if(mem_ready) begin work_sp<=work_sp-1;state<=PUSH_LO;end end
     PUSH_LO: begin if(mem_ready) begin work_sp<=work_sp-1;state<=PUSH_FLAGS;end end
     PUSH_FLAGS: begin if(mem_ready) begin next_sp<=work_sp-1;next_pc<=irq_vector;next_flags<=saved_flags;state_write<=1;busy<=0;state<=IDLE;end end
-    POP_FLAGS: beginif(mem_ready)begin pop_flags<=mem_rdata;work_sp<=work_sp+1;state<=POP_LO;end end
-    POP_LO: beginif(mem_ready)begin pop_lo<=mem_rdata;work_sp<=work_sp+1;state<=POP_HI;end end
-    POP_HI: beginif(mem_ready)begin next_flags<=pop_flags;next_pc<={mem_rdata,pop_lo};next_sp<=work_sp+1;state_write<=1;iret_complete<=1;busy<=0;state<=IDLE;end end
+    POP_FLAGS: begin if(mem_ready)begin pop_flags<=mem_rdata;work_sp<=work_sp+1;state<=POP_LO;end end
+    POP_LO: begin if(mem_ready)begin pop_lo<=mem_rdata;work_sp<=work_sp+1;state<=POP_HI;end end
+    POP_HI: begin if(mem_ready)begin next_flags<=pop_flags;next_pc<={mem_rdata,pop_lo};next_sp<=work_sp+1;state_write<=1;iret_complete<=1;busy<=0;state<=IDLE;end end
    endcase
   end
  end
