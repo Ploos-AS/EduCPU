@@ -6,7 +6,7 @@ module tb_experimental_irq_entry;
  always #5 clk=~clk;
  educpu_experimental_irq_entry dut(.*);
  always @* mem_rdata = mem[mem_addr];
- always @(posedge clk) if(mem_valid && mem_we && mem_ready) mem[mem_addr] <= mem_wdata;
+ always @(posedge clk) if(mem_valid && mem_we && mem_ready) mem[mem_addr] = mem_wdata;
  task tick;begin @(posedge clk);#1;end endtask
  initial begin
   tick;reset=0;irq_accept=1;tick;irq_accept=0;
