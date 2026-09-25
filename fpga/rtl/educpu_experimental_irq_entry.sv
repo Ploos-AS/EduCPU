@@ -23,7 +23,7 @@ module educpu_experimental_irq_entry (
   endcase
  end
  always_ff @(posedge clk) begin
-  if(reset) begin state<=IDLE;busy<=0;state_write<=0;iret_complete<=0; end
+  if(reset) begin state<=IDLE;busy<=0;state_write<=0;iret_complete<=0;saved_pc<=0;work_sp<=0;saved_flags<=0;pop_flags<=0;pop_lo<=0;next_pc<=0;next_sp<=0;next_flags<=0; end
   else begin
    state_write<=0;iret_complete<=0;
    case(state)
