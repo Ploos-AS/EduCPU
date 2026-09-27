@@ -106,3 +106,5 @@ jobs:
         run: sh fpga/conformance/check_reference.sh
       - name: Run RTL/reference differential conformance
         run: python3 fpga/conformance/run_differential.py
+      - name: Run experimental-core ISA-v0 differential conformance
+        run: python3 fpga/conformance/run_experimental_differential.py
