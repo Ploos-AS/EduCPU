@@ -3,11 +3,15 @@ VVP ?= vvp
 YOSYS ?= yosys
 NEXTPNR ?= nextpnr-ice40
 
-.PHONY: test experimental-irq-test experimental-irq-entry-test bringup-test loader-test serial-loader-test serial-e2e-test synth machine-synth up5k machine-up5k spram-up5k upduino-v31 upduino-v31-loader upduino-v31-loader-v1 icebreaker clean
+.PHONY: test experimental-core-irq-test experimental-irq-test experimental-irq-entry-test bringup-test loader-test serial-loader-test serial-e2e-test synth machine-synth up5k machine-up5k spram-up5k upduino-v31 upduino-v31-loader upduino-v31-loader-v1 icebreaker clean
 
 test:
 	$(IVERILOG) -g2012 -o simv educpu_core.sv tb_educpu_core.sv
 	$(VVP) simv
+
+experimental-core-irq-test:
+	$(IVERILOG) -g2012 -o experimental-core-irq-simv educpu_experimental_core.sv tb_experimental_core_irq.sv
+	$(VVP) experimental-core-irq-simv
 
 experimental-irq-test:
 	$(IVERILOG) -g2012 -o experimental-irq-simv educpu_experimental_irq.sv tb_experimental_irq.sv
