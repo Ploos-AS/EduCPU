@@ -108,3 +108,5 @@ jobs:
         run: python3 fpga/conformance/run_differential.py
       - name: Run experimental-core ISA-v0 differential conformance
         run: python3 fpga/conformance/run_experimental_differential.py
+      - name: Run experimental IRQ/reference differential conformance
+        run: python3 fpga/conformance/run_experimental_irq_differential.py
