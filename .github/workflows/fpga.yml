@@ -60,6 +60,9 @@ jobs:
       - name: Run M10 experimental IRQ entry/IRET simulation
         working-directory: fpga/rtl
         run: make experimental-irq-entry-test
+      - name: Run M10 integrated experimental core IRQ/IRET simulation
+        working-directory: fpga/rtl
+        run: make experimental-core-irq-test
       - name: Run board-neutral Yosys/iCE40 synthesis
         working-directory: fpga/rtl
         run: make synth
