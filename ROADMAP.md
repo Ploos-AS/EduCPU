@@ -104,11 +104,11 @@ M10 experiments must remain opt-in. The qualified ISA v0 reference CPU, emulator
 - [x] define a separate experimental RTL boundary without modifying frozen `educpu_core.sv`
 - [x] implement and CI-qualify IRQ pending/accept/IRET control
 - [x] implement and CI-qualify architectural IRQ entry/IRET stack sequencer
-- [ ] integrate the IRQ controller + stack sequencer with a complete experimental execution core
-- [ ] differential-test integrated RTL IRQ architectural results against the software reference model
-- [ ] M10.1 final qualification — see `docs/M10_1_QUALIFICATION.md`
+- [x] integrate the IRQ controller + stack sequencer with a complete experimental execution core
+- [x] differential-test integrated RTL IRQ architectural results against the software reference model
+- [x] M10.1 final qualification — see `docs/M10_1_QUALIFICATION.md`
 
-The RTL experiment is now active and CI-qualified at the controller and architectural stack-sequencer boundaries. M10.1 remains open until a complete experimental CPU integration target is differentially qualified; the frozen ISA v0 RTL remains unchanged.
+M10.1 is complete: software, emulator, isolated RTL, integrated experimental execution, ISA-v0 compatibility and IRQ/reference differential semantics are CI-qualified. The frozen ISA v0 RTL remains unchanged.
 
 
 ## FPGA M0
