@@ -1,6 +1,6 @@
 # M10.1 Interrupt Qualification
 
-Status: **RTL architecture qualified in CI; experimental CPU integration remains open**
+Status: **PASS — complete experimental interrupt architecture qualified in CI**
 
 M10.1 is an opt-in experiment. It does not change the frozen ISA v0 CPU, opcode map, assembler, emulator baseline, or M9 FPGA targets.
 
@@ -49,8 +49,14 @@ Both RTL tests run in the FPGA GitHub Actions workflow.
 
 The qualified ISA v0 RTL remains `fpga/rtl/educpu_core.sv`. M10.1 does not add ports or opcode semantics to that module. The existing ISA-v0 RTL/reference differential suite remains the regression gate for the frozen baseline.
 
-## Remaining M10.1 gate
+## Integrated execution and differential qualification
 
-M10.1 is **not yet marked complete**. The remaining engineering gate is a complete experimental CPU integration target that joins the IRQ controller and entry/IRET sequencer to an execution core and then cross-checks architectural IRQ results against the software model.
+`educpu_experimental_core.sv` integrates interrupt entry, vector execution and IRET while leaving the frozen ISA-v0 core untouched. CI qualifies IRQ → handler → IRET → baseline execution.
+
+The experimental core also runs the opcode-complete ISA-v0 differential suite with IRQ disabled. A dedicated IRQ differential gate compares RTL against `ReferenceMachine`, including PC, SP, FLAGS, HALT/TRAP and the interrupt stack frame.
+
+Final mandatory qualification: FPGA #217 and CI #570 at commit `26f27a6`, both PASS.
+
+**M10.1 is complete.**
 
 Physical UPduino v3.1 bring-up is an independent M9 hardware gate and does not block this experimental work.
