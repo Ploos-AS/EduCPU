@@ -111,6 +111,20 @@ M10 experiments must remain opt-in. The qualified ISA v0 reference CPU, emulator
 M10.1 is complete: software, emulator, isolated RTL, integrated experimental execution, ISA-v0 compatibility and IRQ/reference differential semantics are CI-qualified. The frozen ISA v0 RTL remains unchanged.
 
 
+### M10.2 — I/O
+
+- [x] define capability-gated experimental I/O architecture
+- [ ] implement deterministic port namespace in experimental reference machine
+- [ ] add device registration and focused reference tests
+- [ ] add independent emulator support
+- [ ] freeze software I/O semantics before opcode/RTL allocation
+- [ ] define experimental I/O instructions and RTL bus
+- [ ] differential-test integrated I/O semantics against software reference
+- [ ] M10.2 final qualification
+
+M10.2 uses a separate 8-bit port namespace and remains opt-in under `experimental.io`; frozen ISA v0 memory semantics remain unchanged.
+
+
 ## FPGA M0
 
 - [x] board-neutral FPGA project structure
