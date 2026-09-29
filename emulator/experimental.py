@@ -19,12 +19,30 @@ class ExperimentalEmulator:
         self.irq_enabled = True
         self.irq_vector = 0
         self.in_interrupt = False
+        self.io_readers = {}
+        self.io_writers = {}
 
     def reset(self):
         self.cpu.reset()
         self.irq_pending = False
         self.irq_enabled = True
         self.in_interrupt = False
+
+    def register_io(self, port, read=None, write=None):
+        port &= 0xff
+        if read is not None:
+            self.io_readers[port] = read
+        if write is not None:
+            self.io_writers[port] = write
+
+    def in_port(self, port):
+        reader = self.io_readers.get(port & 0xff)
+        return (reader() & 0xff) if reader else 0
+
+    def out_port(self, port, value):
+        writer = self.io_writers.get(port & 0xff)
+        if writer:
+            writer(value & 0xff)
 
     def request_irq(self):
         self.irq_pending = True
