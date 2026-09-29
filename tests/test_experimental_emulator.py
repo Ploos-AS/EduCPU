@@ -38,3 +38,18 @@ def test_emulator_nested_irq_is_pending():
     m.cpu.mem[0x8001]=0xF0
     m.step()
     assert m.irq_pending and m.in_interrupt and m.cpu.pc==0x8001
+
+
+def test_experimental_emulator_io_defaults_and_callbacks():
+ e=ExperimentalEmulator(); written=[]
+ assert e.in_port(0x42)==0
+ e.out_port(0x42,0xaa)
+ e.register_io(0x142,read=lambda:0x1ab,write=lambda value:written.append(value))
+ assert e.in_port(0x42)==0xab
+ e.out_port(0x42,0x1cd)
+ assert written==[0xcd]
+
+def test_experimental_emulator_io_registration_survives_cpu_reset():
+ e=ExperimentalEmulator(); e.register_io(7,read=lambda:0x5a)
+ e.reset()
+ assert e.in_port(7)==0x5a
