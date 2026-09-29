@@ -76,3 +76,29 @@ def test_nested_irq_is_deferred_until_iret():
  assert m.cpu.pc==0x1234 and m.irq_enabled and not m.in_interrupt and m.irq_pending
  m.step()
  assert m.cpu.pc==0x8000 and m.in_interrupt and not m.irq_pending
+
+
+def test_experimental_io_unmapped_reads_zero_and_writes_are_ignored():
+ m=experimental_machine()
+ assert m.in_port(0x42)==0
+ m.out_port(0x42,0xaa)
+
+def test_baseline_machine_rejects_experimental_io():
+ import pytest
+ m=baseline_machine()
+ with pytest.raises(ValueError,match="does not support"):m.in_port(0)
+ with pytest.raises(ValueError,match="does not support"):m.out_port(0,1)
+
+def test_experimental_io_device_callbacks_and_byte_masking():
+ m=experimental_machine(); written=[]
+ m.register_io(0x142,read=lambda:0x1ab,write=lambda value:written.append(value))
+ assert m.in_port(0x42)==0xab
+ m.out_port(0x42,0x1cd)
+ assert written==[0xcd]
+
+def test_experimental_io_read_and_write_can_be_registered_independently():
+ m=experimental_machine(); written=[]
+ m.register_io(7,write=written.append)
+ assert m.in_port(7)==0
+ m.out_port(7,0x55)
+ assert written==[0x55]
