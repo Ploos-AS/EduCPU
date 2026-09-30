@@ -102,3 +102,26 @@ def test_experimental_io_read_and_write_can_be_registered_independently():
  assert m.in_port(7)==0
  m.out_port(7,0x55)
  assert written==[0x55]
+
+
+def test_experimental_in_instruction_reads_port_without_changing_flags():
+ m=experimental_machine();m.cpu.flags=0x0d
+ m.register_io(0x10,read=lambda:0xa5)
+ m.cpu.mem[:4]=bytes((0xe0,2,0x10,0x01));m.run()
+ assert m.cpu.r[2]==0xa5 and m.cpu.flags==0x0d and m.cpu.halted and m.cpu.trap is None
+
+def test_experimental_out_instruction_writes_register_without_changing_flags():
+ m=experimental_machine();written=[];m.cpu.r[3]=0x5a;m.cpu.flags=0x06
+ m.register_io(0x20,write=written.append)
+ m.cpu.mem[:4]=bytes((0xe1,0x20,3,0x01));m.run()
+ assert written==[0x5a] and m.cpu.flags==0x06 and m.cpu.halted and m.cpu.trap is None
+
+def test_experimental_unmapped_in_and_out_instructions_are_deterministic():
+ m=experimental_machine();m.cpu.r[1]=0xff
+ m.cpu.mem[:7]=bytes((0xe0,1,0x77,0xe1,0x78,1,0x01));m.run()
+ assert m.cpu.r[1]==0 and m.cpu.halted and m.cpu.trap is None
+
+def test_baseline_e0_e1_remain_invalid_opcodes():
+ for opcode in (0xe0,0xe1):
+  m=baseline_machine();m.cpu.mem[0]=opcode;m.step()
+  assert m.cpu.trap=="INVALID_OPCODE"
