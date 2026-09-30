@@ -125,3 +125,13 @@ def test_baseline_e0_e1_remain_invalid_opcodes():
  for opcode in (0xe0,0xe1):
   m=baseline_machine();m.cpu.mem[0]=opcode;m.step()
   assert m.cpu.trap=="INVALID_OPCODE"
+
+
+def test_io_transaction_state_is_explicit_and_observable():
+ m=experimental_machine();m.register_io(0x10,read=lambda:0xa5)
+ m.cpu.mem[:3]=bytes((0xe0,2,0x10));m.step()
+ assert m.last_io=={"direction":"in","port":0x10,"value":0xa5,"mapped":True}
+ m.out_port(0x77,0x1ff)
+ assert m.last_io=={"direction":"out","port":0x77,"value":0xff,"mapped":False}
+ m.reset()
+ assert m.last_io is None
