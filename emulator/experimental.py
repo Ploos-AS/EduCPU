@@ -77,12 +77,16 @@ class ExperimentalEmulator:
         self.cpu.pc = (self.cpu.pc + 1) & 0xffff
         try:
             if op == 0xe0:
-                d = self.cpu._reg()
+                d = self.cpu._reg_operand()
+                if d is None:
+                    return True
                 port = self.cpu._fetch()
                 self.cpu.r[d] = self.in_port(port)
             else:
                 port = self.cpu._fetch()
-                s = self.cpu._reg()
+                s = self.cpu._reg_operand()
+                if s is None:
+                    return True
                 self.out_port(port, self.cpu.r[s])
         except ValueError:
             pass
