@@ -53,3 +53,30 @@ def test_experimental_emulator_io_registration_survives_cpu_reset():
  e=ExperimentalEmulator(); e.register_io(7,read=lambda:0x5a)
  e.reset()
  assert e.in_port(7)==0x5a
+
+
+def test_experimental_emulator_executes_in_out_instructions():
+ e=ExperimentalEmulator();written=[];e.cpu.flags=0x0d
+ e.register_io(0x10,read=lambda:0xa5)
+ e.register_io(0x20,write=written.append)
+ e.cpu.mem[:7]=bytes((0xe0,2,0x10,0xe1,0x20,2,0x01));e.run()
+ assert e.cpu.r[2]==0xa5 and written==[0xa5]
+ assert e.cpu.flags==0x0d and e.cpu.pc==7 and e.cpu.halted and e.cpu.trap is None
+
+def test_reference_and_emulator_io_instruction_semantics_match():
+ from machine import experimental_machine
+ program=bytes((0xe0,2,0x10,0xe1,0x20,2,0xe0,4,0x77,0xe1,0x78,4,0x01))
+ ref=experimental_machine();emu=ExperimentalEmulator()
+ ref_writes=[];emu_writes=[]
+ ref.register_io(0x10,read=lambda:0xa5);ref.register_io(0x20,write=ref_writes.append)
+ emu.register_io(0x10,read=lambda:0xa5);emu.register_io(0x20,write=emu_writes.append)
+ ref.cpu.flags=emu.cpu.flags=0x0d
+ ref.cpu.mem[:len(program)]=program;emu.cpu.mem[:len(program)]=program
+ ref.run();emu.run()
+ assert emu.cpu.r==ref.cpu.r
+ assert emu.cpu.pc==ref.cpu.pc
+ assert emu.cpu.sp==ref.cpu.sp
+ assert emu.cpu.flags==ref.cpu.flags
+ assert emu.cpu.halted==ref.cpu.halted
+ assert emu.cpu.trap==ref.cpu.trap
+ assert emu_writes==ref_writes==[0xa5]
