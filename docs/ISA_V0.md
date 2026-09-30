@@ -128,9 +128,11 @@ HALT leaves PC pointing immediately after HALT and enters a halted state. RESET 
 
 Invalid register operand bytes (>7) produce INVALID_OPERAND.
 
-## Memory-mapped I/O
+## I/O boundary
 
-The CPU itself defines byte reads/writes only. Device semantics are part of the machine model, not the ISA. The top page 0xFF00-0xFFFF is reserved for future teaching-machine I/O/system conventions; M1 reference memory remains deterministic RAM except where a harness explicitly supplies a device.
+ISA v0 defines memory only: all 0x0000-0xFFFF addresses are ordinary deterministic RAM in the reference architecture. ISA v0 does not reserve a memory page or define device semantics.
+
+Experimental I/O belongs to M10 machine profiles and must not silently change ISA-v0 memory behavior. M10.2 introduces a separate 8-bit port namespace first so learners can see the distinction between memory state and device communication. Memory-mapped I/O is retained as a later comparison experiment, not an ISA-v0 reservation.
 
 ## Architectural trace
 
