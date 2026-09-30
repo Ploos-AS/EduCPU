@@ -120,9 +120,10 @@ M10.1 is complete: software, emulator, isolated RTL, integrated experimental exe
 ### M10.2 — I/O
 
 - [x] define capability-gated experimental I/O architecture
-- [ ] implement deterministic port namespace in experimental reference machine
-- [ ] add device registration and focused reference tests
-- [ ] add independent emulator support
+- [x] implement deterministic port namespace in experimental reference machine
+- [x] add device registration and focused reference tests
+- [x] add independent emulator support
+- [x] define I/O teaching motivation, observable state and predict/run/inspect progression
 - [ ] freeze software I/O semantics before opcode/RTL allocation
 - [ ] define experimental I/O instructions and RTL bus
 - [ ] differential-test integrated I/O semantics against software reference
