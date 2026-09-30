@@ -1,5 +1,11 @@
 # EduCPU Roadmap
 
+## Governing teaching goal
+
+EduCPU aims to be a classic, enduring course in what a CPU is and how it works. Milestones are judged not only by implementation completeness but by whether they strengthen the inspectable chain from bits and logic through machine state, software and physical FPGA execution. The governing principles are in `docs/TEACHING_MANIFESTO.md`.
+
+For advanced M10 experiments, technical novelty alone is insufficient: each experiment must identify the CPU problem it teaches, observable state, a predict/run/inspect exercise, and its relationship to simpler mechanisms already learned.
+
 ## M0 — Foundation
 - [x] mission/scope, pedagogy principles, ISA envelope, toolchain, licensing and separation from EduK8
 ## M1 — ISA v0 + executable reference model
