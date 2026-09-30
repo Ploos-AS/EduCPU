@@ -17,6 +17,7 @@ class ReferenceMachine:
  in_interrupt: bool = False
  io_readers: dict = field(default_factory=dict)
  io_writers: dict = field(default_factory=dict)
+ last_io: dict | None = None
 
  @classmethod
  def named(cls, name: str) -> "ReferenceMachine":
@@ -34,6 +35,7 @@ class ReferenceMachine:
   self.irq_pending=False
   self.irq_enabled=True
   self.in_interrupt=False
+  self.last_io=None
 
  def register_io(self, port: int, read=None, write=None) -> None:
   self.profile.require("experimental.io")
@@ -43,13 +45,15 @@ class ReferenceMachine:
 
  def in_port(self, port: int) -> int:
   self.profile.require("experimental.io")
-  reader=self.io_readers.get(port & 0xff)
-  return (reader() & 0xff) if reader else 0
+  port&=0xff;reader=self.io_readers.get(port);value=(reader()&0xff) if reader else 0
+  self.last_io={"direction":"in","port":port,"value":value,"mapped":reader is not None}
+  return value
 
  def out_port(self, port: int, value: int) -> None:
   self.profile.require("experimental.io")
-  writer=self.io_writers.get(port & 0xff)
-  if writer: writer(value & 0xff)
+  port&=0xff;value&=0xff;writer=self.io_writers.get(port)
+  self.last_io={"direction":"out","port":port,"value":value,"mapped":writer is not None}
+  if writer: writer(value)
 
  def request_irq(self) -> None:
   self.profile.require("experimental.interrupts")
