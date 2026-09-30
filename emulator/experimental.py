@@ -70,8 +70,28 @@ class ExperimentalEmulator:
         self.cpu.pc = self.irq_vector & 0xffff
         return True
 
+    def _io_instruction(self):
+        op = self.cpu.mem[self.cpu.pc]
+        if op not in (0xe0, 0xe1):
+            return False
+        self.cpu.pc = (self.cpu.pc + 1) & 0xffff
+        try:
+            if op == 0xe0:
+                d = self.cpu._reg()
+                port = self.cpu._fetch()
+                self.cpu.r[d] = self.in_port(port)
+            else:
+                port = self.cpu._fetch()
+                s = self.cpu._reg()
+                self.out_port(port, self.cpu.r[s])
+        except ValueError:
+            pass
+        return True
+
     def step(self):
         if self._accept_irq():
+            return
+        if self._io_instruction():
             return
         if self.in_interrupt and self.cpu.mem[self.cpu.pc] == 0xf0:
             self.cpu.pc = (self.cpu.pc + 1) & 0xffff
