@@ -85,3 +85,41 @@ The intended teaching progression is:
 6. optional ready/wait-state bus experiment.
 
 Host terminals and real hardware must be adapters around deterministic device semantics, not the definition of those semantics.
+
+
+## Frozen software semantics
+
+The M10.2 software I/O contract is now frozen for instruction/RTL design:
+
+- capability: `experimental.io`;
+- 256 ports, addressed by an 8-bit port number;
+- 8-bit transfer data;
+- port space is architecturally separate from the 16-bit memory space;
+- unmapped input returns `0x00`;
+- unmapped output has no effect;
+- input/output do not modify FLAGS;
+- device callbacks define device-visible side effects;
+- the initial architectural transfer is synchronous and completes as one instruction-level event;
+- reset resets CPU state but does not implicitly destroy the machine's attached device topology.
+
+## Experimental instruction proposal
+
+The first instruction form deliberately exposes every operand as a byte:
+
+| Opcode | Instruction | Bytes | Meaning |
+|---|---|---:|---|
+| E0 | IN rd,port8 | 3 | rd = IO[port8] |
+| E1 | OUT port8,rs | 3 | IO[port8] = rs |
+
+These opcodes belong only to an experimental M10 profile. Frozen ISA v0 continues to trap on E0/E1.
+
+The symmetric three-byte encoding is intentionally easy to inspect:
+
+- `E0 02 10` means input port `0x10` into R2;
+- `E1 10 02` means output R2 to port `0x10`.
+
+IN and OUT do not alter FLAGS. This keeps the first I/O lesson focused on communication rather than introducing implicit condition-code behavior.
+
+### Architectural trace extension
+
+An experimental I/O instruction trace must expose `io_direction`, `io_port`, `io_value`, and whether the port was mapped. This is the bridge from an instruction the learner can decode by eye to the later RTL bus transaction.
