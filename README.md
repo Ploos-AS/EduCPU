@@ -4,6 +4,8 @@ EduCPU is a pedagogy-first virtual CPU and teaching toolchain. Its purpose is
 to make the complete path from bits and machine state to assembly, compilation
 and program execution small enough to inspect and understand.
 
+The ambition is deliberately larger than building a small teaching CPU: EduCPU aims to become a classic, enduring course in **what a CPU is and how it works**. A learner should finish able to explain the path from logical building blocks to compiled-program execution, and to implement, simulate, debug and extend a simple CPU themselves. See [the teaching manifesto](docs/TEACHING_MANIFESTO.md).
+
 The project deliberately separates the educational architecture from its
 implementations. The executable reference CPU defines ISA behaviour; the
 simulator and visualizer expose that behaviour for learning; the independent
@@ -16,7 +18,7 @@ The guided course is bilingual (English/Norwegian), uses Markdown as its
 single source of truth and is published as generated HTML through GitHub
 Pages. Start in [course/](course/README.md).
 
-The recurring question is: **How does EduCPU know?** The course removes
+The recurring question is: **How does EduCPU know?** The teaching loop is **see → predict → run → inspect → explain**. The course removes
 abstractions layer by layer rather than treating the CPU, assembler or
 compiler as magic.
 
