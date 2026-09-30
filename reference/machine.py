@@ -80,8 +80,23 @@ class ReferenceMachine:
   self.in_interrupt=False
   self.irq_enabled=True
 
+ def _io_instruction(self) -> bool:
+  if not self.supports("experimental.io"): return False
+  op=self.cpu.mem[self.cpu.pc]
+  if op not in (0xe0,0xe1): return False
+  self.cpu.pc=(self.cpu.pc+1)&0xffff
+  try:
+   if op==0xe0:
+    d=self.cpu.reg();port=self.cpu.fetch();self.cpu.r[d]=self.in_port(port)
+   else:
+    port=self.cpu.fetch();s=self.cpu.reg();self.out_port(port,self.cpu.r[s])
+  except ValueError:
+   pass
+  return True
+
  def step(self) -> None:
   if self._accept_irq(): return
+  if self._io_instruction(): return
   if self.supports("experimental.interrupts") and self.in_interrupt and self.cpu.mem[self.cpu.pc]==0xf0:
    self.cpu.pc=(self.cpu.pc+1)&0xffff
    self._iret();return
