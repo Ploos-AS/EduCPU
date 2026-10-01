@@ -3,7 +3,7 @@
 Keeps M3 EduSim frozen while exposing capability-gated machine experiments.
 """
 from machine import experimental_machine
-from experimental_microcode import io_plan
+from experimental_microcode import instruction_plan
 
 
 def state(cpu):
@@ -36,7 +36,7 @@ class ExperimentalSimulator:
         self.machine.register_io(port, read=read, write=write)
 
     def micro_plan(self):
-        return io_plan(self.cpu.mem, self.cpu.pc)
+        return instruction_plan(self.cpu.mem, self.cpu.pc)
 
     def step_event(self):
         pc=self.cpu.pc
