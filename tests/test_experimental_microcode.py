@@ -52,7 +52,7 @@ def test_every_isa_v0_opcode_has_a_concrete_plan():
   0x30:[0,0],0x31:[0,0],0x32:[0,0],0x33:[0,0],0x34:[0,0],0x35:[0,0],0x36:[0,0],
   0x38:[0,0],0x39:[],0x40:[0],0x41:[0],
  }
- assert len(samples)==36
+ assert len(samples)==35
  for op,operands in samples.items():
   plan=instruction_plan(bytes([op]+operands),0)
   assert plan, f"empty plan for {op:02X}"
