@@ -64,6 +64,13 @@ CONTROL_STORE={
         MicroInstruction(Source.PC,Destination.NONE,memory_read=True),
         MicroInstruction(Source.MEM,Destination.REG_A,pc_increment=True,next=Next.FETCH),
     ),
+    "MOV": (
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True),
+        MicroInstruction(Source.MEM,Destination.TMP,pc_increment=True),
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True),
+        MicroInstruction(Source.MEM,Destination.NONE,pc_increment=True),
+        MicroInstruction(Source.REG_B,Destination.REG_A,next=Next.FETCH),
+    ),
 }
 
 def program_for(name):
@@ -71,7 +78,7 @@ def program_for(name):
     except KeyError as e:raise KeyError(f"no microprogram for {name}") from e
 
 
-OPCODE_NAMES={0x00:"NOP",0x01:"HALT",0x11:"MOVI"}
+OPCODE_NAMES={0x00:"NOP",0x01:"HALT",0x10:"MOV",0x11:"MOVI"}
 
 class MicroSequencer:
     """Step-visible controller for fetch/dispatch/control-store sequencing."""
@@ -129,6 +136,9 @@ class MicroMachine:
         # A memory read is an explicit request whose result becomes MEM.
         if u.memory_read:self.mem_latch=self.mem[self.pc&0xffff]
         if u.source==Source.MEM:src=self.mem_latch
+        elif u.source==Source.REG_B:
+            if not 0<=self.mem_latch<=7:raise ValueError("INVALID_OPERAND")
+            src=self.r[self.mem_latch]
         if u.destination==Destination.IR:self.ir=src&0xff
         elif u.destination==Destination.TMP:self.tmp=src&0xff
         elif u.destination==Destination.REG_A:
