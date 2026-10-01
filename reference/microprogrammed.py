@@ -215,7 +215,8 @@ class MicroMachine:
         if self.seq.phase=="EXECUTE" and self.seq.opcode in capture_steps and self.seq.micro_pc in capture_steps[self.seq.opcode]:
             self.addr_bytes.append(self.mem_latch)
             if len(self.addr_bytes)==2:self.mar=self.addr_bytes[0]|(self.addr_bytes[1]<<8)
-        if self.seq.phase=="EXECUTE" and self.seq.opcode in (0x14,0x15) and self.seq.micro_pc==3:
+        register_address_step={0x14:3,0x15:1}
+        if self.seq.phase=="EXECUTE" and self.seq.opcode in register_address_step and self.seq.micro_pc==register_address_step[self.seq.opcode]:
             if not 0<=self.mem_latch<=7:raise ValueError("INVALID_OPERAND")
             self.mar=self.r[self.mem_latch]
         if u.source==Source.MEM:src=self.mem_latch
