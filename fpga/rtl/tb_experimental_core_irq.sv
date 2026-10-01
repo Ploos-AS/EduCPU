@@ -1,6 +1,7 @@
 module tb_experimental_core_irq;
  logic clk=0,reset=1,mem_ready=1,irq_accept=0; logic [15:0] irq_vector=16'h8000;
  logic [7:0] mem_rdata; logic [15:0] mem_addr; logic [7:0] mem_wdata; logic mem_we,mem_valid,halted,trap,instruction_boundary,iret_complete;
+ logic [7:0] io_port,io_wdata,io_rdata=0; logic io_we,io_valid,io_ready=1;
  byte mem[0:65535]; always #5 clk=~clk; assign mem_rdata=mem[mem_addr];
  always @(posedge clk) if(mem_valid&&mem_we&&mem_ready) mem[mem_addr]=mem_wdata;
  educpu_experimental_core dut(.*);
