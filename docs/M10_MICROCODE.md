@@ -60,7 +60,7 @@ EduCPU will keep these terms distinct. The conceptual plans introduced first are
 
 The first executable microprogrammed model uses a deliberately readable 24-bit control word. Fields select a source, destination, ALU operation, memory read/write, PC increment and next-control action. Unused bits are reserved rather than compressed away.
 
-The shared fetch microprogram is visible as two microinstructions: request memory at PC, then transfer the returned byte to IR, increment PC and dispatch. NOP returns to fetch; HALT enters the halted control state.
+The shared fetch microprogram is visible as two microinstructions: request memory at PC, then transfer the returned byte to IR, increment PC and dispatch. NOP returns to fetch; HALT enters the halted control state. A step-visible microsequencer exposes `phase`, `micro_pc`, the dispatched opcode and the encoded control word at every transition. Dispatch requires an explicit IR value and rejects opcodes that do not yet have a microprogram.
 
 This representation is intentionally educational. A later RTL encoding may optimize the bit layout, but it must preserve a way to inspect the same control decisions.
 
