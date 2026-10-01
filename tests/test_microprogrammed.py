@@ -19,7 +19,7 @@ def test_first_control_store_programs_are_intentionally_tiny():
  assert program_for("HALT")[-1].next==Next.HALT
 
 def test_unknown_microprogram_is_explicit():
- try: program_for("MOVI")
+ try: program_for("ADD")
  except KeyError as e: assert "no microprogram" in str(e)
  else: raise AssertionError("missing microprogram must not silently execute")
 
