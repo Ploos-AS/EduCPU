@@ -71,6 +71,13 @@ CONTROL_STORE={
         MicroInstruction(Source.MEM,Destination.NONE,pc_increment=True),
         MicroInstruction(Source.REG_B,Destination.REG_A,next=Next.FETCH),
     ),
+    "ADD": (
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True),
+        MicroInstruction(Source.MEM,Destination.TMP,pc_increment=True),
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True),
+        MicroInstruction(Source.MEM,Destination.NONE,pc_increment=True),
+        MicroInstruction(Source.ALU,Destination.REG_A,alu=ALU.ADD,next=Next.FETCH),
+    ),
 }
 
 def program_for(name):
@@ -78,7 +85,7 @@ def program_for(name):
     except KeyError as e:raise KeyError(f"no microprogram for {name}") from e
 
 
-OPCODE_NAMES={0x00:"NOP",0x01:"HALT",0x10:"MOV",0x11:"MOVI"}
+OPCODE_NAMES={0x00:"NOP",0x01:"HALT",0x10:"MOV",0x11:"MOVI",0x20:"ADD"}
 
 class MicroSequencer:
     """Step-visible controller for fetch/dispatch/control-store sequencing."""
@@ -124,7 +131,7 @@ class MicroMachine:
     """Small executable datapath for qualified microprograms."""
     def __init__(self,memory=b""):
         self.mem=bytearray(65536);self.mem[:len(memory)]=memory
-        self.r=[0]*8;self.pc=0;self.ir=0;self.tmp=0;self.mem_latch=0
+        self.r=[0]*8;self.pc=0;self.ir=0;self.tmp=0;self.mem_latch=0;self.flags=0
         self.seq=MicroSequencer()
 
     def step_micro(self):
@@ -139,6 +146,13 @@ class MicroMachine:
         elif u.source==Source.REG_B:
             if not 0<=self.mem_latch<=7:raise ValueError("INVALID_OPERAND")
             src=self.r[self.mem_latch]
+        elif u.source==Source.ALU:
+            if not 0<=self.tmp<=7 or not 0<=self.mem_latch<=7:raise ValueError("INVALID_OPERAND")
+            a=self.r[self.tmp];b=self.r[self.mem_latch]
+            if u.alu==ALU.ADD:
+                total=a+b;src=total&0xff
+                self.flags=(1 if src==0 else 0)|(2 if src&0x80 else 0)|(4 if total>0xff else 0)|(8 if (~(a^b)&(a^src)&0x80) else 0)
+            else:raise NotImplementedError(f"ALU operation {u.alu.name}")
         if u.destination==Destination.IR:self.ir=src&0xff
         elif u.destination==Destination.TMP:self.tmp=src&0xff
         elif u.destination==Destination.REG_A:
@@ -146,5 +160,5 @@ class MicroMachine:
             self.r[self.tmp]=src&0xff
         if u.pc_increment:self.pc=(self.pc+1)&0xffff
         event=self.seq.step(ir=self.ir if u.next==Next.DISPATCH else None)
-        event.update({"pc":self.pc,"ir":self.ir,"tmp":self.tmp,"registers":self.r.copy()})
+        event.update({"pc":self.pc,"ir":self.ir,"tmp":self.tmp,"flags":self.flags,"registers":self.r.copy()})
         return event
