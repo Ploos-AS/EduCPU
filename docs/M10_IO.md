@@ -33,7 +33,7 @@ A device may register read/write callbacks for one or more ports. This keeps UAR
 4. freeze software semantics;
 5. only then define RTL bus/instructions.
 
-No I/O opcode allocation is frozen at this stage.
+The software semantics and experimental E0/E1 instruction encodings are now frozen for M10.2 qualification; they remain outside baseline ISA v0.
 
 
 ## Teaching purpose
@@ -123,3 +123,25 @@ IN and OUT do not alter FLAGS. This keeps the first I/O lesson focused on commun
 ### Architectural trace extension
 
 An experimental I/O instruction trace must expose `io_direction`, `io_port`, `io_value`, and whether the port was mapped. This is the bridge from an instruction the learner can decode by eye to the later RTL bus transaction.
+
+
+## RTL bus and wait states
+
+The experimental RTL core exposes a bus separate from memory: `io_port[7:0]`, `io_wdata[7:0]`, `io_rdata[7:0]`, `io_we`, `io_valid`, and `io_ready`.
+
+A transfer commits when `io_valid && io_ready`. While a peripheral holds `io_ready=0`, the core keeps the port, direction and output data stable and does not commit an IN result. The memory bus is inactive during the I/O access. This turns the simple synchronous architectural operation into an observable hardware lesson about peripheral latency and handshaking without changing its architectural result.
+
+The reference model's mapped/unmapped status is a device-topology concept. At RTL level the external I/O fabric supplies the corresponding ready/read-data behavior; an unmapped input is represented by read data `0x00`, and an unmapped output is ignored by that fabric.
+
+The conceptual micro-operation plans used by the experimental teaching simulator are explanatory phases, not claims about exact RTL clock cycles.
+
+## M10.2 qualification
+
+M10.2 is CI-qualified across four independent layers:
+
+1. reference-machine semantics and focused tests;
+2. independent emulator semantics and software differential tests;
+3. integrated RTL wait-state/handshake simulation;
+4. RTL/reference differential execution covering mapped IN, mapped OUT and unmapped IN while also checking CPU architectural state.
+
+Baseline ISA v0 continues to trap on E0/E1, and the frozen `fpga/rtl/educpu_core.sv` is unchanged. M10.2 qualification is simulation/reference qualification; it does **not** claim physical UPduino v3.1 qualification.
