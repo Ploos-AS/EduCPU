@@ -19,7 +19,7 @@ def test_first_control_store_programs_are_intentionally_tiny():
  assert program_for("HALT")[-1].next==Next.HALT
 
 def test_unknown_microprogram_is_explicit():
- try: program_for("ADD")
+ try: program_for("SUB")
  except KeyError as e: assert "no microprogram" in str(e)
  else: raise AssertionError("missing microprogram must not silently execute")
 
@@ -100,3 +100,32 @@ def test_mov_rejects_invalid_source_selector():
  try:m.step_micro()
  except ValueError as e:assert "INVALID_OPERAND" in str(e)
  else:raise AssertionError("invalid MOV source selector must fail")
+
+
+def _run_one(m):
+ events=[]
+ while not (m.seq.phase=="FETCH" and m.seq.micro_pc==0 and m.pc==3):
+  events.append(m.step_micro());assert len(events)<12
+ return events
+
+def test_add_runs_through_alu_and_writes_result_and_flags():
+ m=MicroMachine(bytes((0x20,2,5)));m.r[2]=0x7f;m.r[5]=1
+ events=_run_one(m)
+ assert m.r[2]==0x80
+ assert m.r[5]==1
+ assert m.flags==0x0a  # N + signed overflow
+ assert len(events)==7
+ assert events[-1]["flags"]==0x0a
+
+def test_add_sets_zero_and_carry_on_unsigned_wrap():
+ m=MicroMachine(bytes((0x20,2,5)));m.r[2]=0xff;m.r[5]=1
+ _run_one(m)
+ assert m.r[2]==0
+ assert m.flags==0x05  # Z + C
+
+def test_add_rejects_invalid_register_selector():
+ m=MicroMachine(bytes((0x20,8,1)))
+ for _ in range(6):m.step_micro()
+ try:m.step_micro()
+ except ValueError as e:assert "INVALID_OPERAND" in str(e)
+ else:raise AssertionError("invalid ADD selector must fail")
