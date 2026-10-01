@@ -201,7 +201,8 @@ class MicroMachine:
         if u.memory_read:
             address=self.mar if data_access else self.pc
             self.mem_latch=self.mem[address&0xffff]
-        if self.seq.phase=="EXECUTE" and self.seq.opcode in (0x12,0x13) and self.seq.micro_pc in (3,5):
+        capture_steps={0x12:(3,5),0x13:(1,3)}
+        if self.seq.phase=="EXECUTE" and self.seq.opcode in capture_steps and self.seq.micro_pc in capture_steps[self.seq.opcode]:
             self.addr_bytes.append(self.mem_latch)
             if len(self.addr_bytes)==2:self.mar=self.addr_bytes[0]|(self.addr_bytes[1]<<8)
         if u.source==Source.MEM:src=self.mem_latch
