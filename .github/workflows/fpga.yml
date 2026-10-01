@@ -6,6 +6,8 @@ on:
       - "fpga/**"
       - "docs/FPGA_M0.md"
       - "docs/M10_INTERRUPTS.md"
+      - "docs/M10_IO.md"
+      - "docs/M10_IO.md"
       - "docs/M10_RTL_INTEGRATION.md"
       - "docs/M10_1_QUALIFICATION.md"
       - "ROADMAP.md"
@@ -63,6 +65,9 @@ jobs:
       - name: Run M10 integrated experimental core IRQ/IRET simulation
         working-directory: fpga/rtl
         run: make experimental-core-irq-test
+      - name: Run M10 experimental IO wait-state simulation
+        working-directory: fpga/rtl
+        run: make experimental-core-io-test
       - name: Run board-neutral Yosys/iCE40 synthesis
         working-directory: fpga/rtl
         run: make synth
