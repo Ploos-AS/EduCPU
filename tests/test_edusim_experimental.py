@@ -24,3 +24,20 @@ def test_non_io_step_has_no_io_event():
  sim=ExperimentalSimulator(bytes((0x00,)))
  event=sim.step_event()
  assert event["io"] is None
+
+
+def test_in_micro_plan_explains_complete_cpu_to_device_path():
+ sim=ExperimentalSimulator(bytes((0xe0,2,0x10)))
+ phases=sim.micro_plan()
+ assert [p for p,_ in phases]==["FETCH","DECODE","OPERAND","OPERAND","I/O READ","TRANSFER","COMMIT"]
+ assert "R2" in phases[2][1]
+ assert "10" in phases[3][1]
+ assert "FLAGS unchanged" in phases[-1][1]
+
+def test_out_micro_plan_explains_device_commit():
+ sim=ExperimentalSimulator(bytes((0xe1,0x20,3)))
+ phases=sim.micro_plan()
+ assert [p for p,_ in phases]==["FETCH","DECODE","OPERAND","OPERAND","I/O WRITE","TRANSFER","COMMIT"]
+ assert "R3" in phases[3][1]
+ assert "20" in phases[4][1]
+ assert "device observes output byte" in phases[-1][1]
