@@ -255,3 +255,28 @@ def test_storer_mar_survives_later_source_selector_fetch():
  assert m.mar==0xb0
  assert m.mem[0xb0]==0x7c
  assert all(e["mar"]==0xb0 for e in events[-3:])
+
+
+def test_loads_builds_effective_address_from_sp_plus_signed_offset():
+ m=MicroMachine(bytes((0x16,2,0xfc)));m.sp=0x2000;m.mem[0x1ffc]=0xa5
+ events=_run_until_fetch(m,3)
+ assert m.mar==0x1ffc and m.r[2]==0xa5 and m.sp==0x2000
+ assert events[-1]["sp"]==0x2000
+
+def test_stores_uses_positive_stack_offset_and_distinct_source():
+ m=MicroMachine(bytes((0x17,6,5)));m.sp=0x2000;m.r[5]=0x7c
+ _run_until_fetch(m,3)
+ assert m.mar==0x2006 and m.mem[0x2006]==0x7c and m.r[5]==0x7c
+
+def test_stack_relative_effective_address_wraps_at_16_bits():
+ m=MicroMachine(bytes((0x16,1,0xff)));m.sp=0;m.mem[0xffff]=0x42
+ _run_until_fetch(m,3)
+ assert m.mar==0xffff and m.r[1]==0x42
+
+def test_stack_relative_memory_operations_preserve_sp_and_flags():
+ load=MicroMachine(bytes((0x16,1,1)));load.sp=0x3000;load.mem[0x3001]=9;load.flags=0x0f
+ store=MicroMachine(bytes((0x17,0xff,1)));store.sp=0x3000;store.r[1]=8;store.flags=0x0f
+ _run_until_fetch(load,3);_run_until_fetch(store,3)
+ assert load.sp==store.sp==0x3000
+ assert load.flags==store.flags==0x0f
+ assert store.mem[0x2fff]==8
