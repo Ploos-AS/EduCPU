@@ -34,6 +34,23 @@ def instruction_plan(memory,pc):
   a,v=_reg(memory,pc+1),_b(memory,pc+2); n=NAMES[op]
   dest="no register write" if op==0x25 else f"result -> {a}"
   return p+[("OPERAND",f"read {a}"),("OPERAND",f"read immediate {v:02X}"),("ALU",f"{n}({a},{v:02X})"),("FLAGS","compute Z/N/C/V"),("COMMIT",dest)]
+ if op in (0x14,0x15):
+  a=_reg(memory,pc+2 if op==0x14 else pc+1)
+  if op==0x14:
+   d=_reg(memory,pc+1);return p+[("OPERAND",f"select {d}"),("OPERAND",f"read address register {a}"),("ADDRESS",f"use low-byte address from {a}"),("MEMORY READ",f"read memory[address in {a}]"),("TRANSFER",f"memory -> {d}"),("COMMIT",f"write {d}; FLAGS unchanged")]
+  s=_reg(memory,pc+2);return p+[("OPERAND",f"read address register {a}"),("OPERAND",f"read {s}"),("ADDRESS",f"use low-byte address from {a}"),("MEMORY WRITE",f"{s} -> memory[address in {a}]"),("COMMIT","memory updated; FLAGS unchanged")]
+ if op in (0x16,0x17):
+  off=_b(memory,pc+2 if op==0x16 else pc+1); signed=off-256 if off&0x80 else off
+  if op==0x16:
+   d=_reg(memory,pc+1);return p+[("OPERAND",f"select {d}"),("OPERAND",f"read signed offset {signed}"),("ADDRESS",f"form SP {signed:+d}"),("MEMORY READ","read stack-relative byte"),("TRANSFER",f"memory -> {d}"),("COMMIT",f"write {d}; FLAGS unchanged")]
+  s=_reg(memory,pc+2);return p+[("OPERAND",f"read signed offset {signed}"),("OPERAND",f"read {s}"),("ADDRESS",f"form SP {signed:+d}"),("MEMORY WRITE",f"{s} -> stack-relative address"),("COMMIT","memory updated; FLAGS unchanged")]
+ if op in (0x18,0x19):
+  n=_b(memory,pc+1);direction="-" if op==0x18 else "+"
+  return p+[("OPERAND",f"read frame size {n}"),("STACK",f"SP <- SP {direction} {n}"),("COMMIT","new SP visible; FLAGS unchanged")]
+ if op in (0x2b,0x2c,0x2d):
+  d=_reg(memory,pc+1);n=NAMES[op]
+  detail={0x2b:"bitwise invert",0x2c:"shift left; old bit 7 becomes carry",0x2d:"shift right; old bit 0 becomes carry"}[op]
+  return p+[("OPERAND",f"read {d}"),("ALU",f"{n}: {detail}"),("FLAGS","compute instruction flags"),("COMMIT",f"result -> {d}")]
  if op in (0x12,0x13):
   a=_addr(memory,pc+2 if op==0x12 else pc+1)
   if op==0x12:
