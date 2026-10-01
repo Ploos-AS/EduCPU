@@ -55,6 +55,15 @@ FETCH=(
 CONTROL_STORE={
     "NOP": (MicroInstruction(next=Next.FETCH),),
     "HALT": (MicroInstruction(next=Next.HALT),),
+    # MOVI uses TMP first as the register selector and then as the immediate
+    # transfer latch. The executable datapath model below makes these two
+    # operand-fetch steps visible.
+    "MOVI": (
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True),
+        MicroInstruction(Source.MEM,Destination.TMP,pc_increment=True),
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True),
+        MicroInstruction(Source.MEM,Destination.REG_A,pc_increment=True,next=Next.FETCH),
+    ),
 }
 
 def program_for(name):
@@ -62,7 +71,7 @@ def program_for(name):
     except KeyError as e:raise KeyError(f"no microprogram for {name}") from e
 
 
-OPCODE_NAMES={0x00:"NOP",0x01:"HALT"}
+OPCODE_NAMES={0x00:"NOP",0x01:"HALT",0x11:"MOVI"}
 
 class MicroSequencer:
     """Step-visible controller for fetch/dispatch/control-store sequencing."""
@@ -102,3 +111,30 @@ class MicroSequencer:
         return {"before":before,"control_word":u.encode(),
                 "after":{"phase":self.phase,"micro_pc":self.micro_pc,
                          "opcode":self.opcode,"halted":self.halted}}
+
+
+class MicroMachine:
+    """Small executable datapath for qualified microprograms."""
+    def __init__(self,memory=b""):
+        self.mem=bytearray(65536);self.mem[:len(memory)]=memory
+        self.r=[0]*8;self.pc=0;self.ir=0;self.tmp=0;self.mem_latch=0
+        self.seq=MicroSequencer()
+
+    def step_micro(self):
+        u=self.seq.current()
+        if u is None:return None
+        # Source value is sampled before destinations are updated.
+        src={Source.NONE:0,Source.PC:self.pc,Source.MEM:self.mem_latch,
+             Source.TMP if hasattr(Source,"TMP") else Source.NONE:0}.get(u.source,0)
+        # A memory read is an explicit request whose result becomes MEM.
+        if u.memory_read:self.mem_latch=self.mem[self.pc&0xffff]
+        if u.source==Source.MEM:src=self.mem_latch
+        if u.destination==Destination.IR:self.ir=src&0xff
+        elif u.destination==Destination.TMP:self.tmp=src&0xff
+        elif u.destination==Destination.REG_A:
+            if not 0<=self.tmp<=7:raise ValueError("INVALID_OPERAND")
+            self.r[self.tmp]=src&0xff
+        if u.pc_increment:self.pc=(self.pc+1)&0xffff
+        event=self.seq.step(ir=self.ir if u.next==Next.DISPATCH else None)
+        event.update({"pc":self.pc,"ir":self.ir,"tmp":self.tmp,"registers":self.r.copy()})
+        return event
