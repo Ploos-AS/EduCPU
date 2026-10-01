@@ -4,7 +4,7 @@ module tb_experimental_irq_diff;
  logic mem_we,mem_valid,halted,trap,instruction_boundary,iret_complete; integer i,n;
  always #5 clk=~clk; assign mem_rdata=mem[mem_addr];
  always @(posedge clk) if(mem_valid&&mem_we) mem[mem_addr]=mem_wdata;
- educpu_experimental_core dut(.*);
+ logic [7:0] io_port,io_wdata,io_rdata=0; logic io_we,io_valid,io_ready=1;\n educpu_experimental_core dut(.*);
  task tick; begin @(posedge clk); #1; end endtask
  initial begin
   for(i=0;i<65536;i=i+1)mem[i]=0;
