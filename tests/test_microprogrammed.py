@@ -214,3 +214,11 @@ def test_load_and_store_address_capture_respects_different_operand_order():
  assert load.mar==store.mar==0x5678
  assert load.r[7]==0x11
  assert store.mem[0x5678]==0x22
+
+
+def test_store_register_source_is_selected_by_final_operand_byte():
+ m=MicroMachine(bytes((0x13,0x00,0x40,3)))
+ m.r[2]=0x22;m.r[3]=0x33;m.r[4]=0x44
+ _run_until_fetch(m,4)
+ assert m.mem[0x4000]==0x33
+ assert m.r[2:5]==[0x22,0x33,0x44]
