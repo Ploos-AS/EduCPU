@@ -80,3 +80,17 @@ def test_reference_and_emulator_io_instruction_semantics_match():
  assert emu.cpu.halted==ref.cpu.halted
  assert emu.cpu.trap==ref.cpu.trap
  assert emu_writes==ref_writes==[0xa5]
+
+
+def test_reference_and_emulator_expose_same_io_transaction():
+ from machine import experimental_machine
+ ref=experimental_machine();emu=ExperimentalEmulator()
+ ref.register_io(0x10,read=lambda:0xa5);emu.register_io(0x10,read=lambda:0xa5)
+ program=bytes((0xe0,2,0x10))
+ ref.cpu.mem[:3]=program;emu.cpu.mem[:3]=program
+ ref.step();emu.step()
+ assert emu.last_io==ref.last_io=={"direction":"in","port":0x10,"value":0xa5,"mapped":True}
+ ref.out_port(0x77,0x1ff);emu.out_port(0x77,0x1ff)
+ assert emu.last_io==ref.last_io=={"direction":"out","port":0x77,"value":0xff,"mapped":False}
+ emu.reset()
+ assert emu.last_io is None
