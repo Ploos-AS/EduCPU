@@ -27,7 +27,7 @@ module educpu_experimental_core (
     logic [15:0] sp;
     logic [7:0]  flags;
 
-    typedef enum logic [4:0] {
+    typedef enum logic [5:0] {
         S_FETCH,
         S_MOV_RD,
         S_MOV_RS,
