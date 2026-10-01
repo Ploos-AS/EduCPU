@@ -8,8 +8,8 @@ resource:
   title: "EduCPU"
   type: course
   language:
-    - no
-    - en
+    - "no"
+    - "en"
   scope: "A pedagogy-first course and toolchain for understanding CPU architecture from bits, logic and machine state through assembly, compilation, simulation, emulation and FPGA realization."
   prerequisites: []
   learning_outcomes:
