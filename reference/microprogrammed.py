@@ -92,14 +92,41 @@ CONTROL_STORE={
         MicroInstruction(Source.MEM,Destination.NONE,pc_increment=True),
         MicroInstruction(Source.ALU,Destination.FLAGS,alu=ALU.SUB,next=Next.FETCH),
     ),
-}
+
+    "AND": (
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.TMP,pc_increment=True),
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.NONE,pc_increment=True),
+        MicroInstruction(Source.ALU,Destination.REG_A,alu=ALU.AND,next=Next.FETCH),
+    ),
+    "OR": (
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.TMP,pc_increment=True),
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.NONE,pc_increment=True),
+        MicroInstruction(Source.ALU,Destination.REG_A,alu=ALU.OR,next=Next.FETCH),
+    ),
+    "XOR": (
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.TMP,pc_increment=True),
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.NONE,pc_increment=True),
+        MicroInstruction(Source.ALU,Destination.REG_A,alu=ALU.XOR,next=Next.FETCH),
+    ),
+    "NOT": (
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.TMP,pc_increment=True),
+        MicroInstruction(Source.ALU,Destination.REG_A,alu=ALU.NOT,next=Next.FETCH),
+    ),
+    "SHL": (
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.TMP,pc_increment=True),
+        MicroInstruction(Source.ALU,Destination.REG_A,alu=ALU.SHL,next=Next.FETCH),
+    ),
+    "SHR": (
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.TMP,pc_increment=True),
+        MicroInstruction(Source.ALU,Destination.REG_A,alu=ALU.SHR,next=Next.FETCH),
+    ),}
 
 def program_for(name):
     try:return CONTROL_STORE[name.upper()]
     except KeyError as e:raise KeyError(f"no microprogram for {name}") from e
 
 
-OPCODE_NAMES={0x00:"NOP",0x01:"HALT",0x10:"MOV",0x11:"MOVI",0x20:"ADD",0x22:"SUB",0x24:"CMP"}
+OPCODE_NAMES={0x00:"NOP",0x01:"HALT",0x10:"MOV",0x11:"MOVI",0x20:"ADD",0x22:"SUB",0x24:"CMP",0x28:"AND",0x29:"OR",0x2a:"XOR",0x2b:"NOT",0x2c:"SHL",0x2d:"SHR"}
 
 class MicroSequencer:
     """Step-visible controller for fetch/dispatch/control-store sequencing."""
@@ -169,6 +196,15 @@ class MicroMachine:
             elif u.alu==ALU.SUB:
                 src=(a-b)&0xff
                 self.flags=(1 if src==0 else 0)|(2 if src&0x80 else 0)|(4 if a>=b else 0)|(8 if ((a^b)&(a^src)&0x80) else 0)
+            elif u.alu in (ALU.AND,ALU.OR,ALU.XOR):
+                src={ALU.AND:a&b,ALU.OR:a|b,ALU.XOR:a^b}[u.alu]
+                self.flags=(1 if src==0 else 0)|(2 if src&0x80 else 0)
+            elif u.alu==ALU.NOT:
+                src=(~a)&0xff;self.flags=(1 if src==0 else 0)|(2 if src&0x80 else 0)
+            elif u.alu==ALU.SHL:
+                src=(a<<1)&0xff;self.flags=(1 if src==0 else 0)|(2 if src&0x80 else 0)|(4 if a&0x80 else 0)
+            elif u.alu==ALU.SHR:
+                src=a>>1;self.flags=(1 if src==0 else 0)|(2 if src&0x80 else 0)|(4 if a&1 else 0)
             else:raise NotImplementedError(f"ALU operation {u.alu.name}")
         if u.destination==Destination.IR:self.ir=src&0xff
         elif u.destination==Destination.TMP:self.tmp=src&0xff
