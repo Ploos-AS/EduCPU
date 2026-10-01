@@ -42,3 +42,28 @@ def test_stack_and_call_ret_make_order_visible():
 def test_experimental_io_still_uses_same_teaching_model():
  p=instruction_plan(bytes([0xe0,2,0x10]),0)
  assert phases(p)==["FETCH","DECODE","OPERAND","OPERAND","I/O READ","TRANSFER","COMMIT"]
+
+def test_every_isa_v0_opcode_has_a_concrete_plan():
+ samples={
+  0x00:[],0x01:[],0x10:[0,1],0x11:[0,1],0x12:[0,0,0],0x13:[0,0,0],
+  0x14:[0,1],0x15:[0,1],0x16:[0,0],0x17:[0,0],0x18:[1],0x19:[1],
+  0x20:[0,1],0x21:[0,1],0x22:[0,1],0x23:[0,1],0x24:[0,1],0x25:[0,1],
+  0x28:[0,1],0x29:[0,1],0x2a:[0,1],0x2b:[0],0x2c:[0],0x2d:[0],
+  0x30:[0,0],0x31:[0,0],0x32:[0,0],0x33:[0,0],0x34:[0,0],0x35:[0,0],0x36:[0,0],
+  0x38:[0,0],0x39:[],0x40:[0],0x41:[0],
+ }
+ assert len(samples)==36
+ for op,operands in samples.items():
+  plan=instruction_plan(bytes([op]+operands),0)
+  assert plan, f"empty plan for {op:02X}"
+  assert all(phase!="UNMODELED" for phase,_ in plan), f"unmodeled {op:02X}"
+  assert plan[0][0]=="FETCH" and plan[1][0]=="DECODE"
+
+
+def test_indirect_stack_relative_and_shift_plans_expose_their_special_mechanism():
+ loadr=instruction_plan(bytes([0x14,2,5]),0)
+ loads=instruction_plan(bytes([0x16,2,0xfc]),0)
+ shl=instruction_plan(bytes([0x2c,2]),0)
+ assert any("address register R5" in text for _,text in loadr)
+ assert any("SP -4" in text for _,text in loads)
+ assert any("bit 7 becomes carry" in text for _,text in shl)
