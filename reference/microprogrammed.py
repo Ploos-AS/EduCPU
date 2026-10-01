@@ -78,7 +78,17 @@ CONTROL_STORE={
         MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.NONE,pc_increment=True),
         MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.NONE,pc_increment=True),
         MicroInstruction(Source.REG_A,Destination.MEM,memory_write=True,next=Next.FETCH),
-    ),    "LOADR": (
+    ),    "LOADS": (
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.TMP,pc_increment=True),
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.NONE,pc_increment=True),
+        MicroInstruction(Source.MEM,Destination.REG_A,memory_read=True,next=Next.FETCH),
+    ),
+    "STORES": (
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.TMP,pc_increment=True),
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.NONE,pc_increment=True),
+        MicroInstruction(Source.REG_A,Destination.MEM,memory_write=True,next=Next.FETCH),
+    ),
+    "LOADR": (
         MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.TMP,pc_increment=True),
         MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.NONE,pc_increment=True),
         MicroInstruction(Source.MEM,Destination.REG_A,memory_read=True,next=Next.FETCH),
@@ -150,7 +160,7 @@ def program_for(name):
     except KeyError as e:raise KeyError(f"no microprogram for {name}") from e
 
 
-OPCODE_NAMES={0x00:"NOP",0x01:"HALT",0x10:"MOV",0x11:"MOVI",0x12:"LOAD",0x13:"STORE",0x14:"LOADR",0x15:"STORER",0x20:"ADD",0x22:"SUB",0x24:"CMP",0x28:"AND",0x29:"OR",0x2a:"XOR",0x2b:"NOT",0x2c:"SHL",0x2d:"SHR"}
+OPCODE_NAMES={0x00:"NOP",0x01:"HALT",0x10:"MOV",0x11:"MOVI",0x12:"LOAD",0x13:"STORE",0x14:"LOADR",0x15:"STORER",0x16:"LOADS",0x17:"STORES",0x20:"ADD",0x22:"SUB",0x24:"CMP",0x28:"AND",0x29:"OR",0x2a:"XOR",0x2b:"NOT",0x2c:"SHL",0x2d:"SHR"}
 
 class MicroSequencer:
     """Step-visible controller for fetch/dispatch/control-store sequencing."""
@@ -196,7 +206,7 @@ class MicroMachine:
     """Small executable datapath for qualified microprograms."""
     def __init__(self,memory=b""):
         self.mem=bytearray(65536);self.mem[:len(memory)]=memory
-        self.r=[0]*8;self.pc=0;self.ir=0;self.tmp=0;self.mem_latch=0;self.flags=0;self.mar=0;self.addr_bytes=[]
+        self.r=[0]*8;self.pc=0;self.ir=0;self.tmp=0;self.mem_latch=0;self.flags=0;self.mar=0;self.addr_bytes=[];self.sp=0xFF00
         self.seq=MicroSequencer()
 
     def step_micro(self):
@@ -207,7 +217,7 @@ class MicroMachine:
              Source.TMP if hasattr(Source,"TMP") else Source.NONE:0}.get(u.source,0)
         # During LOAD/STORE operand fetch, remember the two little-endian
         # address bytes. The final data access uses MAR rather than PC.
-        data_access=self.seq.phase=="EXECUTE" and ((self.seq.opcode in (0x12,0x13) and self.seq.micro_pc==6) or (self.seq.opcode in (0x14,0x15) and self.seq.micro_pc==4))
+        data_access=self.seq.phase=="EXECUTE" and ((self.seq.opcode in (0x12,0x13) and self.seq.micro_pc==6) or (self.seq.opcode in (0x14,0x15,0x16,0x17) and self.seq.micro_pc==4))
         if u.memory_read:
             address=self.mar if data_access else self.pc
             self.mem_latch=self.mem[address&0xffff]
@@ -215,6 +225,10 @@ class MicroMachine:
         if self.seq.phase=="EXECUTE" and self.seq.opcode in capture_steps and self.seq.micro_pc in capture_steps[self.seq.opcode]:
             self.addr_bytes.append(self.mem_latch)
             if len(self.addr_bytes)==2:self.mar=self.addr_bytes[0]|(self.addr_bytes[1]<<8)
+        stack_offset_step={0x16:3,0x17:1}
+        if self.seq.phase=="EXECUTE" and self.seq.opcode in stack_offset_step and self.seq.micro_pc==stack_offset_step[self.seq.opcode]:
+            off=self.mem_latch if self.mem_latch<0x80 else self.mem_latch-0x100
+            self.mar=(self.sp+off)&0xffff
         register_address_step={0x14:3,0x15:1}
         if self.seq.phase=="EXECUTE" and self.seq.opcode in register_address_step and self.seq.micro_pc==register_address_step[self.seq.opcode]:
             if not 0<=self.mem_latch<=7:raise ValueError("INVALID_OPERAND")
@@ -257,5 +271,5 @@ class MicroMachine:
         if u.pc_increment:self.pc=(self.pc+1)&0xffff
         if u.next==Next.FETCH and self.seq.phase=="EXECUTE":self.addr_bytes=[]
         event=self.seq.step(ir=self.ir if u.next==Next.DISPATCH else None)
-        event.update({"pc":self.pc,"ir":self.ir,"tmp":self.tmp,"flags":self.flags,"mar":self.mar,"registers":self.r.copy()})
+        event.update({"pc":self.pc,"ir":self.ir,"tmp":self.tmp,"flags":self.flags,"mar":self.mar,"sp":self.sp,"registers":self.r.copy()})
         return event
