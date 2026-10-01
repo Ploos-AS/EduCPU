@@ -80,3 +80,23 @@ def test_movi_invalid_register_selector_is_not_hidden():
  try:m.step_micro()
  except ValueError as e:assert "INVALID_OPERAND" in str(e)
  else:raise AssertionError("invalid register selector must fail")
+
+
+def test_mov_reads_source_register_and_writes_destination_via_control_store():
+ m=MicroMachine(bytes((0x10,2,5)))
+ m.r[5]=0x7c
+ events=[]
+ while not (m.seq.phase=="FETCH" and m.seq.micro_pc==0 and m.pc==3):
+  events.append(m.step_micro());assert len(events)<12
+ assert m.r[2]==0x7c
+ assert m.r[5]==0x7c
+ assert m.pc==3
+ assert len(events)==7
+
+
+def test_mov_rejects_invalid_source_selector():
+ m=MicroMachine(bytes((0x10,2,8)))
+ for _ in range(6):m.step_micro()
+ try:m.step_micro()
+ except ValueError as e:assert "INVALID_OPERAND" in str(e)
+ else:raise AssertionError("invalid MOV source selector must fail")
