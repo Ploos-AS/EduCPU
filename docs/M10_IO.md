@@ -145,3 +145,18 @@ M10.2 is CI-qualified across four independent layers:
 4. RTL/reference differential execution covering mapped IN, mapped OUT and unmapped IN while also checking CPU architectural state.
 
 Baseline ISA v0 continues to trap on E0/E1, and the frozen `fpga/rtl/educpu_core.sv` is unchanged. M10.2 qualification is simulation/reference qualification; it does **not** claim physical UPduino v3.1 qualification.
+
+
+## Frozen software semantics
+
+The M10.2 software I/O contract is frozen before instruction encoding or RTL work:
+
+- 256 independent 8-bit ports, addressed modulo 256;
+- input and output directions may be registered independently;
+- unmapped reads return `0x00`;
+- unmapped writes have no effect;
+- read results and written values are masked to 8 bits;
+- device registration belongs to the machine/emulator environment and survives CPU reset;
+- software devices are deterministic callbacks and must not implicitly depend on host timing or host I/O.
+
+Reference-machine and independent-emulator implementations are qualified by CI (#576 and #578 respectively). Any later opcode or RTL design must preserve this contract.
