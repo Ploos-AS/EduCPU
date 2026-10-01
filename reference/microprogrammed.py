@@ -206,6 +206,9 @@ class MicroMachine:
             self.addr_bytes.append(self.mem_latch)
             if len(self.addr_bytes)==2:self.mar=self.addr_bytes[0]|(self.addr_bytes[1]<<8)
         if u.source==Source.MEM:src=self.mem_latch
+        elif u.source==Source.REG_A:
+            if not 0<=self.mem_latch<=7:raise ValueError("INVALID_OPERAND")
+            src=self.r[self.mem_latch]
         elif u.source==Source.REG_B:
             if not 0<=self.mem_latch<=7:raise ValueError("INVALID_OPERAND")
             src=self.r[self.mem_latch]
