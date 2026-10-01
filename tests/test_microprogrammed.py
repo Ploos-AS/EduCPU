@@ -19,7 +19,7 @@ def test_first_control_store_programs_are_intentionally_tiny():
  assert program_for("HALT")[-1].next==Next.HALT
 
 def test_unknown_microprogram_is_explicit():
- try: program_for("SUB")
+ try: program_for("AND")
  except KeyError as e: assert "no microprogram" in str(e)
  else: raise AssertionError("missing microprogram must not silently execute")
 
@@ -129,3 +129,29 @@ def test_add_rejects_invalid_register_selector():
  try:m.step_micro()
  except ValueError as e:assert "INVALID_OPERAND" in str(e)
  else:raise AssertionError("invalid ADD selector must fail")
+
+
+def test_sub_writes_result_and_subtraction_flags():
+ m=MicroMachine(bytes((0x22,2,5)));m.r[2]=0x00;m.r[5]=1
+ _run_one(m)
+ assert m.r[2]==0xff
+ assert m.flags==0x02  # N, no-borrow carry is clear
+
+def test_sub_no_borrow_sets_carry():
+ m=MicroMachine(bytes((0x22,2,5)));m.r[2]=5;m.r[5]=3
+ _run_one(m)
+ assert m.r[2]==2
+ assert m.flags==0x04
+
+def test_cmp_updates_flags_but_discards_alu_result():
+ m=MicroMachine(bytes((0x24,2,5)));m.r[2]=5;m.r[5]=5
+ events=_run_one(m)
+ assert m.r[2]==5 and m.r[5]==5
+ assert m.flags==0x05  # equal: Z + no-borrow C
+ assert events[-1]["registers"][2]==5
+
+def test_cmp_signed_overflow_matches_subtraction_semantics():
+ m=MicroMachine(bytes((0x24,2,5)));m.r[2]=0x80;m.r[5]=1
+ _run_one(m)
+ assert m.r[2]==0x80
+ assert m.flags==0x0c  # C + V; result 7F is discarded
