@@ -21,12 +21,14 @@ class ExperimentalEmulator:
         self.in_interrupt = False
         self.io_readers = {}
         self.io_writers = {}
+        self.last_io = None
 
     def reset(self):
         self.cpu.reset()
         self.irq_pending = False
         self.irq_enabled = True
         self.in_interrupt = False
+        self.last_io = None
 
     def register_io(self, port, read=None, write=None):
         port &= 0xff
@@ -36,13 +38,19 @@ class ExperimentalEmulator:
             self.io_writers[port] = write
 
     def in_port(self, port):
-        reader = self.io_readers.get(port & 0xff)
-        return (reader() & 0xff) if reader else 0
+        port &= 0xff
+        reader = self.io_readers.get(port)
+        value = (reader() & 0xff) if reader else 0
+        self.last_io = {"direction":"in", "port":port, "value":value, "mapped":reader is not None}
+        return value
 
     def out_port(self, port, value):
-        writer = self.io_writers.get(port & 0xff)
+        port &= 0xff
+        value &= 0xff
+        writer = self.io_writers.get(port)
+        self.last_io = {"direction":"out", "port":port, "value":value, "mapped":writer is not None}
         if writer:
-            writer(value & 0xff)
+            writer(value)
 
     def request_irq(self):
         self.irq_pending = True
@@ -124,6 +132,7 @@ class ExperimentalEmulator:
             "irq_enabled": self.irq_enabled,
             "irq_vector": self.irq_vector,
             "in_interrupt": self.in_interrupt,
+            "last_io": self.last_io,
             "capabilities": sorted(M10_EXPERIMENTAL.capabilities),
         })
         return state
