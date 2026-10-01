@@ -56,6 +56,14 @@ A **microprogram** is a sequence of microinstructions used to implement an ISA i
 
 EduCPU will keep these terms distinct. The conceptual plans introduced first are micro-operation plans, not hidden claims that ISA v0 uses a microcode ROM.
 
+## First control-word format
+
+The first executable microprogrammed model uses a deliberately readable 24-bit control word. Fields select a source, destination, ALU operation, memory read/write, PC increment and next-control action. Unused bits are reserved rather than compressed away.
+
+The shared fetch microprogram is visible as two microinstructions: request memory at PC, then transfer the returned byte to IR, increment PC and dispatch. NOP returns to fetch; HALT enters the halted control state.
+
+This representation is intentionally educational. A later RTL encoding may optimize the bit layout, but it must preserve a way to inspect the same control decisions.
+
 ## Qualification strategy
 
 M10.3 will qualify in stages:
