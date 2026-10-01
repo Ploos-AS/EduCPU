@@ -16,7 +16,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: Ploos-AS/learning-standard
-          ref: fcca009ddc3bdca7a6549ef9421f7596766e4f51
+          ref: v0.1.0
           path: .pls-standard
 
       - name: Set up Python
