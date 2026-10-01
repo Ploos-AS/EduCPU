@@ -247,3 +247,11 @@ def test_register_indirect_rejects_invalid_address_selector():
  try:_run_until_fetch(m,3)
  except ValueError as e:assert str(e)=="INVALID_OPERAND"
  else:raise AssertionError("invalid address register must fail")
+
+
+def test_storer_mar_survives_later_source_selector_fetch():
+ m=MicroMachine(bytes((0x15,3,5)));m.r[3]=0xb0;m.r[5]=0x7c
+ events=_run_until_fetch(m,3)
+ assert m.mar==0xb0
+ assert m.mem[0xb0]==0x7c
+ assert all(e["mar"]==0xb0 for e in events[-3:])
