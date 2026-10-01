@@ -78,7 +78,17 @@ CONTROL_STORE={
         MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.NONE,pc_increment=True),
         MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.NONE,pc_increment=True),
         MicroInstruction(Source.REG_A,Destination.MEM,memory_write=True,next=Next.FETCH),
-    ),    "MOV": (
+    ),    "LOADR": (
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.TMP,pc_increment=True),
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.NONE,pc_increment=True),
+        MicroInstruction(Source.MEM,Destination.REG_A,memory_read=True,next=Next.FETCH),
+    ),
+    "STORER": (
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.TMP,pc_increment=True),
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.NONE,pc_increment=True),
+        MicroInstruction(Source.REG_A,Destination.MEM,memory_write=True,next=Next.FETCH),
+    ),
+    "MOV": (
         MicroInstruction(Source.PC,Destination.NONE,memory_read=True),
         MicroInstruction(Source.MEM,Destination.TMP,pc_increment=True),
         MicroInstruction(Source.PC,Destination.NONE,memory_read=True),
@@ -140,7 +150,7 @@ def program_for(name):
     except KeyError as e:raise KeyError(f"no microprogram for {name}") from e
 
 
-OPCODE_NAMES={0x00:"NOP",0x01:"HALT",0x10:"MOV",0x11:"MOVI",0x12:"LOAD",0x13:"STORE",0x20:"ADD",0x22:"SUB",0x24:"CMP",0x28:"AND",0x29:"OR",0x2a:"XOR",0x2b:"NOT",0x2c:"SHL",0x2d:"SHR"}
+OPCODE_NAMES={0x00:"NOP",0x01:"HALT",0x10:"MOV",0x11:"MOVI",0x12:"LOAD",0x13:"STORE",0x14:"LOADR",0x15:"STORER",0x20:"ADD",0x22:"SUB",0x24:"CMP",0x28:"AND",0x29:"OR",0x2a:"XOR",0x2b:"NOT",0x2c:"SHL",0x2d:"SHR"}
 
 class MicroSequencer:
     """Step-visible controller for fetch/dispatch/control-store sequencing."""
@@ -197,7 +207,7 @@ class MicroMachine:
              Source.TMP if hasattr(Source,"TMP") else Source.NONE:0}.get(u.source,0)
         # During LOAD/STORE operand fetch, remember the two little-endian
         # address bytes. The final data access uses MAR rather than PC.
-        data_access=self.seq.phase=="EXECUTE" and self.seq.opcode in (0x12,0x13) and self.seq.micro_pc==6
+        data_access=self.seq.phase=="EXECUTE" and ((self.seq.opcode in (0x12,0x13) and self.seq.micro_pc==6) or (self.seq.opcode in (0x14,0x15) and self.seq.micro_pc==4))
         if u.memory_read:
             address=self.mar if data_access else self.pc
             self.mem_latch=self.mem[address&0xffff]
@@ -205,6 +215,9 @@ class MicroMachine:
         if self.seq.phase=="EXECUTE" and self.seq.opcode in capture_steps and self.seq.micro_pc in capture_steps[self.seq.opcode]:
             self.addr_bytes.append(self.mem_latch)
             if len(self.addr_bytes)==2:self.mar=self.addr_bytes[0]|(self.addr_bytes[1]<<8)
+        if self.seq.phase=="EXECUTE" and self.seq.opcode in (0x14,0x15) and self.seq.micro_pc==3:
+            if not 0<=self.mem_latch<=7:raise ValueError("INVALID_OPERAND")
+            self.mar=self.r[self.mem_latch]
         if u.source==Source.MEM:src=self.mem_latch
         elif u.source==Source.REG_A:
             if not 0<=self.mem_latch<=7:raise ValueError("INVALID_OPERAND")
