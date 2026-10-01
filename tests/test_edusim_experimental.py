@@ -41,3 +41,23 @@ def test_out_micro_plan_explains_device_commit():
  assert "R3" in phases[3][1]
  assert "20" in phases[4][1]
  assert "device observes output byte" in phases[-1][1]
+
+def test_movi_micro_plan_can_be_predicted_before_step_and_compared_after():
+ sim=ExperimentalSimulator(bytes((0x11,2,0xa5)))
+ plan=sim.micro_plan()
+ assert [p for p,_ in plan]==["FETCH","DECODE","OPERAND","OPERAND","TRANSFER","COMMIT"]
+ assert "A5 -> R2" in plan[-2][1]
+ event=sim.step_event()
+ assert "R2: 00->A5" in event["changes"]
+ assert event["after"]["flags"]==event["before"]["flags"]
+
+
+def test_cmp_plan_predicts_flags_without_register_write():
+ sim=ExperimentalSimulator(bytes((0x24,1,3)))
+ sim.cpu.r[1]=5;sim.cpu.r[3]=5
+ plan=sim.micro_plan()
+ assert plan[-1][1]=="no register write"
+ before=sim.cpu.r.copy()
+ event=sim.step_event()
+ assert event["after"]["registers"]==before
+ assert "FLAGS: 00->05" in event["changes"]
