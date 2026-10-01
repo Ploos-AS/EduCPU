@@ -78,6 +78,20 @@ CONTROL_STORE={
         MicroInstruction(Source.MEM,Destination.NONE,pc_increment=True),
         MicroInstruction(Source.ALU,Destination.REG_A,alu=ALU.ADD,next=Next.FETCH),
     ),
+    "SUB": (
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True),
+        MicroInstruction(Source.MEM,Destination.TMP,pc_increment=True),
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True),
+        MicroInstruction(Source.MEM,Destination.NONE,pc_increment=True),
+        MicroInstruction(Source.ALU,Destination.REG_A,alu=ALU.SUB,next=Next.FETCH),
+    ),
+    "CMP": (
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True),
+        MicroInstruction(Source.MEM,Destination.TMP,pc_increment=True),
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True),
+        MicroInstruction(Source.MEM,Destination.NONE,pc_increment=True),
+        MicroInstruction(Source.ALU,Destination.FLAGS,alu=ALU.SUB,next=Next.FETCH),
+    ),
 }
 
 def program_for(name):
@@ -85,7 +99,7 @@ def program_for(name):
     except KeyError as e:raise KeyError(f"no microprogram for {name}") from e
 
 
-OPCODE_NAMES={0x00:"NOP",0x01:"HALT",0x10:"MOV",0x11:"MOVI",0x20:"ADD"}
+OPCODE_NAMES={0x00:"NOP",0x01:"HALT",0x10:"MOV",0x11:"MOVI",0x20:"ADD",0x22:"SUB",0x24:"CMP"}
 
 class MicroSequencer:
     """Step-visible controller for fetch/dispatch/control-store sequencing."""
@@ -152,12 +166,17 @@ class MicroMachine:
             if u.alu==ALU.ADD:
                 total=a+b;src=total&0xff
                 self.flags=(1 if src==0 else 0)|(2 if src&0x80 else 0)|(4 if total>0xff else 0)|(8 if (~(a^b)&(a^src)&0x80) else 0)
+            elif u.alu==ALU.SUB:
+                src=(a-b)&0xff
+                self.flags=(1 if src==0 else 0)|(2 if src&0x80 else 0)|(4 if a>=b else 0)|(8 if ((a^b)&(a^src)&0x80) else 0)
             else:raise NotImplementedError(f"ALU operation {u.alu.name}")
         if u.destination==Destination.IR:self.ir=src&0xff
         elif u.destination==Destination.TMP:self.tmp=src&0xff
         elif u.destination==Destination.REG_A:
             if not 0<=self.tmp<=7:raise ValueError("INVALID_OPERAND")
             self.r[self.tmp]=src&0xff
+        elif u.destination==Destination.FLAGS:
+            pass  # ALU already committed flags; result is intentionally discarded
         if u.pc_increment:self.pc=(self.pc+1)&0xffff
         event=self.seq.step(ir=self.ir if u.next==Next.DISPATCH else None)
         event.update({"pc":self.pc,"ir":self.ir,"tmp":self.tmp,"flags":self.flags,"registers":self.r.copy()})
