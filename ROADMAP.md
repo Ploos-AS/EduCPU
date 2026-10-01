@@ -124,12 +124,12 @@ M10.1 is complete: software, emulator, isolated RTL, integrated experimental exe
 - [x] add device registration and focused reference tests
 - [x] add independent emulator support
 - [x] define I/O teaching motivation, observable state and predict/run/inspect progression
-- [ ] freeze software I/O semantics before opcode/RTL allocation
-- [ ] define experimental I/O instructions and RTL bus
-- [ ] differential-test integrated I/O semantics against software reference
-- [ ] M10.2 final qualification
+- [x] freeze software I/O semantics before opcode/RTL allocation
+- [x] define experimental I/O instructions and RTL bus
+- [x] differential-test integrated I/O semantics against software reference
+- [x] M10.2 final qualification — see `docs/M10_2_QUALIFICATION.md`
 
-M10.2 uses a separate 8-bit port namespace and remains opt-in under `experimental.io`; frozen ISA v0 memory semantics remain unchanged.
+M10.2 is complete: reference model, independent emulator, teaching simulator, wait-state RTL and RTL/reference differential semantics are CI-qualified. It uses a separate 8-bit port namespace and remains opt-in under `experimental.io`; frozen ISA v0 memory semantics remain unchanged.
 
 
 ## FPGA M0
