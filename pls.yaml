@@ -1,0 +1,26 @@
+pls:
+  specification: "0.1"
+  entry_level: 0
+  exit_level: 4
+  status: adopting
+
+resource:
+  title: "EduCPU"
+  type: course
+  language:
+    - no
+    - en
+  scope: "A pedagogy-first course and toolchain for understanding CPU architecture from bits, logic and machine state through assembly, compilation, simulation, emulation and FPGA realization."
+  prerequisites: []
+  learning_outcomes:
+    - "Explain how logical building blocks, storage, registers, ALU, datapath and control combine into a working CPU."
+    - "Trace the path from source code through assembly and machine code to CPU state changes."
+    - "Implement, simulate, debug and extend a small inspectable CPU architecture."
+    - "Relate the executable architecture to a synthesizable FPGA implementation."
+  review_paths:
+    - "course/**"
+    - "docs/TEACHING_MANIFESTO.md"
+    - "reference/**"
+    - "examples/**"
+    - "emulator/**"
+    - "fpga/**"
