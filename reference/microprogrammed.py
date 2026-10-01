@@ -11,6 +11,8 @@ class Source(IntEnum):
     NONE=0; PC=1; REG_A=2; REG_B=3; IMM=4; MEM=5; SP=6; ALU=7
 class Destination(IntEnum):
     NONE=0; PC=1; REG_A=2; MEM=3; SP=4; IR=5; TMP=6; FLAGS=7
+# MAR is an internal 16-bit address latch; address-byte assembly is deliberately
+# explicit in MicroMachine rather than hidden in architectural registers.
 class ALU(IntEnum):
     PASS=0; ADD=1; SUB=2; AND=3; OR=4; XOR=5; NOT=6; SHL=7; SHR=8
 class Next(IntEnum):
@@ -64,7 +66,19 @@ CONTROL_STORE={
         MicroInstruction(Source.PC,Destination.NONE,memory_read=True),
         MicroInstruction(Source.MEM,Destination.REG_A,pc_increment=True,next=Next.FETCH),
     ),
-    "MOV": (
+
+    "LOAD": (
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.TMP,pc_increment=True),
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.NONE,pc_increment=True),
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.NONE,pc_increment=True),
+        MicroInstruction(Source.MEM,Destination.REG_A,memory_read=True,next=Next.FETCH),
+    ),
+    "STORE": (
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.TMP,pc_increment=True),
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.NONE,pc_increment=True),
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.NONE,pc_increment=True),
+        MicroInstruction(Source.REG_A,Destination.MEM,memory_write=True,next=Next.FETCH),
+    ),    "MOV": (
         MicroInstruction(Source.PC,Destination.NONE,memory_read=True),
         MicroInstruction(Source.MEM,Destination.TMP,pc_increment=True),
         MicroInstruction(Source.PC,Destination.NONE,memory_read=True),
@@ -126,7 +140,7 @@ def program_for(name):
     except KeyError as e:raise KeyError(f"no microprogram for {name}") from e
 
 
-OPCODE_NAMES={0x00:"NOP",0x01:"HALT",0x10:"MOV",0x11:"MOVI",0x20:"ADD",0x22:"SUB",0x24:"CMP",0x28:"AND",0x29:"OR",0x2a:"XOR",0x2b:"NOT",0x2c:"SHL",0x2d:"SHR"}
+OPCODE_NAMES={0x00:"NOP",0x01:"HALT",0x10:"MOV",0x11:"MOVI",0x12:"LOAD",0x13:"STORE",0x20:"ADD",0x22:"SUB",0x24:"CMP",0x28:"AND",0x29:"OR",0x2a:"XOR",0x2b:"NOT",0x2c:"SHL",0x2d:"SHR"}
 
 class MicroSequencer:
     """Step-visible controller for fetch/dispatch/control-store sequencing."""
@@ -172,7 +186,7 @@ class MicroMachine:
     """Small executable datapath for qualified microprograms."""
     def __init__(self,memory=b""):
         self.mem=bytearray(65536);self.mem[:len(memory)]=memory
-        self.r=[0]*8;self.pc=0;self.ir=0;self.tmp=0;self.mem_latch=0;self.flags=0
+        self.r=[0]*8;self.pc=0;self.ir=0;self.tmp=0;self.mem_latch=0;self.flags=0;self.mar=0;self.addr_bytes=[]
         self.seq=MicroSequencer()
 
     def step_micro(self):
@@ -181,8 +195,15 @@ class MicroMachine:
         # Source value is sampled before destinations are updated.
         src={Source.NONE:0,Source.PC:self.pc,Source.MEM:self.mem_latch,
              Source.TMP if hasattr(Source,"TMP") else Source.NONE:0}.get(u.source,0)
-        # A memory read is an explicit request whose result becomes MEM.
-        if u.memory_read:self.mem_latch=self.mem[self.pc&0xffff]
+        # During LOAD/STORE operand fetch, remember the two little-endian
+        # address bytes. The final data access uses MAR rather than PC.
+        data_access=self.seq.phase=="EXECUTE" and self.seq.opcode in (0x12,0x13) and self.seq.micro_pc==6
+        if u.memory_read:
+            address=self.mar if data_access else self.pc
+            self.mem_latch=self.mem[address&0xffff]
+        if self.seq.phase=="EXECUTE" and self.seq.opcode in (0x12,0x13) and self.seq.micro_pc in (3,5):
+            self.addr_bytes.append(self.mem_latch)
+            if len(self.addr_bytes)==2:self.mar=self.addr_bytes[0]|(self.addr_bytes[1]<<8)
         if u.source==Source.MEM:src=self.mem_latch
         elif u.source==Source.REG_B:
             if not 0<=self.mem_latch<=7:raise ValueError("INVALID_OPERAND")
@@ -213,7 +234,10 @@ class MicroMachine:
             self.r[self.tmp]=src&0xff
         elif u.destination==Destination.FLAGS:
             pass  # ALU already committed flags; result is intentionally discarded
+        elif u.destination==Destination.MEM and u.memory_write:
+            self.mem[self.mar&0xffff]=src&0xff
         if u.pc_increment:self.pc=(self.pc+1)&0xffff
+        if u.next==Next.FETCH and self.seq.phase=="EXECUTE":self.addr_bytes=[]
         event=self.seq.step(ir=self.ir if u.next==Next.DISPATCH else None)
-        event.update({"pc":self.pc,"ir":self.ir,"tmp":self.tmp,"flags":self.flags,"registers":self.r.copy()})
+        event.update({"pc":self.pc,"ir":self.ir,"tmp":self.tmp,"flags":self.flags,"mar":self.mar,"registers":self.r.copy()})
         return event
