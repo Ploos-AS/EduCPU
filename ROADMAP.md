@@ -132,6 +132,19 @@ M10.1 is complete: software, emulator, isolated RTL, integrated experimental exe
 M10.2 is complete: reference model, independent emulator, teaching simulator, wait-state RTL and RTL/reference differential semantics are CI-qualified. It uses a separate 8-bit port namespace and remains opt-in under `experimental.io`; frozen ISA v0 memory semantics remain unchanged.
 
 
+### M10.3 — Microcode and control
+
+- [x] define teaching purpose and terminology boundary
+- [ ] add deterministic ISA-v0 micro-operation plans
+- [ ] expose plans in the teaching simulator
+- [ ] define experimental microinstruction/control-word format
+- [ ] implement microsequencer and control store
+- [ ] compare microprogrammed execution against the reference architecture
+- [ ] evaluate optional experimental RTL realization
+- [ ] M10.3 final qualification
+
+M10.3 starts from observable conceptual micro-operations and only later introduces a genuine microprogrammed controller. This keeps the distinction between explanatory plans and actual microcode explicit while preserving frozen ISA v0.
+
 ## FPGA M0
 
 - [x] board-neutral FPGA project structure
