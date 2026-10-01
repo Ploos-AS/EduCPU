@@ -19,7 +19,7 @@ def test_first_control_store_programs_are_intentionally_tiny():
  assert program_for("HALT")[-1].next==Next.HALT
 
 def test_unknown_microprogram_is_explicit():
- try: program_for("LOAD")
+ try: program_for("CALL")
  except KeyError as e: assert "no microprogram" in str(e)
  else: raise AssertionError("missing microprogram must not silently execute")
 
@@ -177,3 +177,31 @@ def test_shifts_publish_shifted_out_bit_as_carry():
  for m in (left,right):
   while not (m.seq.phase=="FETCH" and m.seq.micro_pc==0 and m.pc==2):m.step_micro()
   assert m.r[2]==0 and m.flags==0x05
+
+
+def _run_until_fetch(m,pc,limit=20):
+ events=[]
+ while not (m.seq.phase=="FETCH" and m.seq.micro_pc==0 and m.pc==pc):
+  events.append(m.step_micro());assert len(events)<limit
+ return events
+
+def test_load_assembles_little_endian_mar_then_reads_data_memory():
+ m=MicroMachine(bytes((0x12,2,0x34,0x12)));m.mem[0x1234]=0xa5
+ events=_run_until_fetch(m,4)
+ assert m.mar==0x1234
+ assert m.r[2]==0xa5
+ assert m.pc==4
+ assert events[-1]["mar"]==0x1234
+
+def test_store_assembles_little_endian_mar_and_writes_data_memory():
+ m=MicroMachine(bytes((0x13,0x34,0x12,5)));m.r[5]=0x7c
+ _run_until_fetch(m,4)
+ assert m.mar==0x1234
+ assert m.mem[0x1234]==0x7c
+ assert m.pc==4
+
+def test_load_store_leave_flags_unchanged():
+ load=MicroMachine(bytes((0x12,2,0x00,0x20)));load.mem[0x2000]=1;load.flags=0x0f
+ store=MicroMachine(bytes((0x13,0x00,0x20,2)));store.r[2]=1;store.flags=0x0f
+ _run_until_fetch(load,4);_run_until_fetch(store,4)
+ assert load.flags==0x0f and store.flags==0x0f
