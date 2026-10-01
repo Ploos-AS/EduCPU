@@ -1,5 +1,5 @@
 from reference.microprogrammed import (
- ALU,CONTROL_STORE,Destination,FETCH,MicroInstruction,MicroSequencer,Next,Source,program_for
+ ALU,CONTROL_STORE,Destination,FETCH,MicroInstruction,MicroMachine,MicroSequencer,Next,Source,program_for
 )
 
 def test_control_word_round_trips_every_field():
@@ -58,3 +58,25 @@ def test_dispatch_requires_visible_ir_and_known_opcode():
  try:s.step(ir=0xff)
  except KeyError as e:assert "no opcode dispatch" in str(e)
  else:raise AssertionError("unknown opcode must not dispatch")
+
+
+def test_movi_executes_entirely_through_visible_microsteps():
+ m=MicroMachine(bytes((0x11,2,0xa5)))
+ events=[]
+ while not (m.seq.phase=="FETCH" and m.seq.micro_pc==0 and m.pc==3):
+  events.append(m.step_micro())
+  assert len(events)<10
+ assert m.r[2]==0xa5
+ assert m.pc==3
+ # 2 shared fetch microinstructions + 4 MOVI microinstructions.
+ assert len(events)==6
+ assert events[1]["after"]["phase"]=="EXECUTE"
+ assert events[-1]["after"]["phase"]=="FETCH"
+
+
+def test_movi_invalid_register_selector_is_not_hidden():
+ m=MicroMachine(bytes((0x11,8,0xa5)))
+ m.step_micro();m.step_micro();m.step_micro();m.step_micro();m.step_micro()
+ try:m.step_micro()
+ except ValueError as e:assert "INVALID_OPERAND" in str(e)
+ else:raise AssertionError("invalid register selector must fail")
