@@ -14,7 +14,13 @@ module educpu_experimental_core (
     input  logic        irq_accept,
     input  logic [15:0] irq_vector,
     output logic        instruction_boundary,
-    output logic        iret_complete
+    output logic        iret_complete,
+    output logic [7:0]  io_port,
+    output logic [7:0]  io_wdata,
+    input  logic [7:0]  io_rdata,
+    output logic        io_we,
+    output logic        io_valid,
+    input  logic        io_ready
 );
     logic [7:0]  r [0:7];
     logic [15:0] pc;
@@ -52,7 +58,12 @@ module educpu_experimental_core (
         S_IRQ_PUSH_FLAGS,
         S_IRET_FLAGS,
         S_IRET_LO,
-        S_IRET_HI
+        S_IRET_HI,
+        S_IO_IN_RD,
+        S_IO_IN_PORT,
+        S_IO_OUT_PORT,
+        S_IO_OUT_RS,
+        S_IO_ACCESS
     } state_t;
 
     state_t state;
@@ -101,7 +112,10 @@ module educpu_experimental_core (
     localparam logic [7:0] OP_RET  = 8'h39;
     localparam logic [7:0] OP_PUSH = 8'h40;
     localparam logic [7:0] OP_POP  = 8'h41;
+    localparam logic [7:0] OP_IN   = 8'hE0;
+    localparam logic [7:0] OP_OUT  = 8'hE1;
     localparam logic [7:0] OP_IRET = 8'hF0;
+    logic [7:0] io_port_latch;
     logic [7:0] irq_saved_flags, iret_flags, iret_lo;
 
     always_ff @(posedge clk) begin
@@ -164,6 +178,8 @@ module educpu_experimental_core (
                         OP_RET: begin
                             pc <= pc + 16'd1; state <= S_RET_LO;
                         end
+                        OP_IN: begin current_op <= mem_rdata; pc <= pc + 16'd1; state <= S_IO_IN_RD; end
+                        OP_OUT: begin current_op <= mem_rdata; pc <= pc + 16'd1; state <= S_IO_OUT_PORT; end
                         OP_IRET: begin
                             pc <= pc + 16'd1; state <= S_IRET_FLAGS;
                         end
@@ -348,6 +364,29 @@ module educpu_experimental_core (
                 S_IRET_LO: begin iret_lo <= mem_rdata; sp <= sp + 16'd1; state <= S_IRET_HI; end
                 S_IRET_HI: begin flags <= iret_flags; pc <= {mem_rdata,iret_lo}; sp <= sp + 16'd1; iret_complete <= 1'b1; state <= S_FETCH; end
 
+                S_IO_IN_RD: begin
+                    pc <= pc + 16'd1;
+                    if (mem_rdata > 8'd7) trap <= 1'b1;
+                    else begin operand_rd <= mem_rdata[2:0]; state <= S_IO_IN_PORT; end
+                end
+                S_IO_IN_PORT: begin
+                    io_port_latch <= mem_rdata; pc <= pc + 16'd1; state <= S_IO_ACCESS;
+                end
+                S_IO_OUT_PORT: begin
+                    io_port_latch <= mem_rdata; pc <= pc + 16'd1; state <= S_IO_OUT_RS;
+                end
+                S_IO_OUT_RS: begin
+                    pc <= pc + 16'd1;
+                    if (mem_rdata > 8'd7) trap <= 1'b1;
+                    else begin operand_rd <= mem_rdata[2:0]; state <= S_IO_ACCESS; end
+                end
+                S_IO_ACCESS: begin
+                    if (io_ready) begin
+                        if (current_op == OP_IN) r[operand_rd] <= io_rdata;
+                        state <= S_FETCH;
+                    end
+                end
+
                 S_BRANCH_LO: begin
                     operand_addr[7:0] <= mem_rdata;
                     pc <= pc + 16'd1;
@@ -412,11 +451,15 @@ module educpu_experimental_core (
                        (state == S_CALL_PUSH_LO) ? pc[7:0] :
                        (state == S_PUSH_WRITE) ? stack_data :
                        (state == S_MEM_ACCESS && (current_op == OP_STORE || current_op == OP_STORER || current_op == OP_STORES)) ? r[store_reg] : r[operand_rd];
-    assign mem_valid = !halted && !trap;
+    assign mem_valid = !halted && !trap && (state != S_IO_ACCESS);
     assign mem_we = ((state == S_MEM_ACCESS) &&
                     (current_op == OP_STORE || current_op == OP_STORER || current_op == OP_STORES)) ||
                     state == S_PUSH_WRITE || state == S_CALL_PUSH_HI || state == S_CALL_PUSH_LO ||
                     state == S_IRQ_PUSH_HI || state == S_IRQ_PUSH_LO || state == S_IRQ_PUSH_FLAGS;
+    assign io_port = io_port_latch;
+    assign io_wdata = r[operand_rd];
+    assign io_we = (state == S_IO_ACCESS) && (current_op == OP_OUT);
+    assign io_valid = !halted && !trap && (state == S_IO_ACCESS);
     assign instruction_boundary = (state == S_FETCH) && !trap;
 
 endmodule
