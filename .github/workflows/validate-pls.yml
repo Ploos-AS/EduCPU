@@ -1,0 +1,47 @@
+name: Validate PLS
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate-pls:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Check out PLS specification
+        uses: actions/checkout@v4
+        with:
+          repository: Ploos-AS/learning-standard
+          ref: fcca009ddc3bdca7a6549ef9421f7596766e4f51
+          path: .pls-standard
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install validator dependencies
+        run: python -m pip install --disable-pip-version-check PyYAML==6.0.2 jsonschema==4.23.0
+
+      - name: Validate PLS metadata and review evidence
+        shell: bash
+        run: |
+          args=(pls.yaml --schema .pls-standard/schema/pls.schema.json --review-schema .pls-standard/schema/pls-review.schema.json)
+          if [[ -f pls-review.yaml ]]; then
+            args+=(--review pls-review.yaml)
+          fi
+          python .pls-standard/tools/pls_lint.py "${args[@]}"
+
+      - name: Check review freshness
+        if: hashFiles('pls-review.yaml') != ''
+        shell: bash
+        run: |
+          args=(pls.yaml pls-review.yaml --repo-root . --attestation-schema .pls-standard/schema/pls-attestation.schema.json)
+          if [[ -f pls-attestation.yaml ]]; then
+            args+=(--attestation pls-attestation.yaml)
+          fi
+          python .pls-standard/tools/pls_staleness.py "${args[@]}"
