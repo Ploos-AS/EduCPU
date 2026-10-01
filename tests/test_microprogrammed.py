@@ -205,3 +205,12 @@ def test_load_store_leave_flags_unchanged():
  store=MicroMachine(bytes((0x13,0x00,0x20,2)));store.r[2]=1;store.flags=0x0f
  _run_until_fetch(load,4);_run_until_fetch(store,4)
  assert load.flags==0x0f and store.flags==0x0f
+
+
+def test_load_and_store_address_capture_respects_different_operand_order():
+ load=MicroMachine(bytes((0x12,7,0x78,0x56)));load.mem[0x5678]=0x11
+ store=MicroMachine(bytes((0x13,0x78,0x56,7)));store.r[7]=0x22
+ _run_until_fetch(load,4);_run_until_fetch(store,4)
+ assert load.mar==store.mar==0x5678
+ assert load.r[7]==0x11
+ assert store.mem[0x5678]==0x22
