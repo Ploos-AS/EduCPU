@@ -19,7 +19,7 @@ def test_first_control_store_programs_are_intentionally_tiny():
  assert program_for("HALT")[-1].next==Next.HALT
 
 def test_unknown_microprogram_is_explicit():
- try: program_for("AND")
+ try: program_for("LOAD")
  except KeyError as e: assert "no microprogram" in str(e)
  else: raise AssertionError("missing microprogram must not silently execute")
 
@@ -155,3 +155,25 @@ def test_cmp_signed_overflow_matches_subtraction_semantics():
  _run_one(m)
  assert m.r[2]==0x80
  assert m.flags==0x0c  # C + V; result 7F is discarded
+
+
+def test_logical_microprograms_write_result_and_only_zn_flags():
+ cases=((0x28,0xf0,0x0f,0x00,0x01),(0x29,0x80,0x01,0x81,0x02),(0x2a,0xaa,0xaa,0x00,0x01))
+ for op,a,b,result,flags in cases:
+  m=MicroMachine(bytes((op,2,5)));m.r[2]=a;m.r[5]=b;m.flags=0x0f
+  _run_one(m)
+  assert m.r[2]==result and m.flags==flags
+
+def test_not_is_unary_and_clears_old_carry_overflow():
+ m=MicroMachine(bytes((0x2b,2)));m.r[2]=0xff;m.flags=0x0c
+ events=[]
+ while not (m.seq.phase=="FETCH" and m.seq.micro_pc==0 and m.pc==2):
+  events.append(m.step_micro());assert len(events)<10
+ assert m.r[2]==0 and m.flags==0x01
+
+def test_shifts_publish_shifted_out_bit_as_carry():
+ left=MicroMachine(bytes((0x2c,2)));left.r[2]=0x80
+ right=MicroMachine(bytes((0x2d,2)));right.r[2]=0x01
+ for m in (left,right):
+  while not (m.seq.phase=="FETCH" and m.seq.micro_pc==0 and m.pc==2):m.step_micro()
+  assert m.r[2]==0 and m.flags==0x05
