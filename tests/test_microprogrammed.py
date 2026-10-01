@@ -222,3 +222,28 @@ def test_store_register_source_is_selected_by_final_operand_byte():
  _run_until_fetch(m,4)
  assert m.mem[0x4000]==0x33
  assert m.r[2:5]==[0x22,0x33,0x44]
+
+
+def test_loadr_zero_extends_address_register_into_mar():
+ m=MicroMachine(bytes((0x14,2,3)));m.r[3]=0xa0;m.mem[0x00a0]=0x5a
+ events=_run_until_fetch(m,3)
+ assert m.mar==0x00a0 and m.r[2]==0x5a and m.r[3]==0xa0
+ assert events[-1]["mar"]==0x00a0
+
+def test_storer_uses_address_register_and_distinct_source_register():
+ m=MicroMachine(bytes((0x15,3,5)));m.r[3]=0xb0;m.r[5]=0x7c
+ _run_until_fetch(m,3)
+ assert m.mar==0x00b0 and m.mem[0x00b0]==0x7c
+ assert m.r[3]==0xb0 and m.r[5]==0x7c
+
+def test_register_indirect_memory_operations_preserve_flags():
+ load=MicroMachine(bytes((0x14,2,3)));load.r[3]=0x80;load.mem[0x80]=1;load.flags=0x0f
+ store=MicroMachine(bytes((0x15,3,2)));store.r[3]=0x80;store.r[2]=2;store.flags=0x0f
+ _run_until_fetch(load,3);_run_until_fetch(store,3)
+ assert load.flags==0x0f and store.flags==0x0f
+
+def test_register_indirect_rejects_invalid_address_selector():
+ m=MicroMachine(bytes((0x14,2,8)))
+ try:_run_until_fetch(m,3)
+ except ValueError as e:assert str(e)=="INVALID_OPERAND"
+ else:raise AssertionError("invalid address register must fail")
