@@ -299,3 +299,17 @@ def test_immediate_alu_rejects_invalid_destination_selector():
  try:_run_until_fetch(m,3)
  except ValueError as e:assert str(e)=="INVALID_OPERAND"
  else:raise AssertionError("invalid immediate ALU register must fail")
+
+
+def test_branch_microprograms_taken_and_not_taken():
+ cases=((0x30,0,True),(0x31,1,True),(0x31,0,False),(0x32,0,True),(0x33,4,True),(0x34,4,False),(0x35,2,True),(0x36,2,False))
+ for op,flags,taken in cases:
+  m=MicroMachine(bytes((op,0x34,0x12)));m.flags=flags
+  target=0x1234 if taken else 3
+  _run_until_fetch(m,target)
+  assert m.pc==target and m.flags==flags
+
+def test_branch_target_is_little_endian_and_wrap_safe():
+ m=MicroMachine(bytes((0x30,0xfe,0xff)))
+ _run_until_fetch(m,0xfffe)
+ assert m.mar==0xfffe and m.pc==0xfffe
