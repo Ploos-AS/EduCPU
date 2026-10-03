@@ -135,9 +135,9 @@ M10.2 is complete: reference model, independent emulator, teaching simulator, wa
 ### M10.3 — Microcode and control
 
 - [x] define teaching purpose and terminology boundary
-- [ ] add deterministic ISA-v0 micro-operation plans
-- [ ] expose plans in the teaching simulator
-- [ ] define experimental microinstruction/control-word format
+- [x] add deterministic ISA-v0 micro-operation plans
+- [x] expose plans in the teaching simulator
+- [x] define experimental microinstruction/control-word format
 - [ ] implement microsequencer and control store
 - [ ] compare microprogrammed execution against the reference architecture
 - [ ] evaluate optional experimental RTL realization
