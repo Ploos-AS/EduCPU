@@ -112,7 +112,21 @@ CONTROL_STORE={
         MicroInstruction(Source.MEM,Destination.NONE,pc_increment=True),
         MicroInstruction(Source.ALU,Destination.REG_A,alu=ALU.ADD,next=Next.FETCH),
     ),
+    "ADDI": (
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True),
+        MicroInstruction(Source.MEM,Destination.TMP,pc_increment=True),
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True),
+        MicroInstruction(Source.MEM,Destination.NONE,pc_increment=True),
+        MicroInstruction(Source.ALU,Destination.REG_A,alu=ALU.ADD,next=Next.FETCH),
+    ),
     "SUB": (
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True),
+        MicroInstruction(Source.MEM,Destination.TMP,pc_increment=True),
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True),
+        MicroInstruction(Source.MEM,Destination.NONE,pc_increment=True),
+        MicroInstruction(Source.ALU,Destination.REG_A,alu=ALU.SUB,next=Next.FETCH),
+    ),
+    "SUBI": (
         MicroInstruction(Source.PC,Destination.NONE,memory_read=True),
         MicroInstruction(Source.MEM,Destination.TMP,pc_increment=True),
         MicroInstruction(Source.PC,Destination.NONE,memory_read=True),
@@ -127,6 +141,13 @@ CONTROL_STORE={
         MicroInstruction(Source.ALU,Destination.FLAGS,alu=ALU.SUB,next=Next.FETCH),
     ),
 
+    "CMPI": (
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True),
+        MicroInstruction(Source.MEM,Destination.TMP,pc_increment=True),
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True),
+        MicroInstruction(Source.MEM,Destination.NONE,pc_increment=True),
+        MicroInstruction(Source.ALU,Destination.FLAGS,alu=ALU.SUB,next=Next.FETCH),
+    ),
     "AND": (
         MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.TMP,pc_increment=True),
         MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.NONE,pc_increment=True),
@@ -160,7 +181,7 @@ def program_for(name):
     except KeyError as e:raise KeyError(f"no microprogram for {name}") from e
 
 
-OPCODE_NAMES={0x00:"NOP",0x01:"HALT",0x10:"MOV",0x11:"MOVI",0x12:"LOAD",0x13:"STORE",0x14:"LOADR",0x15:"STORER",0x16:"LOADS",0x17:"STORES",0x20:"ADD",0x22:"SUB",0x24:"CMP",0x28:"AND",0x29:"OR",0x2a:"XOR",0x2b:"NOT",0x2c:"SHL",0x2d:"SHR"}
+OPCODE_NAMES={0x00:"NOP",0x01:"HALT",0x10:"MOV",0x11:"MOVI",0x12:"LOAD",0x13:"STORE",0x14:"LOADR",0x15:"STORER",0x16:"LOADS",0x17:"STORES",0x20:"ADD",0x21:"ADDI",0x22:"SUB",0x23:"SUBI",0x24:"CMP",0x25:"CMPI",0x28:"AND",0x29:"OR",0x2a:"XOR",0x2b:"NOT",0x2c:"SHL",0x2d:"SHR"}
 
 class MicroSequencer:
     """Step-visible controller for fetch/dispatch/control-store sequencing."""
@@ -242,7 +263,7 @@ class MicroMachine:
             src=self.r[self.mem_latch]
         elif u.source==Source.ALU:
             if not 0<=self.tmp<=7 or not 0<=self.mem_latch<=7:raise ValueError("INVALID_OPERAND")
-            a=self.r[self.tmp];b=self.r[self.mem_latch]
+            a=self.r[self.tmp];b=self.mem_latch if self.seq.opcode in (0x21,0x23,0x25) else self.r[self.mem_latch]
             if u.alu==ALU.ADD:
                 total=a+b;src=total&0xff
                 self.flags=(1 if src==0 else 0)|(2 if src&0x80 else 0)|(4 if total>0xff else 0)|(8 if (~(a^b)&(a^src)&0x80) else 0)
