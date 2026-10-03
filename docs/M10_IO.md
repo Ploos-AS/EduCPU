@@ -160,3 +160,19 @@ The M10.2 software I/O contract is frozen before instruction encoding or RTL wor
 - software devices are deterministic callbacks and must not implicitly depend on host timing or host I/O.
 
 Reference-machine and independent-emulator implementations are qualified by CI (#576 and #578 respectively). Any later opcode or RTL design must preserve this contract.
+
+
+## Experimental instruction encoding
+
+The first M10.2 instruction encoding is:
+
+- `IN Rd, port8` = `E0 rd port`: read one byte from the 8-bit port into register `Rd`.
+- `OUT port8, Rs` = `E1 port rs`: write register `Rs` to the 8-bit port.
+
+Both instructions are three bytes long. Register operands are 0–7; invalid register operands trap. I/O does not modify arithmetic flags.
+
+Opcodes `0xE0` and `0xE1` belong only to the experimental profile. Frozen ISA v0 continues to treat both as invalid opcodes.
+
+## Experimental RTL bus
+
+The experimental core exposes a separate byte-wide port bus: `io_port[7:0]`, `io_wdata[7:0]`, `io_rdata[7:0]`, `io_we`, `io_valid`, and `io_ready`. A transaction is requested with `io_valid` and completes when `io_ready` is asserted. Memory and I/O remain separate architectural spaces.
