@@ -32,7 +32,7 @@ RTL qualification includes:
 - the existing 20-program ISA-v0 experimental-core differential suite;
 - M10.1 IRQ/IRET regression qualification.
 
-The qualifying workflow after adding the I/O differential gate is FPGA #233: **PASS**. CI #610 is also **PASS**.
+The original I/O differential gate qualified at FPGA #233: **PASS** and CI #610: **PASS**. Final M10.2 workflow confirmation at commit `0cd3662` is FPGA #239: **PASS**, CI #660: **PASS**, and Validate PLS #6: **PASS**.
 
 ## Boundary
 
