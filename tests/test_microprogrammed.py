@@ -280,3 +280,22 @@ def test_stack_relative_memory_operations_preserve_sp_and_flags():
  assert load.sp==store.sp==0x3000
  assert load.flags==store.flags==0x0f
  assert store.mem[0x2fff]==8
+
+
+def test_immediate_alu_microprograms_use_literal_operand_and_match_flags():
+ cases=((0x21,0xff,1,0x00,0x05),(0x23,0,1,0xff,0x02))
+ for op,a,imm,result,flags in cases:
+  m=MicroMachine(bytes((op,2,imm)));m.r[2]=a
+  _run_until_fetch(m,3)
+  assert m.r[2]==result and m.flags==flags
+
+def test_cmpi_updates_flags_without_writing_register():
+ m=MicroMachine(bytes((0x25,2,5)));m.r[2]=5
+ _run_until_fetch(m,3)
+ assert m.r[2]==5 and m.flags==0x05
+
+def test_immediate_alu_rejects_invalid_destination_selector():
+ m=MicroMachine(bytes((0x21,8,1)))
+ try:_run_until_fetch(m,3)
+ except ValueError as e:assert str(e)=="INVALID_OPERAND"
+ else:raise AssertionError("invalid immediate ALU register must fail")
