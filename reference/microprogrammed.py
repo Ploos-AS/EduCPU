@@ -148,6 +148,34 @@ CONTROL_STORE={
         MicroInstruction(Source.MEM,Destination.NONE,pc_increment=True),
         MicroInstruction(Source.ALU,Destination.FLAGS,alu=ALU.SUB,next=Next.FETCH),
     ),
+    "JMP": (
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.NONE,pc_increment=True),
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.PC,pc_increment=True,next=Next.FETCH),
+    ),
+    "JZ": (
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.NONE,pc_increment=True),
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.PC,pc_increment=True,next=Next.FETCH),
+    ),
+    "JNZ": (
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.NONE,pc_increment=True),
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.PC,pc_increment=True,next=Next.FETCH),
+    ),
+    "JC": (
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.NONE,pc_increment=True),
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.PC,pc_increment=True,next=Next.FETCH),
+    ),
+    "JNC": (
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.NONE,pc_increment=True),
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.PC,pc_increment=True,next=Next.FETCH),
+    ),
+    "JN": (
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.NONE,pc_increment=True),
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.PC,pc_increment=True,next=Next.FETCH),
+    ),
+    "JP": (
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.NONE,pc_increment=True),
+        MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.PC,pc_increment=True,next=Next.FETCH),
+    ),
     "AND": (
         MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.TMP,pc_increment=True),
         MicroInstruction(Source.PC,Destination.NONE,memory_read=True), MicroInstruction(Source.MEM,Destination.NONE,pc_increment=True),
@@ -181,7 +209,7 @@ def program_for(name):
     except KeyError as e:raise KeyError(f"no microprogram for {name}") from e
 
 
-OPCODE_NAMES={0x00:"NOP",0x01:"HALT",0x10:"MOV",0x11:"MOVI",0x12:"LOAD",0x13:"STORE",0x14:"LOADR",0x15:"STORER",0x16:"LOADS",0x17:"STORES",0x20:"ADD",0x21:"ADDI",0x22:"SUB",0x23:"SUBI",0x24:"CMP",0x25:"CMPI",0x28:"AND",0x29:"OR",0x2a:"XOR",0x2b:"NOT",0x2c:"SHL",0x2d:"SHR"}
+OPCODE_NAMES={0x00:"NOP",0x01:"HALT",0x10:"MOV",0x11:"MOVI",0x12:"LOAD",0x13:"STORE",0x14:"LOADR",0x15:"STORER",0x16:"LOADS",0x17:"STORES",0x20:"ADD",0x21:"ADDI",0x22:"SUB",0x23:"SUBI",0x24:"CMP",0x25:"CMPI",0x30:"JMP",0x31:"JZ",0x32:"JNZ",0x33:"JC",0x34:"JNC",0x35:"JN",0x36:"JP",0x28:"AND",0x29:"OR",0x2a:"XOR",0x2b:"NOT",0x2c:"SHL",0x2d:"SHR"}
 
 class MicroSequencer:
     """Step-visible controller for fetch/dispatch/control-store sequencing."""
@@ -242,7 +270,7 @@ class MicroMachine:
         if u.memory_read:
             address=self.mar if data_access else self.pc
             self.mem_latch=self.mem[address&0xffff]
-        capture_steps={0x12:(3,5),0x13:(1,3)}
+        capture_steps={0x12:(3,5),0x13:(1,3),0x30:(1,3),0x31:(1,3),0x32:(1,3),0x33:(1,3),0x34:(1,3),0x35:(1,3),0x36:(1,3)}
         if self.seq.phase=="EXECUTE" and self.seq.opcode in capture_steps and self.seq.micro_pc in capture_steps[self.seq.opcode]:
             self.addr_bytes.append(self.mem_latch)
             if len(self.addr_bytes)==2:self.mar=self.addr_bytes[0]|(self.addr_bytes[1]<<8)
@@ -280,6 +308,9 @@ class MicroMachine:
             elif u.alu==ALU.SHR:
                 src=a>>1;self.flags=(1 if src==0 else 0)|(2 if src&0x80 else 0)|(4 if a&1 else 0)
             else:raise NotImplementedError(f"ALU operation {u.alu.name}")
+        if u.destination==Destination.PC:
+            take={0x30:True,0x31:bool(self.flags&1),0x32:not bool(self.flags&1),0x33:bool(self.flags&4),0x34:not bool(self.flags&4),0x35:bool(self.flags&2),0x36:not bool(self.flags&2)}.get(self.seq.opcode,True)
+            if take:self.pc=self.mar&0xffff
         if u.destination==Destination.IR:self.ir=src&0xff
         elif u.destination==Destination.TMP:self.tmp=src&0xff
         elif u.destination==Destination.REG_A:
