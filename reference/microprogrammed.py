@@ -286,6 +286,7 @@ class MicroMachine:
         # address bytes. The final data access uses MAR rather than PC.
         data_access=self.seq.phase=="EXECUTE" and ((self.seq.opcode in (0x12,0x13) and self.seq.micro_pc==6) or (self.seq.opcode in (0x14,0x15,0x16,0x17) and self.seq.micro_pc==4) or (self.seq.opcode==0x41 and self.seq.micro_pc==2))
         if u.memory_read:
+            if self.seq.phase=="EXECUTE" and self.seq.opcode==0x41 and self.seq.micro_pc==2:self.mar=self.sp
             address=self.mar if data_access else self.pc
             self.mem_latch=self.mem[address&0xffff]
         capture_steps={0x12:(3,5),0x13:(1,3),0x30:(1,3),0x31:(1,3),0x32:(1,3),0x33:(1,3),0x34:(1,3),0x35:(1,3),0x36:(1,3)}
@@ -303,7 +304,6 @@ class MicroMachine:
         if self.seq.phase=="EXECUTE" and self.seq.opcode==0x40 and self.seq.micro_pc==2:
             if not 0<=self.tmp<=7:raise ValueError("INVALID_OPERAND")
             self.sp=(self.sp-1)&0xffff;self.mar=self.sp
-        if self.seq.phase=="EXECUTE" and self.seq.opcode==0x41 and self.seq.micro_pc==2:self.mar=self.sp
         if u.source==Source.MEM:src=self.mem_latch
         elif u.source==Source.REG_A:
             if not 0<=self.mem_latch<=7:raise ValueError("INVALID_OPERAND")
