@@ -339,3 +339,20 @@ def test_push_pop_reject_invalid_register_selector():
   try:_run_until_fetch(m,2)
   except ValueError as e:assert str(e)=="INVALID_OPERAND"
   else:raise AssertionError("invalid stack register must fail")
+
+
+def test_call_pushes_return_address_and_jumps():
+ m=MicroMachine(bytes((0x38,0x34,0x12)));m.sp=0x2000;m.flags=0x0f
+ _run_until_fetch(m,0x1234)
+ assert m.sp==0x1ffe and m.mem[0x1fff]==0 and m.mem[0x1ffe]==3
+ assert m.flags==0x0f
+
+def test_ret_pops_low_then_high_and_restores_pc():
+ m=MicroMachine(bytes((0x39,)));m.sp=0x1ffe;m.mem[0x1ffe]=0x78;m.mem[0x1fff]=0x56;m.flags=0x0f
+ _run_until_fetch(m,0x5678)
+ assert m.sp==0x2000 and m.pc==0x5678 and m.flags==0x0f
+
+def test_call_ret_round_trip():
+ m=MicroMachine(bytes((0x38,0x06,0x00,0x01,0,0,0x39)));m.sp=0x3000
+ _run_until_fetch(m,6);assert m.sp==0x2ffe
+ _run_until_fetch(m,3);assert m.sp==0x3000 and m.pc==3
