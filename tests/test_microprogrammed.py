@@ -313,3 +313,29 @@ def test_branch_target_is_little_endian_and_wrap_safe():
  m=MicroMachine(bytes((0x30,0xfe,0xff)))
  _run_until_fetch(m,0xfffe)
  assert m.mar==0xfffe and m.pc==0xfffe
+
+
+def test_enter_leave_adjust_sp_and_preserve_flags():
+ enter=MicroMachine(bytes((0x18,0x20)));enter.sp=0x0010;enter.flags=0x0f
+ _run_until_fetch(enter,2);assert enter.sp==0xfff0 and enter.flags==0x0f
+ leave=MicroMachine(bytes((0x19,0x20)));leave.sp=0xfff0;leave.flags=0x0f
+ _run_until_fetch(leave,2);assert leave.sp==0x0010 and leave.flags==0x0f
+
+def test_push_decrements_before_write_and_pop_reads_before_increment():
+ push=MicroMachine(bytes((0x40,3)));push.sp=0x2000;push.r[3]=0xa5
+ _run_until_fetch(push,2);assert push.sp==0x1fff and push.mem[0x1fff]==0xa5
+ pop=MicroMachine(bytes((0x41,3)));pop.sp=0x1fff;pop.mem[0x1fff]=0x5a
+ _run_until_fetch(pop,2);assert pop.r[3]==0x5a and pop.sp==0x2000
+
+def test_push_pop_preserve_flags_and_wrap_stack_pointer():
+ push=MicroMachine(bytes((0x40,0)));push.sp=0;push.r[0]=7;push.flags=0x0f
+ _run_until_fetch(push,2);assert push.sp==0xffff and push.mem[0xffff]==7 and push.flags==0x0f
+ pop=MicroMachine(bytes((0x41,0)));pop.sp=0xffff;pop.mem[0xffff]=9;pop.flags=0x0f
+ _run_until_fetch(pop,2);assert pop.sp==0 and pop.r[0]==9 and pop.flags==0x0f
+
+def test_push_pop_reject_invalid_register_selector():
+ for op in (0x40,0x41):
+  m=MicroMachine(bytes((op,8)))
+  try:_run_until_fetch(m,2)
+  except ValueError as e:assert str(e)=="INVALID_OPERAND"
+  else:raise AssertionError("invalid stack register must fail")
