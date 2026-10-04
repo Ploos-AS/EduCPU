@@ -309,8 +309,11 @@ class MicroMachine:
                 src=a>>1;self.flags=(1 if src==0 else 0)|(2 if src&0x80 else 0)|(4 if a&1 else 0)
             else:raise NotImplementedError(f"ALU operation {u.alu.name}")
         if u.destination==Destination.PC:
+            # The final target byte is itself an instruction operand: consume it
+            # before choosing target vs sequential PC.
+            sequential=(self.pc+1)&0xffff if u.pc_increment else self.pc
             take={0x30:True,0x31:bool(self.flags&1),0x32:not bool(self.flags&1),0x33:bool(self.flags&4),0x34:not bool(self.flags&4),0x35:bool(self.flags&2),0x36:not bool(self.flags&2)}.get(self.seq.opcode,True)
-            if take:self.pc=self.mar&0xffff
+            self.pc=(self.mar&0xffff) if take else sequential
         if u.destination==Destination.IR:self.ir=src&0xff
         elif u.destination==Destination.TMP:self.tmp=src&0xff
         elif u.destination==Destination.REG_A:
@@ -320,7 +323,7 @@ class MicroMachine:
             pass  # ALU already committed flags; result is intentionally discarded
         elif u.destination==Destination.MEM and u.memory_write:
             self.mem[self.mar&0xffff]=src&0xff
-        if u.pc_increment:self.pc=(self.pc+1)&0xffff
+        if u.pc_increment and u.destination!=Destination.PC:self.pc=(self.pc+1)&0xffff
         if u.next==Next.FETCH and self.seq.phase=="EXECUTE":self.addr_bytes=[]
         event=self.seq.step(ir=self.ir if u.next==Next.DISPATCH else None)
         event.update({"pc":self.pc,"ir":self.ir,"tmp":self.tmp,"flags":self.flags,"mar":self.mar,"sp":self.sp,"registers":self.r.copy()})
