@@ -312,8 +312,12 @@ class MicroMachine:
             if not 0<=self.mem_latch<=7:raise ValueError("INVALID_OPERAND")
             self.mar=self.r[self.mem_latch]
         if self.seq.phase=="EXECUTE" and self.seq.opcode==0x38 and self.seq.micro_pc in (4,5):
+            # addr_bytes holds CALL's little-endian target; PC already points
+            # at the sequential return address after operand fetch.
+            target=self.addr_bytes[0]|(self.addr_bytes[1]<<8)
             self.sp=(self.sp-1)&0xffff;self.mar=self.sp
             ret=self.pc&0xffff;src=((ret>>8)&0xff) if self.seq.micro_pc==4 else (ret&0xff)
+            if self.seq.micro_pc==5:self.mar=self.sp
         if self.seq.phase=="EXECUTE" and self.seq.opcode==0x40 and self.seq.micro_pc==2:
             if not 0<=self.tmp<=7:raise ValueError("INVALID_OPERAND")
             self.sp=(self.sp-1)&0xffff;self.mar=self.sp
@@ -346,7 +350,7 @@ class MicroMachine:
         if u.destination==Destination.PC and self.seq.opcode==0x39:
             self.pc=(self.tmp&0xff)|((self.mem_latch&0xff)<<8)
         elif u.destination==Destination.PC and self.seq.opcode==0x38:
-            self.pc=self.mar&0xffff
+            self.pc=(self.addr_bytes[0]|(self.addr_bytes[1]<<8))&0xffff
         elif u.destination==Destination.PC:
             # The final target byte is itself an instruction operand: consume it
             # before choosing target vs sequential PC.
