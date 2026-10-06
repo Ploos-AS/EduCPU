@@ -1,3 +1,4 @@
+from reference.educpu import CPU
 from reference.microprogrammed import (
  ALU,CONTROL_STORE,Destination,FETCH,MicroInstruction,MicroMachine,MicroSequencer,Next,OPCODE_NAMES,Source,program_for
 )
@@ -364,3 +365,40 @@ def test_control_store_covers_complete_isa_v0_opcode_set():
            0x30,0x31,0x32,0x33,0x34,0x35,0x36,0x38,0x39,0x40,0x41}
  assert set(OPCODE_NAMES)==expected
  assert {OPCODE_NAMES[op] for op in expected}==set(CONTROL_STORE)
+
+
+def _micro_step_instruction(m,limit=64):
+ started=False
+ for _ in range(limit):
+  m.step_micro();started=True
+  if started and m.seq.phase=="FETCH" and m.seq.micro_pc==0:return
+  if m.seq.halted:return
+ raise AssertionError("microinstruction limit exceeded")
+
+def _assert_arch_equal(cpu,m):
+ assert m.pc==cpu.pc
+ assert m.sp==cpu.sp
+ assert m.r==cpu.r
+ assert m.flags==cpu.flags
+ assert m.mem==cpu.mem
+
+def test_microprogrammed_differential_representative_isa_v0_program():
+ # MOVI/ALU/STORE/LOAD/stack/frame/branch and HALT in one deterministic trace.
+ program=bytes((0x11,0,5, 0x11,1,3, 0x20,0,1, 0x13,0x00,0x20,0,
+                0x12,2,0x00,0x20, 0x40,2, 0x41,3, 0x18,4, 0x19,4,
+                0x24,0,3, 0x32,0x23,0x00, 0x01, 0,0,0, 0x01))
+ cpu=CPU();cpu.mem[:len(program)]=program
+ mic=MicroMachine(program)
+ for _ in range(12):
+  cpu.step();_micro_step_instruction(mic);_assert_arch_equal(cpu,mic)
+  if cpu.halted:break
+ assert cpu.halted and mic.seq.halted
+
+def test_microprogrammed_differential_call_ret_program():
+ program=bytes((0x38,0x06,0x00,0x01,0,0,0x11,0,0x2a,0x39))
+ cpu=CPU();cpu.mem[:len(program)]=program;cpu.sp=0x3000
+ mic=MicroMachine(program);mic.sp=0x3000
+ for _ in range(4):
+  cpu.step();_micro_step_instruction(mic);_assert_arch_equal(cpu,mic)
+  if cpu.halted:break
+ assert cpu.halted and mic.seq.halted and cpu.r[0]==0x2a
