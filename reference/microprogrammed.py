@@ -299,7 +299,7 @@ class MicroMachine:
             if self.seq.phase=="EXECUTE" and ((self.seq.opcode==0x41 and self.seq.micro_pc==2) or self.seq.opcode==0x39):self.mar=self.sp
             address=self.mar if data_access else self.pc
             self.mem_latch=self.mem[address&0xffff]
-        capture_steps={0x12:(3,5),0x13:(1,3),0x30:(1,3),0x31:(1,3),0x32:(1,3),0x33:(1,3),0x34:(1,3),0x35:(1,3),0x36:(1,3)}
+        capture_steps={0x12:(3,5),0x13:(1,3),0x38:(1,3),0x30:(1,3),0x31:(1,3),0x32:(1,3),0x33:(1,3),0x34:(1,3),0x35:(1,3),0x36:(1,3)}
         if self.seq.phase=="EXECUTE" and self.seq.opcode in capture_steps and self.seq.micro_pc in capture_steps[self.seq.opcode]:
             self.addr_bytes.append(self.mem_latch)
             if len(self.addr_bytes)==2:self.mar=self.addr_bytes[0]|(self.addr_bytes[1]<<8)
