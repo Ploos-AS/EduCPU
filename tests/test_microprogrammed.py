@@ -1,5 +1,5 @@
 from reference.microprogrammed import (
- ALU,CONTROL_STORE,Destination,FETCH,MicroInstruction,MicroMachine,MicroSequencer,Next,Source,program_for
+ ALU,CONTROL_STORE,Destination,FETCH,MicroInstruction,MicroMachine,MicroSequencer,Next,OPCODE_NAMES,Source,program_for
 )
 
 def test_control_word_round_trips_every_field():
