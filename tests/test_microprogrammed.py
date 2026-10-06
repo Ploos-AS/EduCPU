@@ -402,3 +402,44 @@ def test_microprogrammed_differential_call_ret_program():
   cpu.step();_micro_step_instruction(mic);_assert_arch_equal(cpu,mic)
   if cpu.halted:break
  assert cpu.halted and mic.seq.halted and cpu.r[0]==0x2a
+
+
+def _diff_one(program,setup=None):
+ cpu=CPU();cpu.mem[:len(program)]=program
+ mic=MicroMachine(program)
+ if setup:setup(cpu,mic)
+ cpu.step();_micro_step_instruction(mic);_assert_arch_equal(cpu,mic)
+
+def test_microprogrammed_differential_alu_edge_matrix():
+ cases=(
+  (bytes((0x20,0,1)),0xff,1),(bytes((0x20,0,1)),0x7f,1),
+  (bytes((0x22,0,1)),0,1),(bytes((0x22,0,1)),0x80,1),
+  (bytes((0x24,0,1)),5,5),(bytes((0x28,0,1)),0xf0,0x0f),
+  (bytes((0x29,0,1)),0x80,1),(bytes((0x2a,0,1)),0xff,0xff),
+ )
+ for program,a,b in cases:
+  _diff_one(program,lambda c,m,a=a,b=b:(c.r.__setitem__(0,a),m.r.__setitem__(0,a),c.r.__setitem__(1,b),m.r.__setitem__(1,b)))
+ for op,value in ((0x2b,0),(0x2c,0x80),(0x2d,1)):
+  _diff_one(bytes((op,0)),lambda c,m,v=value:(c.r.__setitem__(0,v),m.r.__setitem__(0,v)))
+ for op,a,imm in ((0x21,0xff,1),(0x23,0,1),(0x25,5,5)):
+  _diff_one(bytes((op,0,imm)),lambda c,m,a=a:(c.r.__setitem__(0,a),m.r.__setitem__(0,a)))
+
+def test_microprogrammed_differential_branch_matrix():
+ cases=((0x30,0),(0x31,1),(0x31,0),(0x32,0),(0x32,1),(0x33,4),(0x33,0),(0x34,0),(0x34,4),(0x35,2),(0x35,0),(0x36,0),(0x36,2))
+ for op,flags in cases:
+  _diff_one(bytes((op,0x34,0x12)),lambda c,m,f=flags:(setattr(c,"flags",f),setattr(m,"flags",f)))
+
+def test_microprogrammed_differential_addressing_and_stack_wrap():
+ def direct(c,m):
+  c.mem[0x2345]=m.mem[0x2345]=0xa5
+ _diff_one(bytes((0x12,2,0x45,0x23)),direct)
+ def regind(c,m):
+  c.r[1]=m.r[1]=0x80;c.mem[0x80]=m.mem[0x80]=0x5a
+ _diff_one(bytes((0x14,2,1)),regind)
+ def stacks(c,m):
+  c.sp=m.sp=1;c.mem[0xffff]=m.mem[0xffff]=0x77
+ _diff_one(bytes((0x16,2,0xfe)),stacks)
+ def pushwrap(c,m):c.sp=m.sp=0;c.r[0]=m.r[0]=0x42
+ _diff_one(bytes((0x40,0)),pushwrap)
+ def popwrap(c,m):c.sp=m.sp=0xffff;c.mem[0xffff]=m.mem[0xffff]=0x42
+ _diff_one(bytes((0x41,0)),popwrap)
