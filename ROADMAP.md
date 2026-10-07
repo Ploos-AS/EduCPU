@@ -138,8 +138,8 @@ M10.2 is complete: reference model, independent emulator, teaching simulator, wa
 - [x] add deterministic ISA-v0 micro-operation plans
 - [x] expose plans in the teaching simulator
 - [x] define experimental microinstruction/control-word format
-- [ ] implement microsequencer and control store
-- [ ] compare microprogrammed execution against the reference architecture
+- [x] implement microsequencer and control store
+- [x] compare microprogrammed execution against the reference architecture
 - [ ] evaluate optional experimental RTL realization
 - [ ] M10.3 final qualification
 
