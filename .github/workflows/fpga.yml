@@ -56,6 +56,9 @@ jobs:
       - name: Run UART-to-CPU end-to-end simulation
         working-directory: fpga/rtl
         run: make serial-e2e-test
+      - name: Run M10.3 experimental microsequencer simulation
+        working-directory: fpga/rtl
+        run: make experimental-microsequencer-test
       - name: Run M10 experimental IRQ boundary simulation
         working-directory: fpga/rtl
         run: make experimental-irq-test
